@@ -32,3 +32,21 @@ cd Persistence; dotnet add reference ../Domain; cd ..
 ```bash
 dotnet ef migrations add InitialCreate -p Persistence -s API
 ```
+
+## Create the React application
+
+```bash
+npm create vite@latest client -- --template react-ts
+```
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+Run the React application:
+
+```bash
+npm run dev -- --host --port 4000
+```
