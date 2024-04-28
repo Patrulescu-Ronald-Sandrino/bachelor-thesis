@@ -26,3 +26,9 @@ cd API; dotnet add reference ../Application; cd ..
 cd Application; dotnet add reference ../Persistence; dotnet add reference ../Domain; cd ..
 cd Persistence; dotnet add reference ../Domain; cd ..
 ```
+
+## Create an Entity Framework code first migration
+
+```bash
+dotnet ef migrations add InitialCreate -p Persistence -s API
+```
