@@ -1,4 +1,5 @@
 using Application.Contracts;
+using Application.Core;
 using Application.Logic;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddScoped<IAttractionsService, AttractionsService>();
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
 var app = builder.Build();
 

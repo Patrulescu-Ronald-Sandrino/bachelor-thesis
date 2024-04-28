@@ -17,4 +17,22 @@ public class AttractionsController(IAttractionsService attractionsService) : Bas
     {
         return await attractionsService.GetAttraction(id);
     }
+
+    [HttpPost]
+    public async Task<ActionResult<Attraction>> CreateAttraction(Attraction attraction)
+    {
+        return await attractionsService.CreateAttraction(attraction);
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<Attraction>> UpdateAttraction(Attraction attraction)
+    {
+        return await attractionsService.UpdateAttraction(attraction);
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult<Attraction>> DeleteAttraction(Guid id)
+    {
+        return await attractionsService.DeleteAttraction(id);
+    }
 }
