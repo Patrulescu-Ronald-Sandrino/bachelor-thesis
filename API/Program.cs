@@ -23,6 +23,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(options => { options.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4000"); });
+
 app.UseAuthorization();
 
 app.MapControllers();
