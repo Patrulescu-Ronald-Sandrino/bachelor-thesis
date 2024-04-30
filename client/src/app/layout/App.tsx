@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Attraction } from './attraction.ts';
+import { Attraction } from '../models/attraction.ts';
 import axios from 'axios';
 
 function App() {
