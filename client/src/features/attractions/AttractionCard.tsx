@@ -1,6 +1,7 @@
 import { Attraction } from '../../app/models/attraction.ts';
+import ClickableIcon from '../../app/components/ClickableIcon.tsx';
 
-const imageSize = '45em';
+const imageSize = '37em';
 
 const attractionProperty = {
   margin: 0,
@@ -48,7 +49,7 @@ export default function AttractionCard({ attraction }: Props) {
           </h3>
 
           {Object.entries(leftSideProperties).map(([name, value]) => (
-            <p title={name} style={attractionProperty}>
+            <p title={name} style={attractionProperty} key={name}>
               <img
                 src={`/icons/${name}.svg`}
                 alt={name}
@@ -57,6 +58,26 @@ export default function AttractionCard({ attraction }: Props) {
               {value}
             </p>
           ))}
+
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignContent: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <ClickableIcon
+              icon="/icons/save.svg"
+              onClick={() => console.log('clicked save')}
+            />
+            <div style={{ margin: '0.5em' }}></div>
+            <ClickableIcon
+              icon="/icons/share.svg"
+              onClick={() => console.log('clicked share')}
+            />
+          </div>
         </div>
 
         <div title="description" style={descriptionStyle}>

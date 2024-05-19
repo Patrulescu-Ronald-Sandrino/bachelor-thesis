@@ -18,7 +18,6 @@ export default function Attractions() {
 
   useEffect(() => {
     axios.get('http://localhost:7000/api/attractions').then((response) => {
-      console.log(response);
       setAttractions(response.data);
     });
   }, []);
