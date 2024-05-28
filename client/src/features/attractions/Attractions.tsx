@@ -5,11 +5,12 @@ import AttractionCard from './AttractionCard.tsx';
 import SwiperButton from './SwiperButton.tsx';
 
 export default function Attractions() {
+  const [showComments, setShowComments] = useState(false);
   const [attractions, setAttractions] = useState<Attraction[]>([]);
   const [attractionIndex, setAttractionIndex] = useState<number>(0);
   const attraction =
     attractionIndex < attractions.length ? attractions[attractionIndex] : null;
-  const hasMore = attractionIndex >= attractions.length;
+  const isLast = attractionIndex == attractions.length - 1;
 
   useEffect(() => {
     axios.get('http://localhost:7000/api/attractions').then((response) => {
@@ -18,6 +19,7 @@ export default function Attractions() {
   }, []);
 
   function next() {
+    setShowComments(false);
     setAttractionIndex((x) => x + 1);
   }
 
@@ -31,41 +33,58 @@ export default function Attractions() {
     next();
   }
 
+  function toggleComments() {
+    setShowComments((x) => !x);
+    console.log('toggle comments');
+  }
+
   return (
-    <>
+    <div className="centered" style={{ justifyContent: 'space-around' }}>
       <div className="centered" style={{ flexDirection: 'column' }}>
-        {attraction ? (
-          <AttractionCard key={attraction.id} attraction={attraction} />
-        ) : (
+        {!attraction ? (
           <div>No more attractions! :( ...</div>
+        ) : (
+          <>
+            <AttractionCard key={attraction.id} attraction={attraction} />
+
+            <div className="centered" style={{ marginTop: '1em' }}>
+              <SwiperButton
+                text="Dislike"
+                onClick={dislike}
+                disabled={!attraction}
+                icon="/icons/keys/left.svg"
+                eventKey="ArrowLeft"
+              />
+
+              <SwiperButton
+                text="Like"
+                onClick={like}
+                disabled={!attraction}
+                icon="/icons/keys/right.svg"
+                eventKey="ArrowRight"
+              />
+
+              <SwiperButton
+                text="Next"
+                onClick={next}
+                disabled={isLast}
+                icon="/icons/keys/space.svg"
+                eventKey=" "
+              />
+
+              <SwiperButton
+                text="Toggle comments"
+                onClick={toggleComments}
+                disabled={!attraction}
+                icon="/icons/keys/c.svg"
+                eventKey="c"
+              />
+            </div>
+          </>
         )}
-
-        <div className="centered" style={{ marginTop: '1em' }}>
-          <SwiperButton
-            text="Dislike"
-            onClick={dislike}
-            disabled={!attraction}
-            icon="/icons/keys/left.svg"
-            eventKey="ArrowLeft"
-          />
-
-          <SwiperButton
-            text="Like"
-            onClick={like}
-            disabled={!attraction}
-            icon="/icons/keys/right.svg"
-            eventKey="ArrowRight"
-          />
-
-          <SwiperButton
-            text="Next"
-            onClick={next}
-            disabled={hasMore}
-            icon="/icons/keys/space.svg"
-            eventKey=" "
-          />
-        </div>
       </div>
-    </>
+
+      {showComments && <div>Comments</div>}
+    </div>
   );
 }

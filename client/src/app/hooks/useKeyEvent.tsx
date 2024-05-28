@@ -3,10 +3,13 @@ import { useEffect } from 'react';
 interface Props {
   eventKey: string;
   callback: () => void;
+  disabled: boolean;
 }
 
-export default function useKeyEvent({ eventKey, callback }: Props) {
+export default function useKeyEvent({ eventKey, callback, disabled }: Props) {
   useEffect(() => {
+    if (disabled) return;
+
     function handleKeyUp(e: KeyboardEvent) {
       if (e.key === eventKey) callback();
     }
@@ -16,5 +19,5 @@ export default function useKeyEvent({ eventKey, callback }: Props) {
     window.addEventListener(eventType, handleKeyUp);
 
     return () => window.removeEventListener(eventType, handleKeyUp);
-  }, [eventKey, callback]);
+  }, [eventKey, callback, disabled]);
 }

@@ -15,7 +15,7 @@ export default function SwiperButton({
   icon,
   eventKey,
 }: Props) {
-  useKeyEvent({ eventKey: eventKey, callback: onClick });
+  useKeyEvent({ eventKey: eventKey, callback: onClick, disabled });
 
   return (
     <button
