@@ -4,7 +4,7 @@ html, body {
     font-family: 'Roboto', sans-serif;
 }
 
-.centered-div {
+.centered {
     display: flex;
     justify-content: center;
     align-items: center;

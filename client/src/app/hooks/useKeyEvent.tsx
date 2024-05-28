@@ -1,14 +1,12 @@
 import { useEffect } from 'react';
 
 interface Props {
-  eventKey?: string;
+  eventKey: string;
   callback: () => void;
 }
 
 export default function useKeyEvent({ eventKey, callback }: Props) {
   useEffect(() => {
-    if (!eventKey) return;
-
     function handleKeyUp(e: KeyboardEvent) {
       if (e.key === eventKey) callback();
     }
