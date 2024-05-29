@@ -3,9 +3,10 @@ import { useRef, useState } from 'react';
 interface Props {
   icon: string;
   onClick: () => void;
+  nonHoverFill?: string;
 }
 
-export default function ClickableIcon({ icon, onClick }: Props) {
+export default function ClickableIcon({ icon, onClick, nonHoverFill }: Props) {
   const iconId = icon.split('/').pop()?.split('.')[0];
   const objectRef = useRef<HTMLObjectElement>(null);
   const [cursor, setCursor] = useState('default');
@@ -29,7 +30,7 @@ export default function ClickableIcon({ icon, onClick }: Props) {
         cursor: cursor,
       }}
       onMouseEnter={() => setFill('#a89d9d', 'pointer')}
-      onMouseLeave={() => setFill('black')}
+      onMouseLeave={() => setFill(nonHoverFill || 'black')}
       onClick={onClick}
     >
       <span style={{ display: 'inline-block' }}>

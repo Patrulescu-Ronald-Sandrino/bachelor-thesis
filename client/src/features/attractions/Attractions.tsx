@@ -47,7 +47,10 @@ export default function Attractions() {
           <>
             <AttractionCard key={attraction.id} attraction={attraction} />
 
-            <div className="centered" style={{ marginTop: '1em' }}>
+            <div
+              className="centered"
+              style={{ marginTop: '1em', marginBottom: '1em' }}
+            >
               <SwiperButton
                 text="Dislike"
                 onClick={dislike}

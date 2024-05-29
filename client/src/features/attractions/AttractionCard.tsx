@@ -1,7 +1,6 @@
 import { Attraction } from '../../app/models/attraction.ts';
 import ClickableIcon from '../../app/components/ClickableIcon.tsx';
-
-const imageSize = '37em';
+import AttractionCardPictures from './AttractionCardPictures.tsx';
 
 const attractionProperty = {
   margin: 0,
@@ -37,11 +36,14 @@ export default function AttractionCard({ attraction }: Props) {
 
   return (
     <div style={{ backgroundColor: 'lightgrey' }}>
-      <img
-        src={attraction.mainPictureUrl}
-        alt={attraction.name}
-        style={{ height: imageSize, width: imageSize }}
+      <AttractionCardPictures
+        pictures={[
+          attraction.mainPictureUrl,
+          'https://picsum.photos/id/237/200/300',
+          'https://picsum.photos/seed/picsum/200/300',
+        ]}
       />
+
       <div style={{ display: 'flex', margin: '1em' }}>
         <div>
           <h3 title="name" style={attractionPropertyTitle}>
