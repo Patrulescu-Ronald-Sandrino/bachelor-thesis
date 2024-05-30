@@ -9,8 +9,7 @@ import {
 interface AttractionPicturesContextValue {
   index: number;
   setIndex: (index: number) => void;
-  hasPrevious: boolean;
-  hasNext: boolean;
+  hasManyPictures: boolean;
   previous: () => void;
   next: () => void;
   pictures: string[];
@@ -46,15 +45,14 @@ export function AttractionPicturesContextProvider({
     attractionIndexInitial,
   );
 
-  const hasPrevious = index > 0;
-  const hasNext = index < pictures.length - 1;
+  const hasManyPictures = pictures.length > 1;
 
   function previous() {
-    setIndex((x) => x - 1);
+    setIndex((x) => (x - 1 + pictures.length) % pictures.length);
   }
 
   function next() {
-    setIndex((x) => x + 1);
+    setIndex((x) => (x + 1) % pictures.length);
   }
 
   useEffect(() => {
@@ -69,8 +67,7 @@ export function AttractionPicturesContextProvider({
       value={{
         index,
         setIndex,
-        hasPrevious,
-        hasNext,
+        hasManyPictures,
         previous,
         next,
         pictures,

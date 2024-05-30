@@ -48,6 +48,7 @@ export default function Attractions() {
         ) : (
           <AttractionPicturesContextProvider
             pictures={[
+              /* TODO: replace with actual pictures */
               attraction.mainPictureUrl,
               'https://picsum.photos/id/237/200/300',
               'https://picsum.photos/seed/picsum/200/300',

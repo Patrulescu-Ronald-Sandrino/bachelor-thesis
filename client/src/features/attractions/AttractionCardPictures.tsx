@@ -5,7 +5,7 @@ const imageSize = '32em';
 const imageNumberCircleSize = '1.2em';
 
 export default function AttractionCardPictures() {
-  const { index, setIndex, hasPrevious, hasNext, previous, next, pictures } =
+  const { index, setIndex, hasManyPictures, previous, next, pictures } =
     useAttractionPicturesContext();
 
   return (
@@ -28,7 +28,7 @@ export default function AttractionCardPictures() {
             alt={pictures[index]}
             style={{ height: imageSize, width: imageSize }}
           />
-          {hasPrevious && (
+          {hasManyPictures && (
             <div style={{ position: 'absolute', top: '50%', left: '0%' }}>
               <ClickableIcon
                 icon="/icons/previous.svg"
@@ -37,7 +37,7 @@ export default function AttractionCardPictures() {
               />
             </div>
           )}
-          {hasNext && (
+          {hasManyPictures && (
             <div style={{ position: 'absolute', top: '50%', right: '0%' }}>
               <ClickableIcon
                 icon="/icons/next.svg"
