@@ -1,17 +1,12 @@
 import ClickableIcon from '../../app/components/ClickableIcon.tsx';
-import { useState } from 'react';
+import { useAttractionPicturesContext } from '../../app/context/AttractionPicturesContext.tsx';
 
-const imageSize = '35em';
+const imageSize = '32em';
 const imageNumberCircleSize = '1.2em';
 
-interface Props {
-  pictures: string[];
-}
-
-export default function AttractionCardPictures({ pictures }: Props) {
-  const [index, setIndex] = useState<number>(0);
-  const hasPrevious = index > 0;
-  const hasNext = index < pictures.length - 1;
+export default function AttractionCardPictures() {
+  const { index, setIndex, hasPrevious, hasNext, previous, next, pictures } =
+    useAttractionPicturesContext();
 
   return (
     <div
@@ -37,7 +32,7 @@ export default function AttractionCardPictures({ pictures }: Props) {
             <div style={{ position: 'absolute', top: '50%', left: '0%' }}>
               <ClickableIcon
                 icon="/icons/previous.svg"
-                onClick={() => setIndex((x) => x - 1)}
+                onClick={previous}
                 nonHoverFill="white"
               />
             </div>
@@ -46,7 +41,7 @@ export default function AttractionCardPictures({ pictures }: Props) {
             <div style={{ position: 'absolute', top: '50%', right: '0%' }}>
               <ClickableIcon
                 icon="/icons/next.svg"
-                onClick={() => setIndex((x) => x + 1)}
+                onClick={next}
                 nonHoverFill="white"
               />
             </div>

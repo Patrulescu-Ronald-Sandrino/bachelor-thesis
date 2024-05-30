@@ -36,13 +36,7 @@ export default function AttractionCard({ attraction }: Props) {
 
   return (
     <div style={{ backgroundColor: 'lightgrey' }}>
-      <AttractionCardPictures
-        pictures={[
-          attraction.mainPictureUrl,
-          'https://picsum.photos/id/237/200/300',
-          'https://picsum.photos/seed/picsum/200/300',
-        ]}
-      />
+      <AttractionCardPictures />
 
       <div style={{ display: 'flex', margin: '1em' }}>
         <div>
