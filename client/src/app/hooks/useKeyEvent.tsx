@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import useEventListener from './useEventListener.tsx';
 
 interface Props {
   eventKey: string;
@@ -7,17 +7,10 @@ interface Props {
 }
 
 export default function useKeyEvent({ eventKey, callback, disabled }: Props) {
-  useEffect(() => {
-    if (disabled) return;
+  function handleKeyUp(e: Event) {
+    if (!disabled && e instanceof KeyboardEvent && e.key === eventKey)
+      callback();
+  }
 
-    function handleKeyUp(e: KeyboardEvent) {
-      if (e.key === eventKey) callback();
-    }
-
-    const eventType = 'keyup';
-
-    window.addEventListener(eventType, handleKeyUp);
-
-    return () => window.removeEventListener(eventType, handleKeyUp);
-  }, [eventKey, callback, disabled]);
+  useEventListener('keyup', handleKeyUp, window);
 }
