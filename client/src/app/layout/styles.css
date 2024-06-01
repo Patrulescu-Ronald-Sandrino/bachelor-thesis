@@ -2,6 +2,7 @@ html, body {
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif;
+    background-color: #bcbec4;
 }
 
 .centered {
@@ -22,7 +23,7 @@ html, body {
     background-color: gray;
 }
 
-button:hover {
+button:hover, .clickable:hover {
     cursor: pointer;
 }
 
@@ -47,4 +48,8 @@ button:disabled {
 
 .link:hover {
     text-decoration: underline;
+}
+
+input:focus {
+    outline: none;
 }

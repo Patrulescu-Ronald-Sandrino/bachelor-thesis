@@ -1,10 +1,11 @@
 import Attractions from '../../features/attractions/Attractions.tsx';
+import Header from './Header.tsx';
 
 function App() {
   return (
     <>
-      <h1>Attractions (header)</h1>
-      <Attractions></Attractions>
+      <Header />
+      <Attractions />
     </>
   );
 }
