@@ -40,3 +40,11 @@ button:disabled {
     cursor: pointer;
     outline: inherit;
 }
+
+.link {
+    text-decoration: none;
+}
+
+.link:hover {
+    text-decoration: underline;
+}

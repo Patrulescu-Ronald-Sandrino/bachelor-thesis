@@ -29,9 +29,9 @@ interface Props {
 
 export default function AttractionCard({ attraction }: Props) {
   const leftSideProperties = {
+    type: 'Museum',
     city: attraction.cityId,
     address: attraction.address,
-    website: <a href={attraction.website}>{attraction.website}</a>,
   };
 
   return (
@@ -40,8 +40,13 @@ export default function AttractionCard({ attraction }: Props) {
 
       <div style={{ display: 'flex', margin: '1em' }}>
         <div>
-          <h3 title="name" style={attractionPropertyTitle}>
-            {attraction.name}
+          <h3
+            title="Go to attraction's website"
+            style={attractionPropertyTitle}
+          >
+            <a href={attraction.website} className="link">
+              {attraction.name}
+            </a>
           </h3>
 
           {Object.entries(leftSideProperties).map(([name, value]) => (
