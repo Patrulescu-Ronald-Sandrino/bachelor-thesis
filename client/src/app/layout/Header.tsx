@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import ClickableIcon from '../components/ClickableIcon.tsx';
+import Menu from '../components/Menu.tsx';
 
 export default function Header() {
-  const picSize = '2.25em';
+  const picSize = '2em';
   const [search, setSearch] = useState('');
   const [isSignedIn, setIsSignedIn] = useState(false);
 
@@ -10,6 +11,21 @@ export default function Header() {
     username: 'john',
     picture: 'https://i.imgur.com/I0Hkyig.png',
   };
+
+  const menuItems = [
+    {
+      name: 'Profile',
+      action: () => alert('Profile'),
+    },
+    {
+      name: 'My attractions',
+      action: () => alert('My attractions'),
+    },
+    {
+      name: 'Log out',
+      action: () => setIsSignedIn(false),
+    },
+  ];
 
   return (
     <div
@@ -55,20 +71,27 @@ export default function Header() {
         />
       </div>
 
-      {isSignedIn ? (
-        <div className="centered" style={{ gap: '0.5em' }}>
-          <img
-            src={user.picture}
-            alt="user"
-            style={{ borderRadius: '50%', width: picSize, height: picSize }}
-          />
-          {user.username}
-        </div>
-      ) : (
-        <div className="clickable" onClick={() => setIsSignedIn(true)}>
-          SIGN IN
-        </div>
-      )}
+      <div style={{ marginRight: '3em', marginLeft: '3em' }}>
+        {isSignedIn ? (
+          <Menu items={menuItems}>
+            <div
+              className="centered"
+              style={{ gap: '0.8em', marginLeft: '3em' }}
+            >
+              <img
+                src={user.picture}
+                alt="user"
+                style={{ borderRadius: '50%', width: picSize, height: picSize }}
+              />
+              {user.username}
+            </div>
+          </Menu>
+        ) : (
+          <div className="clickable" onClick={() => setIsSignedIn(true)}>
+            SIGN IN
+          </div>
+        )}
+      </div>
     </div>
   );
 }

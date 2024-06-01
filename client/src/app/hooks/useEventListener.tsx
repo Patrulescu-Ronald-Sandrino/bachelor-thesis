@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 export default function useEventListener(
   eventName: string,
   handler: (event: Event) => void,
-  element: HTMLElement | Window,
+  element: HTMLElement | Window | Document,
 ) {
   useEffect(() => {
     // Make sure the element supports addEventListener
