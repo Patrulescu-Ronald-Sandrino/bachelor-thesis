@@ -1,5 +1,5 @@
 import SwiperButton from './SwiperButton.tsx';
-import { useAttractionPicturesContext } from '../../app/context/AttractionPicturesContext.tsx';
+import { useAttractionPicturesContext } from '../../../app/context/AttractionPicturesContext.tsx';
 
 export default function PicturesNavigationButtons() {
   const { hasManyPictures, previous, next } = useAttractionPicturesContext();

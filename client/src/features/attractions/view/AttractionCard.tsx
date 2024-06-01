@@ -1,5 +1,5 @@
-import { Attraction } from '../../app/models/attraction.ts';
-import ClickableIcon from '../../app/components/ClickableIcon.tsx';
+import { Attraction } from '../../../app/models/attraction.ts';
+import ClickableIcon from '../../../app/components/ClickableIcon.tsx';
 import AttractionCardPictures from './AttractionCardPictures.tsx';
 
 const attractionProperty = {

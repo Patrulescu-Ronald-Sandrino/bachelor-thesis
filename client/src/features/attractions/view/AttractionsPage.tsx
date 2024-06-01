@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Attraction } from '../../app/models/attraction.ts';
+import { Attraction } from '../../../app/models/attraction.ts';
 import axios from 'axios';
 import AttractionCard from './AttractionCard.tsx';
 import SwiperButton from './SwiperButton.tsx';
-import { AttractionPicturesContextProvider } from '../../app/context/AttractionPicturesContext.tsx';
+import { AttractionPicturesContextProvider } from '../../../app/context/AttractionPicturesContext.tsx';
 import PicturesNavigationButtons from './PicturesNavigationButtons.tsx';
 
-export default function Attractions() {
+export default function AttractionsPage() {
   const [showComments, setShowComments] = useState(false);
   const [attractions, setAttractions] = useState<Attraction[]>([]);
   const [attractionIndex, setAttractionIndex] = useState<number>(0);

@@ -1,4 +1,4 @@
-import useKeyEvent from '../../app/hooks/useKeyEvent.tsx';
+import useKeyEvent from '../../../app/hooks/useKeyEvent.tsx';
 
 interface Props {
   text: string;

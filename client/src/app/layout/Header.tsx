@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import ClickableIcon from '../components/ClickableIcon.tsx';
 import Menu from '../components/Menu.tsx';
+import { useLocation } from 'react-router-dom';
 
 export default function Header() {
   const picSize = '2em';
   const [search, setSearch] = useState('');
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const { pathname } = useLocation();
 
   const user = {
     username: 'john',
@@ -39,7 +40,12 @@ export default function Header() {
         justifyContent: 'space-between',
       }}
     >
-      <h1 style={{ margin: 0 }}>Attractions</h1>
+      <a href={'/'} className={'no-style'}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75em' }}>
+          <object data="/icons/attraction.svg" />
+          <h1 style={{ margin: 0 }}>Attractions</h1>
+        </div>
+      </a>
 
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'relative' }}>
@@ -63,12 +69,15 @@ export default function Header() {
           />
         </div>
 
-        <ClickableIcon
-          icon="/icons/add.svg"
-          onClick={() => {
-            console.log('Adding image');
-          }}
-        />
+        {pathname.includes('/attractions/add') ? (
+          <a href={'/attractions'}>
+            <button className={'app-button'}>BACK</button>
+          </a>
+        ) : (
+          <a href={'/attractions/add'}>
+            <img src={'/icons/add.svg'} alt="add" />
+          </a>
+        )}
       </div>
 
       <div style={{ marginRight: '3em', marginLeft: '3em' }}>

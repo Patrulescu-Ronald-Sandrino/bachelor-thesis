@@ -1,11 +1,11 @@
-import Attractions from '../../features/attractions/Attractions.tsx';
 import Header from './Header.tsx';
+import { Outlet } from 'react-router-dom';
 
 function App() {
   return (
     <>
       <Header />
-      <Attractions />
+      <Outlet />
     </>
   );
 }

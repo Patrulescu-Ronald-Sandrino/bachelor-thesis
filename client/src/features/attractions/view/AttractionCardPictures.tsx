@@ -1,5 +1,5 @@
-import ClickableIcon from '../../app/components/ClickableIcon.tsx';
-import { useAttractionPicturesContext } from '../../app/context/AttractionPicturesContext.tsx';
+import ClickableIcon from '../../../app/components/ClickableIcon.tsx';
+import { useAttractionPicturesContext } from '../../../app/context/AttractionPicturesContext.tsx';
 
 const imageSize = '32em';
 const imageNumberCircleSize = '1.2em';
