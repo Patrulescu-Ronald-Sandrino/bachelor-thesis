@@ -4,6 +4,7 @@ import SwiperButton from './SwiperButton.tsx';
 import PicturesNavigationButtons from './PicturesNavigationButtons.tsx';
 import { Attraction } from '../../../app/models/attraction.ts';
 import { useState } from 'react';
+import Comments from './Comments.tsx';
 
 interface Props {
   attraction: Attraction;
@@ -100,7 +101,25 @@ export default function AttractionCardContainer({
         </AttractionPicturesContextProvider>
       </div>
 
-      {showComments && <div>Comments</div>}
+      {showComments && (
+        <Comments
+          attractionId={attraction.id}
+          initialComments={[
+            {
+              username: 'user1',
+              photo: 'https://i.imgur.com/n0ykS6z.png',
+              text: 'This is a comment',
+              timestamp: '2024-06-01T12:10:25Z',
+            },
+            {
+              username: 'user2',
+              photo: 'https://i.imgur.com/aDNNxKP.png',
+              text: 'This is a comment 2',
+              timestamp: '2024-03-01T12:10:00Z',
+            },
+          ]}
+        />
+      )}
     </div>
   );
 }
