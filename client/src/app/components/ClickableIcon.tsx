@@ -4,9 +4,15 @@ interface Props {
   icon: string;
   onClick: () => void;
   nonHoverFill?: string;
+  title?: string;
 }
 
-export default function ClickableIcon({ icon, onClick, nonHoverFill }: Props) {
+export default function ClickableIcon({
+  icon,
+  onClick,
+  nonHoverFill,
+  title,
+}: Props) {
   const iconId = icon.split('/').pop()?.split('.')[0];
   const objectRef = useRef<HTMLObjectElement>(null);
   const [cursor, setCursor] = useState('default');
@@ -22,7 +28,7 @@ export default function ClickableIcon({ icon, onClick, nonHoverFill }: Props) {
 
   return (
     <a
-      title={iconId}
+      title={title ?? iconId}
       style={{
         display: 'inline-block',
         position: 'relative',

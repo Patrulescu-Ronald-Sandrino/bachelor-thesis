@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Menu from '../components/Menu.tsx';
 import { useLocation } from 'react-router-dom';
+import ClickableIcon from '../components/ClickableIcon.tsx';
 
 export default function Header() {
   const picSize = '2em';
@@ -16,11 +17,7 @@ export default function Header() {
   const menuItems = [
     {
       name: 'Profile',
-      action: () => alert('Profile'),
-    },
-    {
-      name: 'My attractions',
-      action: () => alert('My attractions'),
+      action: () => (window.location.href = '/profile'),
     },
     {
       name: 'Log out',
@@ -40,12 +37,16 @@ export default function Header() {
         justifyContent: 'space-between',
       }}
     >
-      <a href={'/'} className={'no-style'}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75em' }}>
-          <object data="/icons/attraction.svg" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75em' }}>
+        <ClickableIcon
+          icon={'/icons/attraction.svg'}
+          onClick={() => (window.location.href = '/')}
+          title={'Go to home page'}
+        />
+        <a href={'/attractions'} className={'no-style'}>
           <h1 style={{ margin: 0 }}>Attractions</h1>
-        </div>
-      </a>
+        </a>
+      </div>
 
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'relative' }}>
@@ -70,9 +71,12 @@ export default function Header() {
         </div>
 
         {pathname.includes('/attractions/add') ? (
-          <a href={'/attractions'}>
-            <button className={'app-button'}>BACK</button>
-          </a>
+          <button
+            className={'app-button'}
+            onClick={() => window.history.go(-1)}
+          >
+            BACK
+          </button>
         ) : (
           <a href={'/attractions/add'}>
             <img src={'/icons/add.svg'} alt="add" />
