@@ -3,7 +3,7 @@ import useKeyEvent from '../../../app/hooks/useKeyEvent.tsx';
 interface Props {
   text: string;
   onClick: () => void;
-  disabled: boolean;
+  disabled?: boolean;
   icon: string;
   eventKey: string;
 }
@@ -15,7 +15,11 @@ export default function SwiperButton({
   icon,
   eventKey,
 }: Props) {
-  useKeyEvent({ eventKey: eventKey, callback: onClick, disabled });
+  useKeyEvent({
+    eventKey: eventKey,
+    callback: onClick,
+    disabled: disabled ?? false,
+  });
 
   return (
     <button

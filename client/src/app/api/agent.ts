@@ -18,6 +18,7 @@ const requests = {
 
 const Attractions = {
   list: () => requests.get('attractions'),
+  fetch: (id: string) => requests.get(`attractions/${id}`),
 };
 
 const agent = {
