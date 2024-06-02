@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Attraction } from '../../../app/models/attraction.ts';
-import axios from 'axios';
 import AttractionCard from './AttractionCard.tsx';
 import SwiperButton from './SwiperButton.tsx';
 import { AttractionPicturesContextProvider } from '../../../app/context/AttractionPicturesContext.tsx';
 import PicturesNavigationButtons from './PicturesNavigationButtons.tsx';
+import agent from '../../../app/api/agent.ts';
 
 export default function AttractionsPage() {
   const [showComments, setShowComments] = useState(false);
@@ -15,9 +15,9 @@ export default function AttractionsPage() {
   const isLast = attractionIndex == attractions.length - 1;
 
   useEffect(() => {
-    axios.get('http://localhost:7000/api/attractions').then((response) => {
-      setAttractions(response.data);
-    });
+    agent.Attractions.list()
+      .then((response) => setAttractions(response))
+      .catch((error) => console.log(error));
   }, []);
 
   function next() {
