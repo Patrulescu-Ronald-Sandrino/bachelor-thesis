@@ -31,6 +31,12 @@ public static class ApplicationServicesExtension
 
     private static void SwaggerGenSetupAction(SwaggerGenOptions options)
     {
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "Attractions API" });
+        SwaggerGenSecuritySetupAction(options);
+    }
+
+    private static void SwaggerGenSecuritySetupAction(SwaggerGenOptions options)
+    {
         var jwtSecurityScheme = new OpenApiSecurityScheme
         {
             BearerFormat = "JWT",
