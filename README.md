@@ -50,3 +50,7 @@ Run the React application:
 ```bash
 npm run dev -- --host --port 4000
 ```
+
+## Utils
+
+SQLite URL: `jdbc:sqlite:PATH/bt.db`
