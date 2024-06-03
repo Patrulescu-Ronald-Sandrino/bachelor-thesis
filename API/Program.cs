@@ -24,7 +24,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => { c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true"); });
 }
 
 app.UseCors(options => { options.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4000"); });
