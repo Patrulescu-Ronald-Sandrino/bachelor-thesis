@@ -9,13 +9,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-[AllowAnonymous]
 public class AccountController(
     UserManager<User> userManager,
     SignInManager<User> signInManager,
     TokenService tokenService)
     : BaseApiController
 {
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
@@ -36,6 +36,7 @@ public class AccountController(
         };
     }
 
+    [AllowAnonymous]
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
@@ -62,7 +63,6 @@ public class AccountController(
         return !result.Succeeded ? BadRequest("Problem registering user") : ToUserDto(user);
     }
 
-    [Authorize]
     [HttpGet]
     public async Task<ActionResult<UserDto>> GetCurrentUser()
     {
