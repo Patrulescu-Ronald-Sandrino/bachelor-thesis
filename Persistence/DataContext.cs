@@ -11,7 +11,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
     public DbSet<AttractionType> AttractionTypes { get; init; }
     public DbSet<Attraction> Attractions { get; init; }
     public DbSet<Country> Countries { get; init; }
-    public DbSet<Reaction> Reactions { get; set; }
+    public DbSet<Reaction> Reactions { get; init; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -20,8 +20,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
         var roleTypes = EnumUtils.GetValues<UserRoles>().ToArray();
         var userRoles = Enumerable.Range(0, roleTypes.Length).Select(i => new UserRole
             {
-                Id = Guid.Parse(Guid.Empty.ToString()
-                    .Replace(Guid.Empty.ToString().First().ToString(), ((int)roleTypes[i]).ToString())),
+                Id = Guid.Empty.OfChar((char)(roleTypes[i] + '0')),
                 Name = roleTypes[i].ToString(),
                 NormalizedName = roleTypes[i].ToString().ToUpper()
             })
