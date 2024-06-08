@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-[Authorize(Roles = nameof(UserRoles.Admin))]
 public class AttractionTypesController(IAttractionTypesService attractionTypesService) : BaseApiController
 {
     [HttpGet]
@@ -16,25 +15,28 @@ public class AttractionTypesController(IAttractionTypesService attractionTypesSe
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<AttractionType> GetAttraction(Guid id)
+    public async Task<AttractionType> GetAttractionType(Guid id)
     {
         return await attractionTypesService.GetAttractionType(id);
     }
 
+    [Authorize(Roles = nameof(UserRoles.Admin))]
     [HttpPost]
-    public async Task<ActionResult<AttractionType>> CreateAttraction(AttractionType attractionType)
+    public async Task<ActionResult<AttractionType>> CreateAttractionType(AttractionType attractionType)
     {
         return await attractionTypesService.CreateAttractionType(attractionType);
     }
 
+    [Authorize(Roles = nameof(UserRoles.Admin))]
     [HttpPut]
-    public async Task<AttractionType> UpdateAttraction(AttractionType attractionType)
+    public async Task<AttractionType> UpdateAttractionType(AttractionType attractionType)
     {
         return await attractionTypesService.UpdateAttractionType(attractionType);
     }
 
+    [Authorize(Roles = nameof(UserRoles.Admin))]
     [HttpDelete("{id:guid}")]
-    public async Task<ActionResult<AttractionType>> DeleteAttraction(Guid id)
+    public async Task<ActionResult<AttractionType>> DeleteAttractionType(Guid id)
     {
         return await attractionTypesService.DeleteAttractionType(id);
     }

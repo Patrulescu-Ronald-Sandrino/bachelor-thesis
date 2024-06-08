@@ -9,6 +9,7 @@ namespace Persistence;
 public static class Seed
 {
     private static readonly string[] Usernames = ["bob", "tom", "jane"];
+    private static readonly string[] AttractionTypeNames = ["Museum", "Park", "Zoo", "Aquarium", "Amusement Park"];
 
     public static async Task SeedData(DataContext context, UserManager<User> userManager,
         ConfigurationManager configuration)
@@ -21,6 +22,7 @@ public static class Seed
             foreach (var user in Usernames.Select(name => new User { UserName = name, Email = $"{name}@test.com" }))
             {
                 await userManager.CreateAsync(user, configuration.GetOrThrow(ConfigKeys.PasswordUser));
+                await userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
             }
 
             const string admin = "admin";
@@ -32,10 +34,9 @@ public static class Seed
 
         if (!context.AttractionTypes.Any())
         {
-            var attractionTypeNames = new[] { "Museum", "Park", "Zoo", "Aquarium", "Amusement Park" };
-            var ids = GenerateOrderedIds(attractionTypeNames.Length);
-            attractionTypes = Enumerable.Range(0, attractionTypeNames.Length)
-                .Select(i => new AttractionType { Id = ids[i], Name = attractionTypeNames[i] }).ToList();
+            var ids = GenerateOrderedIds(AttractionTypeNames.Length);
+            attractionTypes = Enumerable.Range(0, AttractionTypeNames.Length)
+                .Select(i => new AttractionType { Id = ids[i], Name = AttractionTypeNames[i] }).ToList();
             await context.AttractionTypes.AddRangeAsync(attractionTypes);
         }
 

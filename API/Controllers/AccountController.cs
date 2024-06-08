@@ -2,6 +2,7 @@ using System.Security.Claims;
 using API.DTOs;
 using API.Services;
 using Domain.Entities;
+using Domain.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -59,6 +60,11 @@ public class AccountController(
         };
 
         var result = await userManager.CreateAsync(user, registerDto.Password);
+
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
+        }
 
         return !result.Succeeded ? BadRequest("Problem registering user") : ToUserDto(user);
     }
