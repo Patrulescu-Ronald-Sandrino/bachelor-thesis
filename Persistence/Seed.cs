@@ -1,5 +1,8 @@
-using Domain;
+using Domain.Entities;
+using Domain.Types;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Utils;
 
 namespace Persistence;
 
@@ -7,42 +10,71 @@ public static class Seed
 {
     private static readonly string[] Usernames = ["bob", "tom", "jane"];
 
-    public static async Task SeedData(DataContext context, UserManager<User> userManager)
+    public static async Task SeedData(DataContext context, UserManager<User> userManager,
+        ConfigurationManager configuration)
     {
+        List<AttractionType> attractionTypes = null;
+        List<Country> countries = null;
+
         if (!userManager.Users.Any())
         {
             foreach (var user in Usernames.Select(name => new User { UserName = name, Email = $"{name}@test.com" }))
             {
-                await userManager.CreateAsync(user, "1");
+                await userManager.CreateAsync(user, configuration.GetOrThrow(ConfigKeys.PasswordUser));
             }
+
+            const string admin = "admin";
+            await userManager.CreateAsync(new User { UserName = admin, Email = $"{admin}@test.com" },
+                configuration.GetOrThrow(ConfigKeys.PasswordAdmin));
+            var userAdmin = await userManager.FindByNameAsync(admin);
+            await userManager.AddToRoleAsync(userAdmin!, nameof(UserRoles.Admin));
         }
 
-        if (context.Attractions.Any()) return;
-
-        const int count = 20;
-        var random = new Random();
-        var ids = Enumerable.Range(0, count).Select(_ => Guid.NewGuid()).Order().ToList();
-        var cities = Enumerable.Range(0, 5).Select(_ => Guid.NewGuid()).ToList();
-        var pictures = new[]
+        if (!context.AttractionTypes.Any())
         {
-            "https://images.pexels.com/photos/258196/pexels-photo-258196.jpeg",
-            "https://images.pexels.com/photos/161985/alabama-rikard-s-mill-structure-wooden-161985.jpeg",
-            "https://images.pexels.com/photos/208766/pexels-photo-208766.jpeg",
-            "https://images.pexels.com/photos/258134/pexels-photo-258134.jpeg",
-            "https://images.pexels.com/photos/14151333/pexels-photo-14151333.jpeg",
-        };
-        var attractions = Enumerable.Range(0, count).Select(i => new Attraction
-        {
-            Id = ids[i],
-            Name = $"Attraction {i + 1:00}",
-            Description = $"Description {i + 1:00}",
-            CityId = cities[random.Next(0, cities.Count)],
-            Address = $"Address {i + 1:00}",
-            Website = i == 0 ? "https://www.google.com" : "https://example.com/",
-            MainPictureUrl = pictures[i % pictures.Length],
-        });
+            var attractionTypeNames = new[] { "Museum", "Park", "Zoo", "Aquarium", "Amusement Park" };
+            var ids = GenerateOrderedIds(attractionTypeNames.Length);
+            attractionTypes = Enumerable.Range(0, attractionTypeNames.Length)
+                .Select(i => new AttractionType { Id = ids[i], Name = attractionTypeNames[i] }).ToList();
+            await context.AttractionTypes.AddRangeAsync(attractionTypes);
+        }
 
-        await context.Attractions.AddRangeAsync(attractions);
+        if (!context.Countries.Any())
+        {
+            var countryNames = File.ReadLines(Path.Join("..", "Domain", "Data", "countries.txt")).ToArray();
+            var ids = GenerateOrderedIds(countryNames.Length);
+            countries = Enumerable.Range(0, countryNames.Length)
+                .Select(i => new Country { Id = ids[i], Name = countryNames[i] }).ToList();
+            await context.Countries.AddRangeAsync(countries);
+        }
+
+        if (!context.Attractions.Any())
+        {
+            attractionTypes ??= context.AttractionTypes.ToList();
+            countries ??= context.Countries.ToList();
+
+            var random = new Random();
+            var ids = GenerateOrderedIds(20);
+            var attractions = Enumerable.Range(0, ids.Count).Select(i => new Attraction
+            {
+                Id = ids[i],
+                Name = $"Attraction {i + 1:00}",
+                Description = $"Description {i + 1:00}",
+                Address = $"Address {i + 1:00}",
+                Website = i == 0 ? "https://www.google.com" : "https://example.com/",
+                City = $"City {i % 3 + 1}",
+                CountryId = countries.ElementAt(random.Next(context.Countries.Count())).Id,
+                AttractionTypeId = attractionTypes.ElementAt(random.Next(context.AttractionTypes.Count())).Id
+            });
+
+            await context.Attractions.AddRangeAsync(attractions);
+        }
+
         await context.SaveChangesAsync();
+
+        return;
+
+        static List<Guid> GenerateOrderedIds(int count) =>
+            Enumerable.Range(0, count).Select(_ => Guid.NewGuid()).Order().ToList();
     }
 }

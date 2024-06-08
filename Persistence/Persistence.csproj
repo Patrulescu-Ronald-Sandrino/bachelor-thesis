@@ -8,7 +8,13 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4"/>
   </ItemGroup>
 
-  <PropertyGroup>
+    <ItemGroup>
+        <Reference Include="Microsoft.Extensions.Configuration">
+            <HintPath>..\..\..\..\..\usr\share\dotnet\shared\Microsoft.AspNetCore.App\8.0.6\Microsoft.Extensions.Configuration.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>

@@ -1,5 +1,6 @@
 using Application.Contracts;
-using Domain;
+using Application.DTOs;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -7,13 +8,13 @@ namespace API.Controllers;
 public class AttractionsController(IAttractionsService attractionsService) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<List<Attraction>>> GetAttractions()
+    public async Task<List<AttractionDto>> GetAttractions()
     {
         return await attractionsService.GetAttractions();
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<Attraction>> GetAttraction(Guid id)
+    public async Task<AttractionDto> GetAttraction(Guid id)
     {
         return await attractionsService.GetAttraction(id);
     }
@@ -25,7 +26,7 @@ public class AttractionsController(IAttractionsService attractionsService) : Bas
     }
 
     [HttpPut]
-    public async Task<ActionResult<Attraction>> UpdateAttraction(Attraction attraction)
+    public async Task<AttractionDto> UpdateAttraction(Attraction attraction)
     {
         return await attractionsService.UpdateAttraction(attraction);
     }

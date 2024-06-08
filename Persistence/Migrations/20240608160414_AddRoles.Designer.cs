@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -10,9 +11,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240608160414_AddRoles")]
+    partial class AddRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
@@ -79,25 +82,6 @@ namespace Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Countries");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Reaction", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("AttractionId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("UserId", "AttractionId");
-
-                    b.HasIndex("AttractionId");
-
-                    b.ToTable("Reactions");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -197,13 +181,13 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Id = new Guid("2b2714dc-badc-40fa-8841-ea10b4a263b4"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Id = new Guid("73df829f-9122-4a0b-b696-1958e3fc0a0f"),
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         });
@@ -325,25 +309,6 @@ namespace Persistence.Migrations
                     b.Navigation("AttractionType");
 
                     b.Navigation("Country");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Reaction", b =>
-                {
-                    b.HasOne("Domain.Entities.Attraction", "Attraction")
-                        .WithMany()
-                        .HasForeignKey("AttractionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Attraction");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

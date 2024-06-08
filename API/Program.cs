@@ -1,5 +1,5 @@
 using API.Extensions;
-using Domain;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
 // Add services to the container.
 
@@ -15,8 +16,8 @@ builder.Services.AddControllers(options =>
     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
     options.Filters.Add(new AuthorizeFilter(policy));
 });
-builder.Services.AddApplicationServices(builder.Configuration);
-builder.Services.AddIdentityServices(builder.Configuration, builder.Environment.IsDevelopment());
+builder.Services.AddApplicationServices(configuration);
+builder.Services.AddIdentityServices(configuration, builder.Environment.IsDevelopment());
 
 var app = builder.Build();
 
@@ -42,7 +43,7 @@ try
     var context = services.GetRequiredService<DataContext>();
     var userManager = services.GetRequiredService<UserManager<User>>();
     await context.Database.MigrateAsync();
-    await Seed.SeedData(context, userManager);
+    await Seed.SeedData(context, userManager, configuration);
 }
 catch (Exception e)
 {

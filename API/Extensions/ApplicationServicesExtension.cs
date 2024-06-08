@@ -3,7 +3,7 @@ using API.Services;
 using Application.Contracts;
 using Application.Core;
 using Application.Logic;
-using Domain;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Utils;
 
 namespace API.Extensions;
 
@@ -25,13 +26,15 @@ public static class ApplicationServicesExtension
         {
             options.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
         });
+        services.AddScoped<IAttractionTypesService, AttractionTypesService>();
         services.AddScoped<IAttractionsService, AttractionsService>();
+        services.AddScoped<ICountryService, CountryService>();
         services.AddAutoMapper(typeof(MappingProfiles).Assembly);
     }
 
     private static void SwaggerGenSetupAction(SwaggerGenOptions options)
     {
-        options.SwaggerDoc("v1", new OpenApiInfo { Title = "Attractions API" });
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "Attractions API", Version = "1" });
         SwaggerGenSecuritySetupAction(options);
     }
 
@@ -58,6 +61,8 @@ public static class ApplicationServicesExtension
     {
         services.AddIdentityCore<User>(options =>
             {
+                options.User.RequireUniqueEmail = true;
+
                 options.Password.RequireNonAlphanumeric = false;
                 if (!isDevelopment) return;
                 options.Password.RequireDigit = false;
@@ -65,6 +70,7 @@ public static class ApplicationServicesExtension
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 1;
             })
+            .AddRoles<UserRole>()
             .AddEntityFrameworkStores<DataContext>()
             .AddSignInManager<SignInManager<User>>();
 
