@@ -1,9 +1,12 @@
 using System.Text;
 using API.Services;
 using Application.Contracts;
+using Application.Contracts.Infrastructure;
 using Application.Core;
 using Application.Logic;
+using Application.Utils;
 using Domain.Entities;
+using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +32,8 @@ public static class ApplicationServicesExtension
         services.AddScoped<IAttractionTypesService, AttractionTypesService>();
         services.AddScoped<IAttractionsService, AttractionsService>();
         services.AddScoped<ICountryService, CountryService>();
+        services.AddScoped<IUserAccessor, UserAccessor>();
+        services.AddScoped<AuthUtils>();
         services.AddAutoMapper(typeof(MappingProfiles).Assembly);
     }
 

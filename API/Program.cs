@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using API.Extensions;
 using API.Middleware;
 using Domain.Entities;
@@ -13,10 +14,11 @@ var configuration = builder.Configuration;
 // Add services to the container.
 
 builder.Services.AddControllers(options =>
-{
-    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-    options.Filters.Add(new AuthorizeFilter(policy));
-});
+    {
+        var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+        options.Filters.Add(new AuthorizeFilter(policy));
+    })
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddApplicationServices(configuration);
 builder.Services.AddIdentityServices(configuration, builder.Environment.IsDevelopment());
 

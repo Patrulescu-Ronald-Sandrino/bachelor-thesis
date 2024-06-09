@@ -1,6 +1,7 @@
 using Application.Contracts;
 using Application.DTOs;
 using Domain.Entities;
+using Domain.Types;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -35,5 +36,12 @@ public class AttractionsController(IAttractionsService attractionsService) : Bas
     public async Task<ActionResult<Attraction>> DeleteAttraction(Guid id)
     {
         return await attractionsService.DeleteAttraction(id);
+    }
+
+    [HttpPut("{id:guid}/react")]
+    public async Task<ActionResult> React(Guid id, ReactionTypes reactionType)
+    {
+        await attractionsService.React(id, reactionType);
+        return NoContent();
     }
 }

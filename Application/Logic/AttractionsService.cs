@@ -1,5 +1,6 @@
 using Application.Contracts;
 using Application.DTOs;
+using Application.Utils;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Entities;
@@ -9,7 +10,7 @@ using Persistence;
 
 namespace Application.Logic;
 
-public class AttractionsService(DataContext context, IMapper mapper) : IAttractionsService
+public class AttractionsService(DataContext context, IMapper mapper, AuthUtils authUtils) : IAttractionsService
 {
     public async Task<List<AttractionDto>> GetAttractions()
     {
@@ -48,21 +49,18 @@ public class AttractionsService(DataContext context, IMapper mapper) : IAttracti
     public async Task React(Guid id, ReactionTypes reactionType)
     {
         await context.Attractions.FindAsyncOrThrow(id);
-        // TODO: get user id + uncomment save changes async
-        var userId = Guid.NewGuid();
-        var reaction = await context.Reactions.FindAsync(id, userId);
+        var userId = authUtils.GetCurrentUser().Id;
+        var reaction = await context.Reactions.FindAsync(userId, id);
 
         if (reaction == null)
         {
-            reaction = new Reaction { AttractionId = id, UserId = userId, Type = reactionType };
-            await context.Reactions.AddAsync(reaction);
+            await context.Reactions.AddAsync(new Reaction { AttractionId = id, UserId = userId, Type = reactionType });
         }
         else
         {
             reaction.Type = reactionType;
         }
 
-        throw new NotImplementedException();
-        // await context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 }
