@@ -16,7 +16,7 @@ public class BuggyController : BaseApiController
     [HttpGet("not-found/actual")]
     public ActionResult GetNotFoundActual()
     {
-        throw new NotFoundException(Guid.Empty);
+        throw new NotFoundException();
     }
 
     [HttpGet("bad-request")]

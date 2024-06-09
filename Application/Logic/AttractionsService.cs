@@ -18,7 +18,7 @@ public class AttractionsService(DataContext context, IMapper mapper) : IAttracti
 
     public async Task<AttractionDto> GetAttraction(Guid id)
     {
-        return mapper.Map<AttractionDto>(await context.Attractions.FindAsync(id));
+        return mapper.Map<AttractionDto>(await context.Attractions.FindAsyncOrThrow(id));
     }
 
     public async Task<Attraction> CreateAttraction(Attraction attraction)
@@ -39,12 +39,7 @@ public class AttractionsService(DataContext context, IMapper mapper) : IAttracti
 
     public async Task<Attraction> DeleteAttraction(Guid id)
     {
-        var attraction = await context.Attractions.FindAsync(id);
-        if (attraction == null)
-        {
-            throw new Exception("Attraction not found");
-        }
-
+        var attraction = await context.Attractions.FindAsyncOrThrow(id);
         context.Remove(attraction);
         await context.SaveChangesAsync();
         return attraction;
@@ -52,10 +47,22 @@ public class AttractionsService(DataContext context, IMapper mapper) : IAttracti
 
     public async Task React(Guid id, ReactionTypes reactionType)
     {
-        var attraction = await context.Attractions.FindAsync(id);
-        if (attraction == null)
+        await context.Attractions.FindAsyncOrThrow(id);
+        // TODO: get user id + uncomment save changes async
+        var userId = Guid.NewGuid();
+        var reaction = await context.Reactions.FindAsync(id, userId);
+
+        if (reaction == null)
         {
-            throw new Exception("Attraction not found");
+            reaction = new Reaction { AttractionId = id, UserId = userId, Type = reactionType };
+            await context.Reactions.AddAsync(reaction);
         }
+        else
+        {
+            reaction.Type = reactionType;
+        }
+
+        throw new NotImplementedException();
+        // await context.SaveChangesAsync();
     }
 }
