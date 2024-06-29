@@ -11,6 +11,18 @@ html, body {
     align-items: center;
 }
 
+.centered-both {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    margin: 0 auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .app-button {
     background-color: #A89D9D;
     font-size: 1em;

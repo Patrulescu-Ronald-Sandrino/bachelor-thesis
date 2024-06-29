@@ -1,35 +1,24 @@
+import { useAppSelector } from '../../app/store/configureStore.ts';
+import Link from '../../app/components/Link.tsx';
+
 export default function HomePage() {
-  const isSignedIn = true;
+  const { user } = useAppSelector((state) => state.account);
 
   return (
-    <div
-      className="centered"
-      style={{
-        position: 'absolute',
-        margin: '0 auto',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        flexDirection: 'column',
-      }}
-    >
+    <div className={'centered-both'}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75em' }}>
         <object data="/icons/attraction.svg" />
         <h1 style={{ marginBottom: '0.5em' }}>Attractions</h1>
       </div>
       <p>Welcome to Attractions</p>
-      {isSignedIn ? (
+      {user ? (
         <div>
-          <a href={'/attractions'}>
-            <button className="app-button" style={{ padding: '0.5em' }}>
-              Go to Attractions
-            </button>
-          </a>
+          <Link href={'/attractions'} text={'Go to Attractions'} />
         </div>
       ) : (
-        <div>
-          <button className="app-button">Login</button>
-          <button className="app-button">Register</button>
+        <div style={{ display: 'flex', gap: '0.5em' }}>
+          <Link href={'/login'} text={'Login'} />
+          <Link href={'/register'} text={'Register'} />
         </div>
       )}
     </div>

@@ -2,17 +2,15 @@ import { useState } from 'react';
 import Menu from '../components/Menu.tsx';
 import { useLocation } from 'react-router-dom';
 import ClickableIcon from '../components/ClickableIcon.tsx';
+import { useAppDispatch, useAppSelector } from '../store/configureStore.ts';
+import { signOut } from '../../features/account/accountSlice.ts';
 
 export default function Header() {
   const picSize = '2em';
   const [search, setSearch] = useState('');
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const { user } = useAppSelector((state) => state.account);
+  const dispatch = useAppDispatch();
   const { pathname } = useLocation();
-
-  const user = {
-    username: 'john',
-    picture: 'https://i.imgur.com/I0Hkyig.png',
-  };
 
   const menuItems = [
     {
@@ -21,7 +19,7 @@ export default function Header() {
     },
     {
       name: 'Log out',
-      action: () => setIsSignedIn(false),
+      action: () => dispatch(signOut()),
     },
   ];
 
@@ -85,25 +83,16 @@ export default function Header() {
       </div>
 
       <div style={{ marginRight: '3em', marginLeft: '3em' }}>
-        {isSignedIn ? (
-          <Menu items={menuItems}>
-            <div
-              className="centered"
-              style={{ gap: '0.8em', marginLeft: '3em' }}
-            >
-              <img
-                src={user.picture}
-                alt="user"
-                style={{ borderRadius: '50%', width: picSize, height: picSize }}
-              />
-              {user.username}
-            </div>
-          </Menu>
-        ) : (
-          <div className="clickable" onClick={() => setIsSignedIn(true)}>
-            SIGN IN
+        <Menu items={menuItems}>
+          <div className="centered" style={{ gap: '0.8em', marginLeft: '3em' }}>
+            <img
+              src={user!.image || 'avatar.png'}
+              alt="user"
+              style={{ borderRadius: '50%', width: picSize, height: picSize }}
+            />
+            {user!.username}
           </div>
-        )}
+        </Menu>
       </div>
     </div>
   );
