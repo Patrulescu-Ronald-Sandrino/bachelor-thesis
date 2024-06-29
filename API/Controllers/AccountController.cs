@@ -6,7 +6,6 @@ using Domain.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
@@ -22,7 +21,7 @@ public class AccountController(
     {
         var user = await userManager.FindByEmailAsync(loginDto.Email);
 
-        if (user == null) return Unauthorized("Invalid email");
+        if (user == null) return Unauthorized();
 
         var result = await signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
@@ -41,30 +40,21 @@ public class AccountController(
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
-        var existingUser =
-            await userManager.Users.FirstOrDefaultAsync(x =>
-                x.Email == registerDto.Email || x.UserName == registerDto.Username);
-
-        if (existingUser != null)
-        {
-            var message = "";
-            if (existingUser.Email == registerDto.Email) message += "Email taken.";
-            if (existingUser.UserName == registerDto.Username) message += " Username taken.";
-            return BadRequest(message);
-        }
-
-        var user = new User
-        {
-            Email = registerDto.Email,
-            UserName = registerDto.Username,
-        };
+        var user = new User { Email = registerDto.Email, UserName = registerDto.Username, };
 
         var result = await userManager.CreateAsync(user, registerDto.Password);
 
-        if (result.Succeeded)
+        if (!result.Succeeded)
         {
-            await userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(error.Code, error.Description);
+            }
+
+            return ValidationProblem();
         }
+
+        await userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
 
         return !result.Succeeded ? BadRequest("Problem registering user") : ToUserDto(user);
     }
