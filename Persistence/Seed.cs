@@ -63,7 +63,7 @@ public static class Seed
                 Name = $"Attraction {i + 1:00}",
                 Description = $"Description {i + 1:00}",
                 Address = $"Address {i + 1:00}",
-                Website = i == 0 ? "https://www.google.com" : "https://example.com/",
+                Website = i % 2 == 0 ? "https://www.google.com" : "https://example.com/",
                 City = $"City {i % 3 + 1}",
                 CountryId = countries.ElementAt(random.Next(context.Countries.Count())).Id,
                 AttractionTypeId = attractionTypes.ElementAt(random.Next(context.AttractionTypes.Count())).Id

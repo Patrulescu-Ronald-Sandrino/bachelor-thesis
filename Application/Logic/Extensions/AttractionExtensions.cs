@@ -7,7 +7,7 @@ namespace Application.Logic.Extensions;
 
 public static class AttractionExtensions
 {
-    private static readonly Dictionary<SearchField, Func<Attraction, string>> Getters = new()
+    private static readonly Dictionary<SearchField, Expression<Func<Attraction, string>>> Getters = new()
     {
         [SearchField.Name] = a => a.Name,
         [SearchField.TypeName] = a => a.AttractionType.Name,
@@ -40,12 +40,25 @@ public static class AttractionExtensions
         var searchFieldIsInGetters = Getters.TryGetValue(searchField, out var getter);
         var getterList = searchFieldIsInGetters ? [getter] : Getters.Values.ToArray();
 
-        return query.Where(a => getterList.Any(g => searchValue == g(a)));
+        var parameter = Expression.Parameter(typeof(Attraction), "a");
+        Expression predicateBody = Expression.Constant(false);
+
+        foreach (var getterExpr in getterList)
+        {
+            var memberExpr = Expression.Invoke(getterExpr, parameter);
+            var searchValueExpr = Expression.Constant(searchValue);
+            var containsMethod = typeof(string).GetMethod(nameof(string.Contains), [typeof(string)]);
+            var containsExpr = Expression.Call(memberExpr, containsMethod, searchValueExpr);
+            predicateBody = Expression.OrElse(predicateBody, containsExpr);
+        }
+
+        var predicate = Expression.Lambda<Func<Attraction, bool>>(predicateBody, parameter);
+        return query.Where(predicate);
     }
 
     public static IQueryable<Attraction> Filter(this IQueryable<Attraction> query, string[] types)
     {
-        if (types == null || types.Length == 0) return query;
+        if (types == null || types.Length == 0 || types.All(string.IsNullOrWhiteSpace)) return query;
 
         return query.Where(a => types.Contains(a.AttractionType.Name));
     }
