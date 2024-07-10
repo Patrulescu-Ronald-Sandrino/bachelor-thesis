@@ -5,6 +5,7 @@ using Application.Contracts.Infrastructure;
 using Application.Core;
 using Application.Logic;
 using Application.Utils;
+using Config;
 using Domain.Entities;
 using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,7 +15,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Utils;
 
 namespace API.Extensions;
 
