@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 using Application.DTOs.Attraction.Query;
 using Application.DTOs.Query;
 using Domain.Entities;
@@ -41,8 +40,7 @@ public static class AttractionExtensions
         var searchFieldIsInGetters = Getters.TryGetValue(searchField, out var getter);
         var getterList = searchFieldIsInGetters ? [getter] : Getters.Values.ToArray();
 
-        return query
-            .Where(a => getterList.Any(g => Regex.Match(searchValue, g(a)).Success));
+        return query.Where(a => getterList.Any(g => searchValue == g(a)));
     }
 
     public static IQueryable<Attraction> Filter(this IQueryable<Attraction> query, string[] types)
