@@ -1,3 +1,4 @@
+using Config;
 using Domain.Entities;
 using Domain.Types;
 using Microsoft.AspNetCore.Identity;

@@ -2,6 +2,4 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities;
 
-public class UserRole : IdentityRole<Guid>
-{
-}
+public class UserRole : IdentityRole<Guid>;

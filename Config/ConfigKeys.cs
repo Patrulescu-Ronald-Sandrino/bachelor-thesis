@@ -1,4 +1,4 @@
-namespace Utils;
+namespace Config;
 
 public static class ConfigKeys
 {
