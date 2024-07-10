@@ -40,6 +40,10 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
             .HasForeignKey(a => a.CountryId)
             .IsRequired();
 
+        builder.Entity<AttractionType>()
+            .HasIndex(at => at.Name)
+            .IsUnique();
+
         builder.Entity<Reaction>(x =>
         {
             x.HasKey(r => new { r.UserId, r.AttractionId });

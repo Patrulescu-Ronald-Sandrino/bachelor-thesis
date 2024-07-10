@@ -1,5 +1,7 @@
+using API.Extensions;
 using Application.Contracts;
-using Application.DTOs;
+using Application.DTOs.Attraction;
+using Application.DTOs.Attraction.Query;
 using Domain.Entities;
 using Domain.Types;
 using Microsoft.AspNetCore.Mvc;
@@ -9,9 +11,11 @@ namespace API.Controllers;
 public class AttractionsController(IAttractionsService attractionsService) : BaseApiController
 {
     [HttpGet]
-    public async Task<List<AttractionDto>> GetAttractions()
+    public async Task<List<AttractionDto>> GetAttractions([FromQuery] AttractionsQuery query)
     {
-        return await attractionsService.GetAttractions();
+        var response = await attractionsService.GetAttractions(query);
+        Response.AddPaginationHeader(response.PageData);
+        return response;
     }
 
     [HttpGet("{id:guid}")]

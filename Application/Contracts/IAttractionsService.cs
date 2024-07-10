@@ -1,4 +1,6 @@
-using Application.DTOs;
+using Application.DTOs.Attraction;
+using Application.DTOs.Attraction.Query;
+using Application.DTOs.Pagination;
 using Domain.Entities;
 using Domain.Types;
 
@@ -6,7 +8,7 @@ namespace Application.Contracts;
 
 public interface IAttractionsService
 {
-    public Task<List<AttractionDto>> GetAttractions();
+    public Task<PagedList<AttractionDto>> GetAttractions(AttractionsQuery query);
 
     public Task<AttractionDto> GetAttraction(Guid id);
 

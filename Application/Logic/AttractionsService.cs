@@ -1,20 +1,28 @@
 using Application.Contracts;
-using Application.DTOs;
+using Application.DTOs.Attraction;
+using Application.DTOs.Attraction.Query;
+using Application.DTOs.Pagination;
+using Application.Logic.Extensions;
 using Application.Utils;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Entities;
 using Domain.Types;
-using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Logic;
 
 public class AttractionsService(DataContext context, IMapper mapper, AuthUtils authUtils) : IAttractionsService
 {
-    public async Task<List<AttractionDto>> GetAttractions()
+    public async Task<PagedList<AttractionDto>> GetAttractions(AttractionsQuery query)
     {
-        return await context.Attractions.ProjectTo<AttractionDto>(mapper.ConfigurationProvider).ToListAsync();
+        var queryable = context.Attractions
+            .Sort(query.SortField, query.SortOrder)
+            .Search(query.SearchField, query.SearchValue)
+            .Filter(query.Types)
+            .ProjectTo<AttractionDto>(mapper.ConfigurationProvider)
+            .AsQueryable();
+        return await PagedList<AttractionDto>.ToPagedList(queryable, query.PageNumber, query.PageSize);
     }
 
     public async Task<AttractionDto> GetAttraction(Guid id)
