@@ -40,6 +40,13 @@ public static class AttractionExtensions
         var searchFieldIsInGetters = Getters.TryGetValue(searchField, out var getter);
         var getterList = searchFieldIsInGetters ? [getter] : Getters.Values.ToArray();
 
+        var predicate = ConstructSearchPredicate(searchValue, getterList);
+        return query.Where(predicate);
+    }
+
+    private static Expression<Func<Attraction, bool>> ConstructSearchPredicate(string searchValue,
+        Expression<Func<Attraction, string>>[] getterList)
+    {
         var parameter = Expression.Parameter(typeof(Attraction), "a");
         Expression predicateBody = Expression.Constant(false);
 
@@ -53,7 +60,7 @@ public static class AttractionExtensions
         }
 
         var predicate = Expression.Lambda<Func<Attraction, bool>>(predicateBody, parameter);
-        return query.Where(predicate);
+        return predicate;
     }
 
     public static IQueryable<Attraction> Filter(this IQueryable<Attraction> query, string[] types)
