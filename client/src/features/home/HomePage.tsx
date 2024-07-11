@@ -1,26 +1,51 @@
 import { useAppSelector } from '../../app/store/configureStore.ts';
-import Link from '../../app/components/Link.tsx';
+import { Box, Button, Grid, IconButton, Link, Typography } from '@mui/material';
+import AttractionsIcon from '@mui/icons-material/Attractions';
 
 export default function HomePage() {
   const { user } = useAppSelector((state) => state.account);
 
   return (
-    <div className={'centered-both'}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75em' }}>
-        <object data="/icons/attraction.svg" />
-        <h1 style={{ marginBottom: '0.5em' }}>Attractions</h1>
-      </div>
-      <p>Welcome to Attractions</p>
-      {user ? (
-        <div>
-          <Link href={'/attractions'} text={'Go to Attractions'} />
-        </div>
-      ) : (
-        <div style={{ display: 'flex', gap: '0.5em' }}>
-          <Link href={'/login'} text={'Login'} />
-          <Link href={'/register'} text={'Register'} />
-        </div>
-      )}
-    </div>
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      style={{ minHeight: '100vh' }}
+    >
+      <Grid item xs="auto">
+        <Box display="flex" alignItems="center" flexDirection="column" gap={2}>
+          <Box display="flex" alignItems="center">
+            <IconButton component={Link} href="/" edge="start" color="inherit">
+              <AttractionsIcon fontSize="large" />
+            </IconButton>
+            <Link href={'/attractions'} sx={{ textDecoration: 'none' }}>
+              <Typography variant="h4" style={{ color: 'black' }}>
+                Attractions
+              </Typography>
+            </Link>
+          </Box>
+          <Box>
+            <Typography>Welcome to Attractions</Typography>
+          </Box>
+          {user ? (
+            <Box>
+              Go to{' '}
+              <Link href={'/attractions'} style={{ textDecoration: 'none' }}>
+                Attractions
+              </Link>
+            </Box>
+          ) : (
+            <Box display="flex" gap={2}>
+              <Button component={Link} href={'/login'}>
+                Login
+              </Button>
+              <Button component={Link} href={'/register'}>
+                Register
+              </Button>
+            </Box>
+          )}
+        </Box>
+      </Grid>
+    </Grid>
   );
 }
