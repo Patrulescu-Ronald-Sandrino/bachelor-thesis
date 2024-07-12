@@ -2,12 +2,14 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { store } from '../store/configureStore.ts';
 import { toast } from 'react-toastify';
 import { router } from '../router/Routes.tsx';
+import { User } from '../models/user.ts';
+import { Attraction } from '../models/attraction.ts';
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
 
 axios.defaults.baseURL = 'http://localhost:7000/api/';
 
-const responseBody = (response: AxiosResponse) => response.data;
+const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
 axios.interceptors.request.use((config) => {
   const token = store.getState().account.user?.token;
@@ -54,19 +56,20 @@ axios.interceptors.response.use(
 );
 
 const requests = {
-  get: (url: string) => axios.get(url).then(responseBody),
-  post: (url: string, body: object) => axios.post(url, body).then(responseBody),
+  get: <T>(url: string) => axios.get<T>(url).then(responseBody<T>),
+  post: <T>(url: string, body: object) =>
+    axios.post<T>(url, body).then(responseBody<T>),
 };
 
 const Account = {
-  login: (body: object) => requests.post('account/login', body),
-  register: (values: object) => requests.post('account/register', values),
-  currentUser: () => requests.get('account'),
+  login: (body: object) => requests.post<User>('account/login', body),
+  register: (values: object) => requests.post<User>('account/register', values),
+  currentUser: () => requests.get<User>('account'),
 };
 
 const Attractions = {
-  list: () => requests.get('attractions'),
-  fetch: (id: string) => requests.get(`attractions/${id}`),
+  list: () => requests.get<Attraction[]>('attractions'),
+  fetch: (id: string) => requests.get<Attraction>(`attractions/${id}`),
 };
 
 const agent = {

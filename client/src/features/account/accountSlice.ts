@@ -1,9 +1,15 @@
-import { createAsyncThunk, createSlice, isAnyOf } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createSlice,
+  isAnyOf,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 import { User } from '../../app/models/user.ts';
 import { FieldValues } from 'react-hook-form';
 import agent from '../../app/api/agent.ts';
 import { router } from '../../app/router/Routes.tsx';
 import { toast } from 'react-toastify';
+import { shallowCopy } from '../../app/util/object.ts';
 
 interface AccountState {
   user: User | null;
@@ -51,13 +57,15 @@ export const fetchCurrentUser = createAsyncThunk<User>(
 
 const getRolesFromToken = (token: string) => {
   const claims = JSON.parse(atob(token.split('.')[1]));
-  const roles =
+  const roles: string | string[] =
     claims['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
   return typeof roles === 'string' ? [roles] : roles;
 };
 
-const getUserWithRoles = (user: LoginResponse) => {
-  return { ...user, roles: getRolesFromToken(user.token) };
+const getUserWithRoles = (user: User) => {
+  const userWithRoles = shallowCopy(user);
+  userWithRoles.roles = getRolesFromToken(user.token);
+  return userWithRoles;
 };
 
 export const accountSlice = createSlice({
@@ -69,7 +77,7 @@ export const accountSlice = createSlice({
       localStorage.removeItem('user');
       router.navigate('/');
     },
-    setUser: (state, action) => {
+    setUser: (state, action: PayloadAction<User>) => {
       state.user = getUserWithRoles(action.payload);
     },
   },
@@ -85,7 +93,7 @@ export const accountSlice = createSlice({
     });
     builder.addMatcher(
       isAnyOf(signInUser.fulfilled, fetchCurrentUser.fulfilled),
-      (state, action) => {
+      (state, action: PayloadAction<User>) => {
         state.user = getUserWithRoles(action.payload);
       },
     );
