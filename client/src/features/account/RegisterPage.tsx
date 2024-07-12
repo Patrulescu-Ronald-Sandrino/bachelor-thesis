@@ -77,6 +77,7 @@ export default function RegisterPage() {
           {...register('username', { required: 'Username is required' })}
           error={!!errors.username}
           helperText={errors?.username?.message as string}
+          autoComplete="username"
         />
         <TextField
           margin="normal"
@@ -91,6 +92,7 @@ export default function RegisterPage() {
           })}
           error={!!errors.email}
           helperText={errors?.email?.message as string}
+          autoComplete="email"
         />
         <TextField
           margin="normal"
@@ -102,6 +104,7 @@ export default function RegisterPage() {
           })}
           error={!!errors.password}
           helperText={errors?.password?.message as string}
+          autoComplete="current-password"
         />
         <LoadingButton
           loading={isSubmitting}

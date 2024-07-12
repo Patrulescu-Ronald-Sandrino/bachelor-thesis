@@ -80,6 +80,7 @@ export default function LoginPage() {
           })}
           error={!!errors.email}
           helperText={errors?.email?.message as string}
+          autoComplete="username"
         />
         <TextField
           margin="normal"
@@ -89,6 +90,7 @@ export default function LoginPage() {
           {...register('password', { required: 'Password is required' })}
           error={!!errors.password}
           helperText={errors?.password?.message as string}
+          autoComplete="current-password"
         />
         <LoadingButton
           loading={isSubmitting}
