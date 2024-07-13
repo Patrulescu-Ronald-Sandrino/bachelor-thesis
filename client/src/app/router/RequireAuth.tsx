@@ -4,6 +4,7 @@ import Header from '../layout/Header.tsx';
 import { router } from './Routes.tsx';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { Container } from '@mui/material';
 
 interface Props {
   roles?: string[];
@@ -25,9 +26,9 @@ export default function RequireAuth({ roles }: Props) {
   return (
     <>
       <Header />
-      <div style={{ marginLeft: '1em', marginRight: '1em' }}>
+      <Container sx={{ mt: 4 }}>
         <Outlet />
-      </div>
+      </Container>
     </>
   );
 }
