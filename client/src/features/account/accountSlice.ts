@@ -57,8 +57,7 @@ export const fetchCurrentUser = createAsyncThunk<User>(
 
 const getRolesFromToken = (token: string) => {
   const claims = JSON.parse(atob(token.split('.')[1]));
-  const roles: string | string[] =
-    claims['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+  const roles: string | string[] = claims['role'];
   return typeof roles === 'string' ? [roles] : roles;
 };
 

@@ -23,14 +23,9 @@ export const router = createBrowserRouter([
         element: <RequireAuth />,
         children: [
           { path: 'attractions', element: <AttractionListPage /> },
+          { path: 'attractions/add', element: <AttractionAddPage /> },
           { path: 'attractions/:id', element: <AttractionDetailsPage /> },
           { path: 'profile', element: <ProfilePage /> },
-          {
-            element: <RequireAuth roles={['Admin']} />,
-            children: [
-              { path: 'attractions/add', element: <AttractionAddPage /> },
-            ],
-          },
         ],
       },
     ],
