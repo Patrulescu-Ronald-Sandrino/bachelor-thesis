@@ -1,10 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from '../layout/App.tsx';
-import AttractionsPage from '../../features/attractions/view/AttractionsPage.tsx';
+import AttractionListPage from '../../features/attraction/AttractionListPage.tsx';
 import HomePage from '../../features/home/HomePage.tsx';
-import AddAttractionPage from '../../features/attractions/AddAttractionPage.tsx';
+import AttractionAddPage from '../../features/attraction/AttractionAddPage.tsx';
 import ProfilePage from '../../features/profile/ProfilePage.tsx';
-import AttractionPage from '../../features/attractions/view/AttractionPage.tsx';
+import AttractionDetailsPage from '../../features/attraction/AttractionDetailsPage.tsx';
 import RequireAuth from './RequireAuth.tsx';
 import LoginPage from '../../features/account/LoginPage.tsx';
 import RegisterPage from '../../features/account/RegisterPage.tsx';
@@ -22,13 +22,13 @@ export const router = createBrowserRouter([
       {
         element: <RequireAuth />,
         children: [
-          { path: 'attractions', element: <AttractionsPage /> },
-          { path: 'attractions/:id', element: <AttractionPage /> },
+          { path: 'attractions', element: <AttractionListPage /> },
+          { path: 'attractions/:id', element: <AttractionDetailsPage /> },
           { path: 'profile', element: <ProfilePage /> },
           {
             element: <RequireAuth roles={['Admin']} />,
             children: [
-              { path: 'attractions/add', element: <AddAttractionPage /> },
+              { path: 'attractions/add', element: <AttractionAddPage /> },
             ],
           },
         ],

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Attraction } from '../../../app/models/attraction.ts';
-import agent from '../../../app/api/agent.ts';
-import AttractionCardContainer from './AttractionCardContainer.tsx';
+import { Attraction } from '../../app/models/attraction.ts';
+import agent from '../../app/api/agent.ts';
+import AttractionCardContainer from './shared/AttractionCardContainer.tsx';
 
-export default function AttractionsPage() {
+export default function AttractionListPage() {
   const [attractions, setAttractions] = useState<Attraction[]>([]);
   const [attractionIndex, setAttractionIndex] = useState<number>(0);
   const attraction =
