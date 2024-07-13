@@ -1,10 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from '../layout/App.tsx';
-import AttractionListPage from '../../features/attraction/AttractionListPage.tsx';
+import AttractionListPage from '../../features/attraction/list/AttractionListPage.tsx';
 import HomePage from '../../features/home/HomePage.tsx';
 import AttractionAddPage from '../../features/attraction/AttractionAddPage.tsx';
 import ProfilePage from '../../features/profile/ProfilePage.tsx';
-import AttractionDetailsPage from '../../features/attraction/AttractionDetailsPage.tsx';
+import AttractionDetailsPage from '../../features/attraction/details/AttractionDetailsPage.tsx';
 import RequireAuth from './RequireAuth.tsx';
 import LoginPage from '../../features/account/LoginPage.tsx';
 import RegisterPage from '../../features/account/RegisterPage.tsx';

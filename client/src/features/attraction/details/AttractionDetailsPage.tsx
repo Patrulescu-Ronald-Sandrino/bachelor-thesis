@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import agent from '../../app/api/agent.ts';
-import { Attraction } from '../../app/models/attraction.ts';
-import AttractionCardContainer from './shared/AttractionCardContainer.tsx';
+import agent from '../../../app/api/agent.ts';
+import { Attraction } from '../../../app/models/attraction.ts';
+import AttractionCardContainer from './AttractionCardContainer.tsx';
 
 export default function AttractionDetailsPage() {
   const { id } = useParams<{ id: string }>();
