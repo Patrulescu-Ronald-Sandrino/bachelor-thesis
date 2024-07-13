@@ -5,7 +5,7 @@ import { signOut } from '../../features/account/accountSlice.ts';
 
 export default function HeaderMenu() {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.account).user!;
+  const user = useAppSelector((state) => state.account).user;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
 
@@ -24,7 +24,7 @@ export default function HeaderMenu() {
         color="inherit"
         sx={{ textTransform: 'none', typography: 'h6' }}
       >
-        {user.username}
+        {user?.username}
       </Button>
       <Menu anchorEl={anchorEl} open={isMenuOpen} onClose={handleClose}>
         <MenuItem component={Link} href="/profile">
