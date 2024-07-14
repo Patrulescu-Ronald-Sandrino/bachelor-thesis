@@ -9,6 +9,7 @@ import RequireAuth from './RequireAuth.tsx';
 import LoginPage from '../../features/account/LoginPage.tsx';
 import RegisterPage from '../../features/account/RegisterPage.tsx';
 import ServerError from '../errors/ServerError.tsx';
+import NotFound from '../errors/NotFound.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
           { path: 'profile', element: <ProfilePage /> },
         ],
       },
+      ...['not-found', '*'].map((path) => ({ path, element: <NotFound /> })),
     ],
   },
 ]);

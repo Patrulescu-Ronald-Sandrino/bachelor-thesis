@@ -1,10 +1,8 @@
 import { useAppSelector } from '../store/configureStore.ts';
 import { Outlet, useLocation } from 'react-router-dom';
-import Header from '../layout/Header.tsx';
 import { router } from './Routes.tsx';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Container } from '@mui/material';
 
 interface Props {
   roles?: string[];
@@ -23,12 +21,5 @@ export default function RequireAuth({ roles }: Props) {
     }
   }, [location, roles, user]);
 
-  return (
-    <>
-      <Header />
-      <Container sx={{ mt: 4 }}>
-        <Outlet />
-      </Container>
-    </>
-  );
+  return <Outlet />;
 }
