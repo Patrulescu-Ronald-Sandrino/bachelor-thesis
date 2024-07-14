@@ -30,7 +30,7 @@ interface Props {
 export default function AttractionCard({ attraction }: Props) {
   const leftSideProperties = {
     type: 'Museum',
-    city: attraction.cityId,
+    city: attraction.city,
     address: attraction.address,
   };
 

@@ -4,6 +4,8 @@ import { toast } from 'react-toastify';
 import { router } from '../router/Routes.tsx';
 import { User } from '../models/user.ts';
 import { Attraction } from '../models/attraction.ts';
+import { PageResponse } from '../models/pagination.ts';
+import { AttractionType } from '../models/attractionType.ts';
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -20,6 +22,12 @@ axios.interceptors.request.use((config) => {
 axios.interceptors.response.use(
   async (response) => {
     if (import.meta.env.DEV) await sleep();
+
+    // debugger;
+    const pagination = response.headers['pagination'];
+    if (pagination) {
+      response.data = new PageResponse(response.data, JSON.parse(pagination));
+    }
 
     return response;
   },
@@ -56,7 +64,8 @@ axios.interceptors.response.use(
 );
 
 const requests = {
-  get: <T>(url: string) => axios.get<T>(url).then(responseBody<T>),
+  get: <T>(url: string, params?: URLSearchParams) =>
+    axios.get<T>(url, { params }).then(responseBody<T>),
   post: <T>(url: string, body: object) =>
     axios.post<T>(url, body).then(responseBody<T>),
 };
@@ -68,13 +77,19 @@ const Account = {
 };
 
 const Attractions = {
-  list: () => requests.get<Attraction[]>('attractions'),
+  list: (params: URLSearchParams) =>
+    requests.get<PageResponse<Attraction>>('attractions', params),
   fetch: (id: string) => requests.get<Attraction>(`attractions/${id}`),
 };
 
+const AttractionTypes = {
+  list: () => requests.get<AttractionType[]>('attractionTypes'),
+};
+
 const agent = {
-  Attractions,
   Account,
+  Attractions,
+  AttractionTypes,
 };
 
 export default agent;
