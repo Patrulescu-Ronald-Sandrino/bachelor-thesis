@@ -5,12 +5,6 @@ html, body {
     background-color: #bcbec4;
 }
 
-.centered {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .centered-both {
     display: flex;
     justify-content: center;
@@ -22,95 +16,3 @@ html, body {
     left: 50%;
     transform: translate(-50%, -50%);
 }
-
-.app-button {
-    background-color: #A89D9D;
-    font-size: 1em;
-    padding: 0.3em 0.5em;
-    border-radius: 100px;
-    border: 1px solid #000000;
-}
-
-.app-button:hover {
-    background-color: gray;
-}
-
-button:hover, .clickable:hover {
-    cursor: pointer;
-}
-
-button:disabled {
-    cursor: not-allowed;
-}
-
-.app-icon-button {
-    background: none;
-    color: inherit;
-    border: none;
-    margin: 0;
-    padding: 0;
-    font: inherit;
-    cursor: pointer;
-    outline: inherit;
-}
-
-.link {
-    text-decoration: none;
-}
-
-.link:hover {
-    text-decoration: underline;
-}
-
-input:focus {
-    outline: none;
-}
-
-a.no-style:link {
-    text-decoration: inherit;
-    color: inherit;
-}
-
-a.no-style:visited {
-    text-decoration: inherit;
-    color: inherit;
-}
-
-/*region menu*/
-.menu-container {
-    position: relative;
-    display: inline-block;
-}
-
-.menu-button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-}
-
-.menu-list {
-    position: absolute;
-    top: calc(100% + 5px); /* Position the menu below the button with 5px spacing */
-    left: 0;
-    z-index: 1;
-    max-height: 200px; /* Set a maximum height for the menu */
-    overflow-y: auto; /* Enable vertical scrolling if the menu height exceeds the max height */
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /*width: auto; !* Let the width of the menu adjust based on content *!*/
-    width: 110%;
-}
-
-.menu-list li {
-    padding: 0.5rem 1rem;
-}
-
-.menu-list li:hover {
-    background-color: #f0f0f0;
-}
-
-/*endregion*/
