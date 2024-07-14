@@ -9,5 +9,5 @@ public enum SearchField
     CityName,
     Address,
     Description,
-    Website
+    Website,
 }
