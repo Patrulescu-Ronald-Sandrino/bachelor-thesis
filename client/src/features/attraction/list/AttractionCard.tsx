@@ -43,11 +43,7 @@ export default function AttractionCard({ attraction }: Props) {
 
       {mainPictureUrl ? (
         <CardMedia
-          sx={{
-            height: 140,
-            backgroundSize: 'contain',
-            bgcolor: 'primary.light',
-          }}
+          sx={{ height: 140 }}
           image={mainPictureUrl}
           title={attraction.name}
         />

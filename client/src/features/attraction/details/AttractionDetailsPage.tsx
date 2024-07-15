@@ -4,11 +4,15 @@ import agent from '../../../app/api/agent.ts';
 import { Attraction } from '../../../app/models/attraction.ts';
 import Loadable from '../../../app/layout/Loadable.tsx';
 import NotFound from '../../../app/errors/NotFound.tsx';
+import { Container, Grid } from '@mui/material';
+import { AttractionCard } from './AttractionCard.tsx';
+import Comments from './Comments.tsx';
 
 export default function AttractionDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const [attraction, setAttraction] = useState<Attraction | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showComments, setShowComments] = useState(false);
 
   useEffect(() => {
     agent.Attractions.fetch(id!)
@@ -17,7 +21,33 @@ export default function AttractionDetailsPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (!loading && !attraction) return <NotFound />;
+  if (loading) return <Loadable loading={loading} />;
+  if (!attraction) return <NotFound />;
 
-  return <Loadable loading={loading}>{attraction!.name}</Loadable>;
+  function toggleComments() {
+    setShowComments((prevState) => !prevState);
+  }
+
+  const attractionCard = (
+    <AttractionCard attraction={attraction} toggleComments={toggleComments} />
+  );
+
+  return (
+    <Container>
+      <Grid container columnSpacing={4}>
+        {showComments ? (
+          <>
+            {attractionCard}
+            <Comments />
+          </>
+        ) : (
+          <>
+            <Grid item xs={3} />
+            {attractionCard}
+            <Grid item xs={3} />
+          </>
+        )}
+      </Grid>
+    </Container>
+  );
 }
