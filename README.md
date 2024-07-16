@@ -27,6 +27,12 @@ cd Application; dotnet add reference ../Persistence; dotnet add reference ../Dom
 cd Persistence; dotnet add reference ../Domain; cd ..
 ```
 
+Run the API:
+
+```bash
+dotnet watch run --no-hot-reload --non-interactive
+```
+
 ## Create an Entity Framework code first migration
 
 ```bash
