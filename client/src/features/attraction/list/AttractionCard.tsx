@@ -16,12 +16,12 @@ import PlaceIcon from '@mui/icons-material/Place';
 import ShareAttraction from '../ShareAttraction.tsx';
 
 const detailsFields = [
-  { icon: <AttractionsIcon />, getter: (a: Attraction) => a.attractionType },
+  { icon: AttractionsIcon, getter: (a: Attraction) => a.attractionType },
   {
-    icon: <LocationCityIcon />,
+    icon: LocationCityIcon,
     getter: (a: Attraction) => a.city + ', ' + a.country,
   },
-  { icon: <PlaceIcon />, getter: (a: Attraction) => a.address },
+  { icon: PlaceIcon, getter: (a: Attraction) => a.address },
 ];
 
 interface Props {
@@ -58,10 +58,17 @@ export default function AttractionCard({ attraction }: Props) {
         </Box>
       )}
 
-      <CardContent>
+      <CardContent
+        sx={{
+          paddingBottom: 0.5,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 0.5,
+        }}
+      >
         {detailsFields.map((detailsField, index) => (
           <Box key={index} display="flex" alignItems="center" gap={0.75}>
-            {detailsField.icon}
+            <detailsField.icon sx={{ color: 'gray' }} />
             <Typography
               variant="body2"
               noWrap
@@ -73,7 +80,7 @@ export default function AttractionCard({ attraction }: Props) {
         ))}
       </CardContent>
 
-      <CardActions disableSpacing>
+      <CardActions disableSpacing sx={{ p: 0.5 }}>
         <Button
           component={Link}
           href={`/attractions/${attraction.id}`}

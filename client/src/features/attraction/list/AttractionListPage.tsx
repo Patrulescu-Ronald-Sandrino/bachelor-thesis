@@ -104,6 +104,8 @@ export default function AttractionListPage() {
           <Grid container spacing={4}>
             {attractions.map((attraction) => (
               <Grid item xs={4} key={attraction.id}>
+                {/*for fixing skeleton height*/}
+                {/*{Math.random() < 0.5 ? (*/}
                 {!attractionsLoaded ? (
                   <AttractionCardSkeleton />
                 ) : (

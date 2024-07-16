@@ -69,7 +69,7 @@ export default function ShareAttraction({ attraction }: Props) {
 
   return (
     <IconButton onClick={() => setShareOpen(true)} sx={{ margin: 0 }}>
-      <ShareIcon />
+      <ShareIcon sx={{ color: 'black' }} />
       <AppDialog title="Share..." open={shareOpen} onClose={closeShare}>
         {actions.map((action) => (
           <Link

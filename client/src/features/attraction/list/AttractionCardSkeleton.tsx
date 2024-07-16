@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   CardActions,
   CardContent,
@@ -11,27 +12,20 @@ export default function AttractionCardSkeleton() {
   return (
     <Grid item xs component={Card}>
       <CardHeader
-        title={
-          <Skeleton
-            animation="wave"
-            height={26}
-            width="80%"
-            style={{ marginBottom: 6 }}
-          />
-        }
+        title={<Skeleton animation="wave" height={32} width="80%" />}
       />
       <Skeleton sx={{ height: 140 }} animation="wave" variant="rectangular" />
-      <CardContent>
-        <>
+      <CardContent sx={{ paddingBottom: 0.5 }}>
+        <Box display="flex" flexDirection="column" gap={0.5}>
           <Skeleton animation="wave" height={24} width="60%" />
           <Skeleton animation="wave" height={24} width="60%" />
           <Skeleton animation="wave" height={24} width="60%" />
-        </>
+        </Box>
       </CardContent>
       <CardActions>
         <>
-          <Skeleton animation="wave" height={30} width="20%" />
-          <Skeleton animation="wave" height={30} width="10%" />
+          <Skeleton animation="wave" height={32} width="20%" />
+          <Skeleton animation="wave" height={32} width="10%" />
         </>
       </CardActions>
     </Grid>
