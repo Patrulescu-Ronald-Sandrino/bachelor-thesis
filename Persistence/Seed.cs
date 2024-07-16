@@ -2,6 +2,7 @@ using Config;
 using Domain.Entities;
 using Domain.Types;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Utils;
 
@@ -57,6 +58,7 @@ public static class Seed
 
             var random = new Random();
             var ids = GenerateOrderedIds(20);
+            var users = await userManager.Users.ToListAsync();
             var attractions = Enumerable.Range(0, ids.Count).Select(i => new Attraction
             {
                 Id = ids[i],
@@ -66,7 +68,8 @@ public static class Seed
                 Website = i % 2 == 0 ? "https://www.google.com" : "https://example.com/",
                 City = $"City {i % 3 + 1}",
                 CountryId = countries.ElementAt(random.Next(context.Countries.Count())).Id,
-                AttractionTypeId = attractionTypes.ElementAt(random.Next(context.AttractionTypes.Count())).Id
+                AttractionTypeId = attractionTypes.ElementAt(random.Next(context.AttractionTypes.Count())).Id,
+                CreatorId = users.ElementAt(i % users.Count).Id,
             });
 
             await context.Attractions.AddRangeAsync(attractions);

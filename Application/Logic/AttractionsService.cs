@@ -7,6 +7,7 @@ using Application.Utils;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Types;
 using Persistence;
 
@@ -33,8 +34,9 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
     public async Task<AttractionDto> CreateAttraction(AttractionDto attractionDto)
     {
         var attraction = mapper.Map<Attraction>(attractionDto);
-        attractionDto.Id = Guid.NewGuid();
         await ValidateAttraction(attraction);
+        attraction.Id = Guid.NewGuid();
+        attraction.CreatorId = authUtils.GetCurrentUser().Id;
         await context.Attractions.AddAsync(attraction);
         await context.SaveChangesAsync();
         return mapper.Map<AttractionDto>(attraction);
@@ -42,16 +44,18 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
 
     public async Task<AttractionDto> UpdateAttraction(AttractionDto attractionDto)
     {
-        var attractionToEdit = await context.Attractions.FindAsync(attractionDto.Id);
-        mapper.Map(attractionDto, attractionToEdit);
-        await ValidateAttraction(attractionToEdit);
+        var attraction = await context.Attractions.FindAsyncOrThrow(attractionDto.Id);
+        EnsureWriteAccess(attraction);
+        mapper.Map(attractionDto, attraction);
+        await ValidateAttraction(attraction);
         await context.SaveChangesAsync();
-        return mapper.Map<AttractionDto>(attractionToEdit);
+        return mapper.Map<AttractionDto>(attraction);
     }
 
     public async Task<Attraction> DeleteAttraction(Guid id)
     {
         var attraction = await context.Attractions.FindAsyncOrThrow(id);
+        EnsureWriteAccess(attraction);
         context.Remove(attraction);
         await context.SaveChangesAsync();
         return attraction;
@@ -75,12 +79,17 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         await context.SaveChangesAsync();
     }
 
+    private void EnsureWriteAccess(Attraction attraction)
+    {
+        if (attraction.CreatorId != authUtils.GetCurrentUser().Id)
+            throw new ForbiddenException();
+    }
+
     private async Task ValidateAttraction(Attraction attraction)
     {
         var taskAttractionType = context.AttractionTypes.FindAsync(attraction.AttractionTypeId).AsTask();
         var taskCountry = context.Countries.FindAsync(attraction.CountryId).AsTask();
         await Task.WhenAll(taskAttractionType, taskCountry);
-        await context.Countries.FindAsync(attraction.CountryId);
         new Validator()
             .Add(taskAttractionType.Result == null, "AttractionTypeId", ["Attraction type not found"])
             .Add(taskCountry.Result == null, "CountryId", ["Country not found"])

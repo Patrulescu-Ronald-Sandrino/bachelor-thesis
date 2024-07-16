@@ -14,4 +14,7 @@ public class Attraction
 
     public Guid AttractionTypeId { get; set; }
     public AttractionType AttractionType { get; set; }
+
+    public Guid CreatorId { get; set; }
+    public User Creator { get; set; }
 }

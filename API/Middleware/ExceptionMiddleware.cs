@@ -26,6 +26,9 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
 
             switch (e)
             {
+                case ForbiddenException:
+                    response.Status = StatusCodes.Status403Forbidden;
+                    break;
                 case BadRequestException:
                     response.Status = StatusCodes.Status400BadRequest;
                     break;
