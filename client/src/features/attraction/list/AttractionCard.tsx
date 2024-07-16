@@ -13,7 +13,7 @@ import {
 import AttractionsIcon from '@mui/icons-material/Attractions';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import PlaceIcon from '@mui/icons-material/Place';
-import ShareIcon from '@mui/icons-material/Share';
+import ShareAttraction from '../ShareAttraction.tsx';
 
 const detailsFields = [
   { icon: <AttractionsIcon />, getter: (a: Attraction) => a.attractionType },
@@ -73,7 +73,7 @@ export default function AttractionCard({ attraction }: Props) {
         ))}
       </CardContent>
 
-      <CardActions>
+      <CardActions disableSpacing>
         <Button
           component={Link}
           href={`/attractions/${attraction.id}`}
@@ -82,7 +82,7 @@ export default function AttractionCard({ attraction }: Props) {
           View
         </Button>
 
-        <ShareIcon />
+        <ShareAttraction attraction={attraction} />
       </CardActions>
     </Card>
   );

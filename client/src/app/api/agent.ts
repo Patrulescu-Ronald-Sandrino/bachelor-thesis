@@ -9,7 +9,7 @@ import { AttractionType } from '../models/attractionType.ts';
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
 
-axios.defaults.baseURL = 'http://localhost:7000/api/';
+axios.defaults.baseURL = import.meta.env.VITE_APP_URL + 'api/';
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 

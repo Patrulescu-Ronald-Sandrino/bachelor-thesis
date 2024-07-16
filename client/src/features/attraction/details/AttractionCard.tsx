@@ -15,6 +15,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import ShareAttraction from '../ShareAttraction.tsx';
 
 interface Props {
   attraction: Attraction;
@@ -75,7 +76,7 @@ export function AttractionCard({ attraction, toggleComments }: Props) {
                       fontSize="small"
                       sx={{
                         overflowY: 'auto',
-                        height: 10,
+                        height: 100,
                       }}
                     >
                       {attraction.description}
@@ -87,8 +88,9 @@ export function AttractionCard({ attraction, toggleComments }: Props) {
           </TableContainer>
         </CardContent>
 
-        <CardActions>
+        <CardActions disableSpacing>
           <Button onClick={toggleComments}>Toggle comments</Button>
+          <ShareAttraction attraction={attraction} />
         </CardActions>
       </Card>
     </Grid>
