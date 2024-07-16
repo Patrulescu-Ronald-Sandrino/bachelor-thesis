@@ -12,9 +12,9 @@ public interface IAttractionsService
 
     public Task<AttractionDto> GetAttraction(Guid id);
 
-    public Task<Attraction> CreateAttraction(Attraction attraction);
+    public Task<AttractionDto> CreateAttraction(AttractionDto attractionDto);
 
-    public Task<AttractionDto> UpdateAttraction(Attraction attraction);
+    public Task<AttractionDto> UpdateAttraction(AttractionDto attractionDto);
 
     public Task<Attraction> DeleteAttraction(Guid id);
 

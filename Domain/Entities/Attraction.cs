@@ -7,7 +7,6 @@ public class Attraction
     public string Description { get; set; }
     public string Address { get; set; }
     public string Website { get; set; }
-
     public string City { get; set; }
 
     public Guid CountryId { get; set; }

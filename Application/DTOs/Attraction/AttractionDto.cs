@@ -8,6 +8,8 @@ public class AttractionDto
     public string Address { get; set; }
     public string Website { get; set; }
     public string City { get; set; }
+    public Guid CountryId { get; set; }
     public string Country { get; set; }
+    public Guid AttractionTypeId { get; set; }
     public string AttractionType { get; set; }
 }

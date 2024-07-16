@@ -60,3 +60,5 @@ npm run dev -- --host --port 4000
 ## Utils
 
 SQLite URL: `jdbc:sqlite:PATH/bt.db`
+
+https://stackoverflow.com/questions/46349038/jetbrains-rider-run-with-watch
