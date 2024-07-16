@@ -5,6 +5,12 @@ html, body {
     background-color: #bcbec4;
 }
 
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .centered-both {
     display: flex;
     justify-content: center;

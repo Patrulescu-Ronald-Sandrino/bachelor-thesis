@@ -5,7 +5,6 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  CardMedia,
   Grid,
   Link,
   Table,
@@ -16,6 +15,7 @@ import {
   Typography,
 } from '@mui/material';
 import ShareAttraction from '../ShareAttraction.tsx';
+import AttractionCardPictures from './AttractionCardPictures.tsx';
 
 interface Props {
   attraction: Attraction;
@@ -26,10 +26,13 @@ export function AttractionCard({ attraction, toggleComments }: Props) {
   return (
     <Grid item xs={6}>
       <Card>
-        <CardMedia
-          sx={{ height: 300 }}
-          image="https://i.imgur.com/6LlO6sO.png"
-          title={attraction.name}
+        {/*TODO: replace with actual pictures*/}
+        <AttractionCardPictures
+          pictures={[
+            'https://i.imgur.com/6LlO6sO.png',
+            'https://i.imgur.com/JZmHnyR.png',
+            'https://i.imgur.com/4bd9A68.jpeg',
+          ]}
         />
 
         <CardHeader
