@@ -8,7 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class AttractionsController(IAttractionsService attractionsService) : BaseApiController
+public class AttractionsController(
+    IAttractionsService attractionsService,
+    ICountryService countryService,
+    IAttractionTypesService attractionTypesService) : BaseApiController
 {
     [HttpGet]
     public async Task<List<AttractionDto>> GetAttractions([FromQuery] AttractionsQuery query)
@@ -25,15 +28,17 @@ public class AttractionsController(IAttractionsService attractionsService) : Bas
     }
 
     [HttpPost]
-    public async Task<ActionResult<AttractionDto>> CreateAttraction(AttractionDto attractionDto)
+    public async Task<ActionResult<AttractionFormData>> CreateAttraction(AttractionDto attractionDto)
     {
-        return await attractionsService.CreateAttraction(attractionDto);
+        var attraction = await attractionsService.CreateAttraction(attractionDto);
+        return await GetAttractionFormData(attraction.Id);
     }
 
     [HttpPut]
-    public async Task<AttractionDto> UpdateAttraction(AttractionDto attractionDto)
+    public async Task<ActionResult<AttractionFormData>> UpdateAttraction(AttractionDto attractionDto)
     {
-        return await attractionsService.UpdateAttraction(attractionDto);
+        await attractionsService.UpdateAttraction(attractionDto);
+        return await GetAttractionFormData(attractionDto.Id);
     }
 
     [HttpDelete("{id:guid}")]
@@ -41,6 +46,24 @@ public class AttractionsController(IAttractionsService attractionsService) : Bas
     {
         return await attractionsService.DeleteAttraction(id);
     }
+
+    [HttpGet("form-data/{id:guid?}")]
+    public async Task<ActionResult<AttractionFormData>> GetAttractionFormData(Guid? id)
+    {
+        var taskCountries = countryService.GetCountries();
+        var taskAttractionTypes = attractionTypesService.GetAttractionTypes();
+        var taskAttraction = id.Map(attractionsService.GetAttraction, Task<AttractionDto>.Factory.StartNew(() => null));
+
+        await Task.WhenAll(taskCountries, taskAttractionTypes, taskAttraction);
+
+        return new AttractionFormData
+        {
+            Countries = taskCountries.Result,
+            Types = taskAttractionTypes.Result,
+            Attraction = taskAttraction.Result,
+        };
+    }
+
 
     [HttpPut("{id:guid}/react")]
     public async Task<ActionResult> React(Guid id, ReactionTypes reactionType)

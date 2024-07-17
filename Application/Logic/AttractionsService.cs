@@ -46,6 +46,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
     {
         var attraction = await context.Attractions.FindAsyncOrThrow(attractionDto.Id);
         EnsureWriteAccess(attraction);
+        attractionDto.CreatorId = attraction.CreatorId;
         mapper.Map(attractionDto, attraction);
         await ValidateAttraction(attraction);
         await context.SaveChangesAsync();
