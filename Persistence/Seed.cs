@@ -10,8 +10,11 @@ namespace Persistence;
 
 public static class Seed
 {
-    private static readonly string[] Usernames = ["bob", "tom", "jane"];
     private static readonly string[] AttractionTypeNames = ["Museum", "Park", "Zoo", "Aquarium", "Amusement Park"];
+    private static readonly string[] Usernames = ["bob", "tom", "jane"];
+
+    private static readonly string[] Photos =
+        ["https://i.imgur.com/7GgNR8y.jpeg", "https://i.imgur.com/MhiQZE0.png", "https://i.imgur.com/5qm6RFh.png"];
 
     public static async Task SeedData(DataContext context, UserManager<User> userManager,
         ConfigurationManager configuration)
@@ -21,14 +24,22 @@ public static class Seed
 
         if (!userManager.Users.Any())
         {
-            foreach (var user in Usernames.Select(name => new User { UserName = name, Email = $"{name}@test.com" }))
+            foreach (var (username, i) in Usernames.Select((username, i) => (username, i)))
             {
+                var user = new User
+                {
+                    UserName = username, Email = $"{username}@test.com", PhotoUrl = Photos[i % Photos.Length],
+                };
                 await userManager.CreateAsync(user, configuration.GetOrThrow(ConfigKeys.PasswordUser));
                 await userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
             }
 
             const string admin = "admin";
-            await userManager.CreateAsync(new User { UserName = admin, Email = $"{admin}@test.com" },
+            await userManager.CreateAsync(
+                new User
+                {
+                    UserName = admin, Email = $"{admin}@test.com", PhotoUrl = "https://i.imgur.com/ZHwzVZ2.png",
+                },
                 configuration.GetOrThrow(ConfigKeys.PasswordAdmin));
             var userAdmin = await userManager.FindByNameAsync(admin);
             await userManager.AddToRoleAsync(userAdmin!, nameof(UserRoles.Admin));

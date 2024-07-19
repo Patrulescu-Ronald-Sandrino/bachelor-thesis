@@ -27,13 +27,7 @@ public class AccountController(
 
         if (!result.Succeeded) return Unauthorized();
 
-        return new UserDto
-        {
-            Username = user.UserName,
-            Email = user.Email,
-            Token = tokenService.CreateToken(user),
-            Image = null,
-        };
+        return ToUserDto(user);
     }
 
     [AllowAnonymous]
@@ -74,7 +68,7 @@ public class AccountController(
             Username = user.UserName,
             Email = user.Email,
             Token = tokenService.CreateToken(user),
-            Image = null,
+            Image = user.PhotoUrl,
         };
     }
 }
