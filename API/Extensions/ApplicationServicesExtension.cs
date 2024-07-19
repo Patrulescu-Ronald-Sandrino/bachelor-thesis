@@ -48,10 +48,11 @@ public static class ApplicationServicesExtension
         var jwtSecurityScheme = new OpenApiSecurityScheme
         {
             BearerFormat = "JWT",
-            Name = "Authorization",
+            Name = "JWT Authorization",
             In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
             Scheme = JwtBearerDefaults.AuthenticationScheme,
-            Description = "Put Bearer + your token in the box below",
+            Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
             Reference = new OpenApiReference
                 { Id = JwtBearerDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme }
         };

@@ -62,3 +62,27 @@ npm run dev -- --host --port 4000
 SQLite URL: `jdbc:sqlite:PATH/bt.db`
 
 https://stackoverflow.com/questions/46349038/jetbrains-rider-run-with-watch
+(seems like it doesn't work in debug mode)
+
+### Swagger to Postman
+
+1. Import http://localhost:7000/swagger/v1/swagger.json
+2. Add `http://localhost:7000` to Collection's Variables
+3. Add to `login` endpoint -> Scripts:
+
+```javascript
+const user = pm.response.json();
+
+pm.test("Has properties", function () {
+    pm.expect(user).to.have.property('token');
+});
+
+if (pm.test("Has properties")) {
+    pm.collectionVariables.set('bearerToken', user.token);
+}
+
+pm.test("Collection variables token has been set", function () {
+    var token = pm.collectionVariables.get('bearerToken');
+    pm.expect(token).to.eql(user.token);
+});
+```
