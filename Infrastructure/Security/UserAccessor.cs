@@ -6,7 +6,7 @@ namespace Infrastructure.Security;
 
 public class UserAccessor(IHttpContextAccessor httpContextAccessor) : IUserAccessor
 {
-    public string? GetUsername()
+    public string GetUsername()
     {
         return httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Name);
     }

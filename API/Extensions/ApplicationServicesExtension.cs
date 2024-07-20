@@ -7,6 +7,7 @@ using Application.Logic;
 using Application.Utils;
 using Config;
 using Domain.Entities;
+using Infrastructure.Photos;
 using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -33,8 +34,10 @@ public static class ApplicationServicesExtension
         services.AddScoped<IAttractionsService, AttractionsService>();
         services.AddScoped<ICountryService, CountryService>();
         services.AddScoped<IUserAccessor, UserAccessor>();
+        services.AddScoped<IPhotoAccessor, PhotoAccessor>();
         services.AddScoped<AuthUtils>();
         services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+        services.Configure<CloudinarySettings>(configuration.GetSection("Cloudinary"));
     }
 
     private static void SwaggerGenSetupAction(SwaggerGenOptions options)

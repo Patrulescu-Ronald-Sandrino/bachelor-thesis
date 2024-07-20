@@ -28,14 +28,16 @@ public class AttractionsController(
     }
 
     [HttpPost]
-    public async Task<ActionResult<AttractionFormData>> CreateAttraction(AttractionDto attractionDto)
+    public async Task<ActionResult<AttractionFormData>> CreateAttraction(
+        [FromForm] AttractionAddOrEditDto attractionDto)
     {
         var attraction = await attractionsService.CreateAttraction(attractionDto);
         return await GetAttractionFormData(attraction.Id);
     }
 
     [HttpPut]
-    public async Task<ActionResult<AttractionFormData>> UpdateAttraction(AttractionDto attractionDto)
+    public async Task<ActionResult<AttractionFormData>> UpdateAttraction(
+        [FromForm] AttractionAddOrEditDto attractionDto)
     {
         await attractionsService.UpdateAttraction(attractionDto);
         return await GetAttractionFormData(attractionDto.Id);

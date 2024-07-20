@@ -16,4 +16,9 @@ public class Validator
     {
         if (_errors.Count > 0) throw new ValidationException(_errors);
     }
+
+    public static void Run(bool condition, string error, string[] details)
+    {
+        new Validator().Add(condition, error, details).Run();
+    }
 }

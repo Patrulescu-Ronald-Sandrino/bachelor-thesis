@@ -36,7 +36,8 @@ dotnet watch run --no-hot-reload --non-interactive
 ## Create an Entity Framework code first migration
 
 ```bash
-dotnet ef migrations add InitialCreate -p Persistence -s API
+dotnet ef migrations add -p Persistence -s API InitialCreate
+# dotnet ef migrations remove # remove the last migration
 ```
 
 ## Create the React application

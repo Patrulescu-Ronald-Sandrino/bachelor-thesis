@@ -13,4 +13,6 @@ public class AttractionDto
     public Guid AttractionTypeId { get; set; }
     public string AttractionType { get; set; }
     public Guid CreatorId { get; set; }
+
+    public string[] PhotoUrlList { get; set; }
 }

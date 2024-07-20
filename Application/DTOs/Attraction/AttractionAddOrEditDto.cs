@@ -1,6 +1,6 @@
-namespace Domain.Entities;
+namespace Application.DTOs.Attraction;
 
-public class Attraction
+public class AttractionAddOrEditDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
@@ -8,15 +8,7 @@ public class Attraction
     public string Address { get; set; }
     public string Website { get; set; }
     public string City { get; set; }
-
     public Guid CountryId { get; set; }
-    public Country Country { get; set; }
-
     public Guid AttractionTypeId { get; set; }
-    public AttractionType AttractionType { get; set; }
-
-    public Guid CreatorId { get; set; }
-    public User Creator { get; set; }
-
-    public ICollection<AttractionPhoto> AttractionPhotos { get; set; } = [];
+    public AttractionPhotosDto[] Photos { get; set; }
 }
