@@ -24,16 +24,7 @@ public static class Seed
 
         if (!userManager.Users.Any())
         {
-            foreach (var (username, i) in Usernames.Select((username, i) => (username, i)))
-            {
-                var user = new User
-                {
-                    UserName = username, Email = $"{username}@test.com", PhotoUrl = Photos[i % Photos.Length],
-                };
-                await userManager.CreateAsync(user, configuration.GetOrThrow(ConfigKeys.PasswordUser));
-                await userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
-            }
-
+            // add admin user
             const string admin = "admin";
             await userManager.CreateAsync(
                 new User
@@ -43,6 +34,17 @@ public static class Seed
                 configuration.GetOrThrow(ConfigKeys.PasswordAdmin));
             var userAdmin = await userManager.FindByNameAsync(admin);
             await userManager.AddToRoleAsync(userAdmin!, nameof(UserRoles.Admin));
+
+            // add regular users
+            foreach (var (username, i) in Usernames.Select((username, i) => (username, i)))
+            {
+                var user = new User
+                {
+                    UserName = username, Email = $"{username}@test.com", PhotoUrl = Photos[i % Photos.Length],
+                };
+                await userManager.CreateAsync(user, configuration.GetOrThrow(ConfigKeys.PasswordUser));
+                await userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
+            }
         }
 
         if (!context.AttractionTypes.Any())
