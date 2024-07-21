@@ -1,7 +1,16 @@
-import { Button, Link, Menu, MenuItem } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  Link,
+  Menu,
+  MenuItem,
+  Typography,
+} from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../store/configureStore.ts';
 import React, { useState } from 'react';
 import { signOut } from '../../features/account/accountSlice.ts';
+import NotFound from '../errors/NotFound.tsx';
 
 export default function HeaderMenu() {
   const dispatch = useAppDispatch();
@@ -17,6 +26,8 @@ export default function HeaderMenu() {
     setAnchorEl(null);
   }
 
+  if (!user) return <NotFound />;
+
   return (
     <div>
       <Button
@@ -24,7 +35,10 @@ export default function HeaderMenu() {
         color="inherit"
         sx={{ textTransform: 'none', typography: 'h6' }}
       >
-        {user?.username}
+        <Box display="flex" alignItems="center" gap={0.5}>
+          {user.image && <Avatar src={user.image} />}
+          <Typography variant="h6">{user?.username}</Typography>
+        </Box>
       </Button>
       <Menu anchorEl={anchorEl} open={isMenuOpen} onClose={handleClose}>
         <MenuItem component={Link} href="/profile">
