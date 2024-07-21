@@ -55,16 +55,19 @@ export const fetchCurrentUser = createAsyncThunk<User>(
   },
 );
 
-const getRolesFromToken = (token: string) => {
-  const claims = JSON.parse(atob(token.split('.')[1]));
-  const roles: string | string[] = claims['role'];
-  return typeof roles === 'string' ? [roles] : roles;
-};
+function getRolesFromClaims(claims: { [index: string]: string | string[] }) {
+  const roleOrRoles: string | string[] = claims['role'];
+  return typeof roleOrRoles === 'string' ? [roleOrRoles] : roleOrRoles;
+}
 
-const getUserWithRoles = (user: User) => {
-  const userWithRoles = shallowCopy(user);
-  userWithRoles.roles = getRolesFromToken(user.token);
-  return userWithRoles;
+const getUserWithTokenData = (user: User) => {
+  const userWithTokenData = shallowCopy(user);
+  const claims = JSON.parse(atob(user.token.split('.')[1]));
+
+  userWithTokenData.roles = getRolesFromClaims(claims);
+  userWithTokenData.id = claims['nameid'];
+
+  return userWithTokenData;
 };
 
 export const accountSlice = createSlice({
@@ -77,7 +80,7 @@ export const accountSlice = createSlice({
       router.navigate('/');
     },
     setUser: (state, action: PayloadAction<User>) => {
-      state.user = getUserWithRoles(action.payload);
+      state.user = getUserWithTokenData(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -93,7 +96,7 @@ export const accountSlice = createSlice({
     builder.addMatcher(
       isAnyOf(signInUser.fulfilled, fetchCurrentUser.fulfilled),
       (state, action: PayloadAction<User>) => {
-        state.user = getUserWithRoles(action.payload);
+        state.user = getUserWithTokenData(action.payload);
       },
     );
   },

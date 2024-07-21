@@ -3,11 +3,19 @@ import { store } from '../store/configureStore.ts';
 import { toast } from 'react-toastify';
 import { router } from '../router/Routes.tsx';
 import { User } from '../models/user.ts';
-import { Attraction } from '../models/attraction.ts';
+import { Attraction, AttractionFormData } from '../models/attraction.ts';
 import { PageResponse } from '../models/pagination.ts';
 import { AttractionType } from '../models/attractionType.ts';
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
+
+function createFormData(item: object) {
+  const formData = new FormData();
+  for (const key in item) {
+    formData.append(key, item[key as keyof object]);
+  }
+  return formData;
+}
 
 axios.defaults.baseURL = import.meta.env.VITE_APP_URL + 'api/';
 
@@ -23,7 +31,6 @@ axios.interceptors.response.use(
   async (response) => {
     if (import.meta.env.DEV) await sleep();
 
-    // debugger;
     const pagination = response.headers['pagination'];
     if (pagination) {
       response.data = new PageResponse(response.data, JSON.parse(pagination));
@@ -68,6 +75,9 @@ const requests = {
     axios.get<T>(url, { params }).then(responseBody<T>),
   post: <T>(url: string, body: object) =>
     axios.post<T>(url, body).then(responseBody<T>),
+  put: <T>(url: string, body: object) =>
+    axios.put<T>(url, body).then(responseBody<T>),
+  delete: <T>(url: string) => axios.delete<T>(url).then(responseBody<T>),
 };
 
 const Account = {
@@ -80,6 +90,13 @@ const Attractions = {
   list: (params: URLSearchParams) =>
     requests.get<PageResponse<Attraction>>('attractions', params),
   fetch: (id: string) => requests.get<Attraction>(`attractions/${id}`),
+  getFormData: (id?: string) =>
+    requests.get<AttractionFormData>(`attractions/form-data/${id ?? ''}`),
+  add: (data: object) =>
+    requests.post<AttractionFormData>('attractions', createFormData(data)),
+  update: (data: object) =>
+    requests.put<AttractionFormData>('attractions', createFormData(data)),
+  delete: (id: string) => requests.delete(`attractions/${id}`),
 };
 
 const AttractionTypes = {

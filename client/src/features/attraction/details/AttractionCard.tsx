@@ -14,8 +14,8 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import ShareAttraction from '../ShareAttraction.tsx';
 import AttractionCardPictures from './AttractionCardPictures.tsx';
+import AttractionEditAndShareIcons from '../common/AttractionEditAndShareIcons.tsx';
 
 interface Props {
   attraction: Attraction;
@@ -26,14 +26,7 @@ export function AttractionCard({ attraction, toggleComments }: Props) {
   return (
     <Grid item xs={6}>
       <Card>
-        {/*TODO: replace with actual pictures*/}
-        <AttractionCardPictures
-          pictures={[
-            'https://i.imgur.com/6LlO6sO.png',
-            'https://i.imgur.com/JZmHnyR.png',
-            'https://i.imgur.com/4bd9A68.jpeg',
-          ]}
-        />
+        <AttractionCardPictures pictures={attraction.photoUrlList} />
 
         <CardHeader
           title={attraction.name}
@@ -91,9 +84,17 @@ export function AttractionCard({ attraction, toggleComments }: Props) {
           </TableContainer>
         </CardContent>
 
-        <CardActions disableSpacing>
+        <CardActions
+          disableSpacing
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           <Button onClick={toggleComments}>Toggle comments</Button>
-          <ShareAttraction attraction={attraction} />
+
+          <AttractionEditAndShareIcons attraction={attraction} />
         </CardActions>
       </Card>
     </Grid>

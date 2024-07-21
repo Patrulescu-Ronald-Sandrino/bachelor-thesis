@@ -1,13 +1,12 @@
 import ShareIcon from '@mui/icons-material/Share';
-import AppDialog from '../../app/components/AppDialog.tsx';
-import { IconButton, Link, Typography } from '@mui/material';
+import AppDialog from '../../../app/components/AppDialog.tsx';
+import { Icon, IconButton, Link, Typography } from '@mui/material';
 import React, { useState } from 'react';
-import { Attraction } from '../../app/models/attraction.ts';
+import { Attraction } from '../../../app/models/attraction.ts';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import LinkIcon from '@mui/icons-material/Link';
 import { toast } from 'react-toastify';
 import EmailIcon from '@mui/icons-material/Email';
-import ThreadsIcon from './ThreadsIcon.tsx';
 
 function getUrl(attraction: Attraction) {
   return `${window.location.origin}/attractions/${attraction.id}`;
@@ -23,6 +22,14 @@ async function copyToClipboard(text: string) {
 
 interface Props {
   attraction: Attraction;
+}
+
+function ThreadsIcon() {
+  return (
+    <Icon>
+      <img src="/icons/threads-icon.svg" alt="Threads icon" />
+    </Icon>
+  );
 }
 
 export default function ShareAttraction({ attraction }: Props) {

@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import App from '../layout/App.tsx';
 import AttractionListPage from '../../features/attraction/list/AttractionListPage.tsx';
 import HomePage from '../../features/home/HomePage.tsx';
-import AttractionAddPage from '../../features/attraction/AttractionAddPage.tsx';
+import AttractionFormPage from '../../features/attraction/manage/AttractionFormPage.tsx';
 import ProfilePage from '../../features/profile/ProfilePage.tsx';
 import AttractionDetailsPage from '../../features/attraction/details/AttractionDetailsPage.tsx';
 import RequireAuth from './RequireAuth.tsx';
@@ -24,7 +24,10 @@ export const router = createBrowserRouter([
         element: <RequireAuth />,
         children: [
           { path: 'attractions', element: <AttractionListPage /> },
-          { path: 'attractions/add', element: <AttractionAddPage /> },
+          ...['add', ':id/edit'].map((path) => ({
+            path: 'attractions/' + path,
+            element: <AttractionFormPage />,
+          })),
           { path: 'attractions/:id', element: <AttractionDetailsPage /> },
           { path: 'profile', element: <ProfilePage /> },
         ],

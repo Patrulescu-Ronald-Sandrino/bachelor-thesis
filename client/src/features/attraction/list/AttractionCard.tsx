@@ -13,7 +13,7 @@ import {
 import AttractionsIcon from '@mui/icons-material/Attractions';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import PlaceIcon from '@mui/icons-material/Place';
-import ShareAttraction from '../ShareAttraction.tsx';
+import AttractionEditAndShareIcons from '../common/AttractionEditAndShareIcons.tsx';
 
 const detailsFields = [
   { icon: AttractionsIcon, getter: (a: Attraction) => a.attractionType },
@@ -29,9 +29,6 @@ interface Props {
 }
 
 export default function AttractionCard({ attraction }: Props) {
-  // TODO: replace with actual picture
-  const mainPictureUrl = 'https://i.imgur.com/6LlO6sO.png';
-
   return (
     <Card>
       <CardHeader
@@ -41,10 +38,10 @@ export default function AttractionCard({ attraction }: Props) {
         }}
       />
 
-      {mainPictureUrl ? (
+      {attraction.photoUrlList.length > 0 ? (
         <CardMedia
           sx={{ height: 140 }}
-          image={mainPictureUrl}
+          image={attraction.photoUrlList[0]}
           title={attraction.name}
         />
       ) : (
@@ -80,7 +77,15 @@ export default function AttractionCard({ attraction }: Props) {
         ))}
       </CardContent>
 
-      <CardActions disableSpacing sx={{ p: 0.5 }}>
+      <CardActions
+        disableSpacing
+        sx={{
+          p: 0.5,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
         <Button
           component={Link}
           href={`/attractions/${attraction.id}`}
@@ -89,7 +94,7 @@ export default function AttractionCard({ attraction }: Props) {
           View
         </Button>
 
-        <ShareAttraction attraction={attraction} />
+        <AttractionEditAndShareIcons attraction={attraction} />
       </CardActions>
     </Card>
   );

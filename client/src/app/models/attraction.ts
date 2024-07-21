@@ -1,13 +1,19 @@
+import { AttractionType } from './attractionType.ts';
+import { Country } from './country.ts';
+
 export interface Attraction {
   id: string;
   name: string;
   description: string;
   address: string;
-  website: string;
+  website?: string;
   city: string;
-  country: string;
-  attractionType: string;
-  mainPictureUrl: string;
+  countryId: string;
+  country?: string;
+  attractionTypeId: string;
+  attractionType?: string;
+  creatorId: string;
+  photoUrlList: string[];
 }
 
 export const SortFields = [
@@ -41,4 +47,10 @@ export interface AttractionParams {
   searchField: SearchField;
   searchValue: string;
   types: string[];
+}
+
+export interface AttractionFormData {
+  countries: Country[];
+  types: AttractionType[];
+  attraction: Attraction | null;
 }
