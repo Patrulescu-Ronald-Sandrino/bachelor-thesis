@@ -48,11 +48,8 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         attraction.CreatorId = authUtils.GetCurrentUser().Id;
         await context.Attractions.AddAsync(attraction);
 
-        var photosUrlList =
-            await photoAccessor.UploadPhotos(attractionDto.Photos!.Select(ap => ap.NewPhoto).ToArray());
-        var attractionPhotos = photosUrlList.Select((url, i) => new AttractionPhoto
-            { Url = url, Position = Convert.ToUInt32(i) + 1, AttractionId = attraction.Id });
-        await context.AttractionPhotos.AddRangeAsync(attractionPhotos);
+        var photos = await photoAccessor.UploadPhotos(attractionDto.Photos!.Select(ap => ap.NewPhoto).ToArray());
+        attraction.Photos = photos;
 
         await context.SaveChangesAsync();
         return mapper.Map<AttractionDto>(attraction);
@@ -100,30 +97,18 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
 
     private async Task UpdatePhotos(Attraction attraction, AttractionPhotosDto[] newPhotoDtoList)
     {
-        var oldPhotos = attraction.AttractionPhotos.ToList();
-        var indexPositionMismatch = oldPhotos.Select((photo, i) => (photo, i))
-            .Where(tuple => tuple.photo.Position != tuple.i + 1).Select(tuple =>
-                $"Photo with url {tuple.photo.Url} has index-position mismatch ({tuple.i}, {tuple.photo.Position})")
-            .Aggregate("",
-                (acc, val) => acc + val + "\n");
-        if (indexPositionMismatch != "")
-        {
-            Console.WriteLine("Index position mismatch:");
-            Console.WriteLine(indexPositionMismatch);
-            throw new Exception("Failed to update photos. Please contact an administrator");
-        }
+        var oldPhotos = attraction.Photos;
+        var oldPhotosSet = new HashSet<string>(oldPhotos);
 
-        var oldPhotoUrlToPhoto = oldPhotos
-            .Select(p => new { p.Url, p }).ToDictionary(arg => arg.Url, arg => arg.p);
         Dictionary<int, IFormFile> photosToAdd = new();
-        HashSet<string> urlsToDelete = [];
+        var photosToDelete = oldPhotos.Skip(newPhotoDtoList.Length).ToHashSet();
+        List<string> newPhotos = [..new string[Math.Max(oldPhotos.Count, newPhotoDtoList.Length)]];
         Dictionary<int, string> errors = new();
-        List<AttractionPhoto> newPhotosList = [];
 
         for (var i = 0; i < newPhotoDtoList.Length; i++)
         {
             var newPhoto = newPhotoDtoList[i].NewPhoto;
-            var currentPhotoUrl = newPhotoDtoList[i].CurrentPhotoUrl;
+            var currentPhotoUrl = newPhotoDtoList[i].CurrentUrl;
 
             if (currentPhotoUrl == null)
             {
@@ -135,9 +120,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
                     }
                     else
                     {
-                        if (oldPhotos[i].Position != i + 1)
-                            errors.Add(i, "Somehow, the old photo position got messed up");
-                        else newPhotosList.Add(mapper.Map<AttractionPhoto>(oldPhotos[i]));
+                        newPhotos[i] = oldPhotos[i];
                     }
                 }
                 else // add
@@ -148,8 +131,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
                     }
                     else
                     {
-                        newPhotosList.Add(new AttractionPhoto
-                            { AttractionId = attraction.Id, Position = Convert.ToUInt32(i) + 1 });
+                        newPhotos[i] = null;
                         photosToAdd.Add(i, newPhoto);
                     }
                 }
@@ -158,16 +140,13 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
             {
                 if (newPhoto == null) // move
                 {
-                    oldPhotoUrlToPhoto.TryGetValue(currentPhotoUrl, out var photo);
-                    if (photo == null)
+                    if (!oldPhotosSet.Contains(currentPhotoUrl))
                     {
                         errors.Add(i, $"Existing photo not found for url {currentPhotoUrl}");
                     }
                     else
                     {
-                        var movedPhoto = mapper.Map<AttractionPhoto>(photo);
-                        movedPhoto.Position = Convert.ToUInt32(i) + 1;
-                        newPhotosList.Add(movedPhoto);
+                        newPhotos[i] = currentPhotoUrl;
                     }
                 }
                 else // replace = delete + add
@@ -178,21 +157,9 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
                     }
                     else
                     {
-                        if (oldPhotos[i].Position != i + 1)
-                        {
-                            errors.Add(i, "Somehow, the old photo position got messed up");
-                        }
-                        else if (currentPhotoUrl != oldPhotos[i].Url)
-                        {
-                            errors.Add(i, "Current photo url does not match the old photo");
-                        }
-                        else
-                        {
-                            urlsToDelete.Add(oldPhotos[i].Url);
-                            newPhotosList.Add(new AttractionPhoto
-                                { AttractionId = attraction.Id, Position = Convert.ToUInt32(i) + 1 });
-                            photosToAdd.Add(i, newPhoto);
-                        }
+                        photosToDelete.Add(oldPhotos[i]);
+                        newPhotos[i] = null;
+                        photosToAdd.Add(i, newPhoto);
                     }
                 }
             }
@@ -201,28 +168,25 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         if (errors.Count > 0)
         {
             var message = errors.OrderBy(pair => pair.Key)
-                .Select(pair => $"Error at position {pair.Key + 1}: {pair.Value}").Aggregate("",
+                .Select(pair => $"Error for photo {pair.Key + 1}: {pair.Value}").Aggregate("",
                     (acc, val) => acc + val + "\n");
             Console.WriteLine("Failed to update photos");
             Console.WriteLine(message);
             throw new Exception("Failed to update photos");
         }
 
-        // add new photos to cloudinary + update the new photos list + update the attraction's photos
+        // upload new photos + update the new photos list + update the attraction's photos
         var photosToAddList = photosToAdd.OrderBy(pair => pair.Key).ToImmutableList();
         var urls = await photoAccessor.UploadPhotos(photosToAddList.Select(pair => pair.Value).ToArray());
         for (var i = 0; i < urls.Count; i++)
         {
-            var url = urls[i];
-            newPhotosList[photosToAddList[i].Key].Url = url;
+            newPhotos[photosToAddList[i].Key] = urls[i];
         }
 
-        attraction.AttractionPhotos = newPhotosList;
+        attraction.Photos = newPhotos;
 
-        // try to delete old photos
-        if (newPhotosList.Count < oldPhotos.Count)
-            urlsToDelete.UnionWith(oldPhotos.Skip(newPhotosList.Count).Select(p => p.Url));
-        await photoAccessor.DeletePhotos(urlsToDelete.ToList());
+        // try to delete old uploaded photos
+        await photoAccessor.DeletePhotos(photosToDelete.ToList());
     }
 
     private async Task<Attraction> GetOrThrow(Guid id, bool tracking = false)
@@ -230,7 +194,6 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         var queryable = context.Attractions
             .Include(a => a.Country)
             .Include(a => a.AttractionType)
-            .Include(a => a.AttractionPhotos.OrderBy(ap => ap.Position))
             .Where(a => a.Id == id);
         queryable = tracking ? queryable.AsTracking() : queryable.AsNoTracking();
         var attraction = await queryable.FirstOrDefaultAsync();

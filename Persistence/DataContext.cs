@@ -12,7 +12,6 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
     public DbSet<Attraction> Attractions { get; init; }
     public DbSet<Country> Countries { get; init; }
     public DbSet<Reaction> Reactions { get; init; }
-    public DbSet<AttractionPhoto> AttractionPhotos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -47,15 +46,14 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
             .HasForeignKey(a => a.CreatorId)
             .IsRequired();
 
+        builder.Entity<Attraction>()
+            .Ignore(a => a.Photos)
+            .Property(a => a.PhotosCsv)
+            .IsRequired()
+            .HasDefaultValue("");
+
         builder.Entity<AttractionType>()
             .HasIndex(at => at.Name)
-            .IsUnique();
-
-        builder.Entity<AttractionPhoto>()
-            .HasKey(ap => ap.Url);
-
-        builder.Entity<AttractionPhoto>()
-            .HasIndex(ap => new { ap.AttractionId, ap.Position })
             .IsUnique();
 
         builder.Entity<Reaction>(x =>
