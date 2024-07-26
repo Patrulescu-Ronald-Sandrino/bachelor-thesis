@@ -38,10 +38,10 @@ export default function AttractionCard({ attraction }: Props) {
         }}
       />
 
-      {attraction.photoUrlList.length > 0 ? (
+      {attraction.photos.length > 0 ? (
         <CardMedia
           sx={{ height: 140 }}
-          image={attraction.photoUrlList[0]}
+          image={attraction.photos[0]}
           title={attraction.name}
         />
       ) : (

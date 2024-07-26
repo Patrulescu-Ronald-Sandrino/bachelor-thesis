@@ -26,7 +26,7 @@ export function AttractionCard({ attraction, toggleComments }: Props) {
   return (
     <Grid item xs={6}>
       <Card>
-        <AttractionCardPictures pictures={attraction.photoUrlList} />
+        <AttractionCardPictures pictures={attraction.photos} />
 
         <CardHeader
           title={attraction.name}

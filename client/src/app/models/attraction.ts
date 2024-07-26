@@ -13,7 +13,7 @@ export interface Attraction {
   attractionTypeId: string;
   attractionType?: string;
   creatorId: string;
-  photoUrlList: string[];
+  photos: string[];
 }
 
 export const SortFields = [
@@ -53,4 +53,22 @@ export interface AttractionFormData {
   countries: Country[];
   types: AttractionType[];
   attraction: Attraction | null;
+}
+
+export type AttractionPhotosDto = {
+  newPhoto?: File | null;
+  currentUrl?: string | null;
+  preview?: string | null;
+};
+
+export interface AttractionAddOrEditDto {
+  id?: string;
+  name: string;
+  description: string;
+  address: string;
+  website: string;
+  city: string;
+  countryId: string;
+  attractionTypeId: string;
+  photos: AttractionPhotosDto[];
 }

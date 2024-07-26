@@ -3,17 +3,46 @@ import { store } from '../store/configureStore.ts';
 import { toast } from 'react-toastify';
 import { router } from '../router/Routes.tsx';
 import { User } from '../models/user.ts';
-import { Attraction, AttractionFormData } from '../models/attraction.ts';
+import {
+  Attraction,
+  AttractionAddOrEditDto,
+  AttractionFormData,
+} from '../models/attraction.ts';
 import { PageResponse } from '../models/pagination.ts';
 import { AttractionType } from '../models/attractionType.ts';
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
 
-function createFormData(item: object) {
-  const formData = new FormData();
-  for (const key in item) {
-    formData.append(key, item[key as keyof object]);
+function createFormData(
+  data: object,
+  formData = new FormData(),
+  parentKey?: string,
+) {
+  for (const key in data) {
+    const formKey = parentKey ? `${parentKey}.${key}` : key;
+    const value: unknown = data[key as keyof object];
+    // console.log(formKey, typeof value, value);
+
+    if (value === null || value === undefined) {
+      formData.append(formKey, '');
+    } else if (value instanceof Blob) {
+      formData.append(formKey, value);
+    } else if (Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++) {
+        createFormData(value[i], formData, `${formKey}[${i}]`);
+      }
+    } else if (typeof value === 'object') {
+      createFormData(value, formData, formKey);
+    } else {
+      formData.append(formKey, value.toString());
+    }
   }
+  // console.log('finished creating form data');
+  // if (!parentKey) {
+  //   for (const pair of formData.entries()) {
+  //     console.log(pair[0] + ', ' + pair[1]);
+  //   }
+  // }
   return formData;
 }
 
@@ -61,7 +90,7 @@ axios.interceptors.response.use(
         toast.error('You are not allowed to do that!');
         break;
       case 500:
-        router.navigate('/server-error', { state: { error: data } });
+        void router.navigate('/server-error', { state: { error: data } });
         break;
       default:
         break;
@@ -92,9 +121,9 @@ const Attractions = {
   fetch: (id: string) => requests.get<Attraction>(`attractions/${id}`),
   getFormData: (id?: string) =>
     requests.get<AttractionFormData>(`attractions/form-data/${id ?? ''}`),
-  add: (data: object) =>
+  add: (data: AttractionAddOrEditDto) =>
     requests.post<AttractionFormData>('attractions', createFormData(data)),
-  update: (data: object) =>
+  update: (data: AttractionAddOrEditDto) =>
     requests.put<AttractionFormData>('attractions', createFormData(data)),
   delete: (id: string) => requests.delete(`attractions/${id}`),
 };
