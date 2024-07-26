@@ -16,7 +16,6 @@ import {
   Typography,
 } from '@mui/material';
 import SelectList from '../../../app/components/SelectList.tsx';
-import { generate, swap } from '../../../app/util/array.ts';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
   AttractionAddOrEditDto,
@@ -29,6 +28,7 @@ import { Cropper } from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import { generate } from '../../../app/util/array.ts';
 
 const dzStyles = {
   display: 'flex',
@@ -51,7 +51,10 @@ interface Props extends UseControllerProps<AttractionAddOrEditDto> {
 
 export default function FormPhotos(props: Props) {
   const { errors } = useFormState({ ...props });
-  const { fields, append } = useFieldArray({ ...props, name: 'photos' });
+  const { fields, append, swap } = useFieldArray({
+    ...props,
+    name: 'photos',
+  });
   const [newPhoto, setNewPhoto] = useState<AttractionPhotosDto | null>(null);
   const [cropper, setCropper] = useState<Cropper>();
 
@@ -123,19 +126,12 @@ export default function FormPhotos(props: Props) {
                   selectedValue={currentIndex + 1}
                   items={generate(1, fields.length)}
                   onChange={(newPosition) => {
-                    // swap(currentIndex, newPosition - 1);
-                    const newPhotos = swap(
-                      fields,
-                      currentIndex,
-                      newPosition - 1,
-                    );
-                    props.setValue('photos', newPhotos, {
-                      shouldValidate: true,
-                    });
+                    swap(currentIndex, newPosition - 1);
                   }}
                 />
                 <IconButton
                   onClick={() => {
+                    // remove(currentIndex);
                     const newPhotos = fields.filter(
                       (_, index) => index !== currentIndex,
                     );
