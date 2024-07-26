@@ -95,72 +95,47 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         await context.SaveChangesAsync();
     }
 
-    private async Task UpdatePhotos(Attraction attraction, AttractionPhotosDto[] newPhotoDtoList)
+    private async Task UpdatePhotos(Attraction attraction, AttractionPhotosDto[] newPhotosDto)
     {
         var oldPhotos = attraction.Photos;
         var oldPhotosSet = new HashSet<string>(oldPhotos);
 
         Dictionary<int, IFormFile> photosToAdd = new();
-        var photosToDelete = oldPhotos.Skip(newPhotoDtoList.Length).ToHashSet();
-        List<string> newPhotos = [..new string[Math.Max(oldPhotos.Count, newPhotoDtoList.Length)]];
+        List<string> newPhotos = [..new string[newPhotosDto.Length]];
         Dictionary<int, string> errors = new();
 
-        for (var i = 0; i < newPhotoDtoList.Length; i++)
+        for (var i = 0; i < newPhotosDto.Length; i++)
         {
-            var newPhoto = newPhotoDtoList[i].NewPhoto;
-            var currentPhotoUrl = newPhotoDtoList[i].CurrentUrl;
+            var newPhoto = newPhotosDto[i].NewPhoto;
+            var currentPhotoUrl = newPhotosDto[i].CurrentUrl;
 
             if (currentPhotoUrl == null)
             {
-                if (newPhoto == null) // keep
+                if (newPhoto == null)
                 {
-                    if (i >= oldPhotos.Count)
-                    {
-                        errors.Add(i, "Cannot keep more photos than the original");
-                    }
-                    else
-                    {
-                        newPhotos[i] = oldPhotos[i];
-                    }
+                    errors.Add(i, "Cannot add/keep a photo that does not exist");
                 }
                 else // add
                 {
-                    if (i < oldPhotos.Count)
-                    {
-                        errors.Add(i, "Cannot add if photo exists, use replace");
-                    }
-                    else
-                    {
-                        newPhotos[i] = null;
-                        photosToAdd.Add(i, newPhoto);
-                    }
+                    photosToAdd.Add(i, newPhoto);
                 }
             }
             else
             {
-                if (newPhoto == null) // move
+                if (newPhoto == null)
                 {
                     if (!oldPhotosSet.Contains(currentPhotoUrl))
                     {
                         errors.Add(i, $"Existing photo not found for url {currentPhotoUrl}");
                     }
-                    else
+                    else // keep
                     {
                         newPhotos[i] = currentPhotoUrl;
                     }
                 }
-                else // replace = delete + add
+                else
                 {
-                    if (i >= oldPhotos.Count)
-                    {
-                        errors.Add(i, "Cannot replace more photos than the original");
-                    }
-                    else
-                    {
-                        photosToDelete.Add(oldPhotos[i]);
-                        newPhotos[i] = null;
-                        photosToAdd.Add(i, newPhoto);
-                    }
+                    errors.Add(i, "Cannot add a new photo and keep an existing one at the same time");
                 }
             }
         }
@@ -186,7 +161,8 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         attraction.Photos = newPhotos;
 
         // try to delete old uploaded photos
-        await photoAccessor.DeletePhotos(photosToDelete.ToList());
+        var photosToDelete = oldPhotosSet.Except(newPhotos.ToHashSet()).ToList();
+        await photoAccessor.DeletePhotos(photosToDelete);
     }
 
     private async Task<Attraction> GetOrThrow(Guid id, bool tracking = false)
