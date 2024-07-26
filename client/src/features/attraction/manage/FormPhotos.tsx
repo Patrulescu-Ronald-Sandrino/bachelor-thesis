@@ -1,4 +1,5 @@
 import {
+  FieldArray,
   UseControllerProps,
   useFieldArray,
   UseFormSetValue,
@@ -49,7 +50,7 @@ interface Props extends UseControllerProps<AttractionAddOrEditDto> {
   setValue: UseFormSetValue<AttractionAddOrEditDto>;
 }
 
-export default function FormPhotos(props: Props) {
+export default function FormPhotos({ setValue, ...props }: Props) {
   const { errors } = useFormState({ ...props });
   const { fields, append } = useFieldArray({ ...props, name: 'photos' });
   const [newPhoto, setNewPhoto] = useState<AttractionPhotosDto | null>(null);
@@ -105,6 +106,25 @@ export default function FormPhotos(props: Props) {
     }
   }
 
+  function updatePhotos(
+    newPhotos: (FieldArray<AttractionAddOrEditDto, 'photos'> &
+      Record<'id', string>)[],
+  ) {
+    setValue('photos', newPhotos, {
+      shouldValidate: true,
+    });
+  }
+
+  function swapPhotos(currentIndex: number, newPosition: number) {
+    const newPhotos = swap(fields, currentIndex, newPosition - 1);
+    updatePhotos(newPhotos);
+  }
+
+  function deletePhoto(currentIndex: number) {
+    const newPhotos = fields.filter((_, i) => i !== currentIndex);
+    updatePhotos(newPhotos);
+  }
+
   return (
     <>
       <Typography>Photos</Typography>
@@ -122,28 +142,11 @@ export default function FormPhotos(props: Props) {
                   label="Position"
                   selectedValue={currentIndex + 1}
                   items={generate(1, fields.length)}
-                  onChange={(newPosition) => {
-                    // swap(currentIndex, newPosition - 1);
-                    const newPhotos = swap(
-                      fields,
-                      currentIndex,
-                      newPosition - 1,
-                    );
-                    props.setValue('photos', newPhotos, {
-                      shouldValidate: true,
-                    });
-                  }}
+                  onChange={(newPosition) =>
+                    swapPhotos(currentIndex, newPosition)
+                  }
                 />
-                <IconButton
-                  onClick={() => {
-                    const newPhotos = fields.filter(
-                      (_, index) => index !== currentIndex,
-                    );
-                    props.setValue('photos', newPhotos, {
-                      shouldValidate: true,
-                    });
-                  }}
-                >
+                <IconButton onClick={() => deletePhoto(currentIndex)}>
                   <DeleteIcon />
                 </IconButton>
               </CardActions>
