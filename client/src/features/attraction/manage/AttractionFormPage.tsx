@@ -106,7 +106,7 @@ export default function AttractionFormPage() {
   }
 
   if (loading) return <Loadable loading={loading} />;
-  if (!!id && !attraction) return <NotFound />;
+  if (!!id && !attraction.id) return <NotFound />;
 
   return (
     <Box component={Paper} sx={{ p: 4 }}>
@@ -183,6 +183,14 @@ export default function AttractionFormPage() {
               control={control as unknown as Control}
               label="Address (Street, Number, Etc)"
               name="address"
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={12}>
+            <FormTextInput
+              control={control as unknown as Control}
+              label="Website"
+              name="website"
             />
           </Grid>
 
