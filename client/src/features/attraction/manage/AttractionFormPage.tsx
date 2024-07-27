@@ -3,9 +3,9 @@ import useAttractionFormData from './useAttractionFormData.tsx';
 import Loadable from '../../../app/layout/Loadable.tsx';
 import NotFound from '../../../app/errors/NotFound.tsx';
 import * as yup from 'yup';
-import { Control, useForm } from 'react-hook-form';
+import { Control, FieldPath, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import agent from '../../../app/api/agent.ts';
 import { Box, Button, Grid, Paper, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -19,6 +19,7 @@ import {
   AttractionPhotosDto,
 } from '../../../app/models/attraction.ts';
 import FormPhotos from './FormPhotos.tsx';
+import { forEachError } from '../../../app/util/form.ts';
 
 function toSelectList(items: { id: string; name: string }[]) {
   return items.map((item) => ({ value: item.id, label: item.name }));
@@ -52,8 +53,13 @@ const validationSchema: yup.ObjectSchema<AttractionAddOrEditDto> = yup
 
 export default function AttractionFormPage() {
   const { id } = useParams<{ id: string }>();
-  const { loading, attraction, types, countries, setAttractionFormData } =
-    useAttractionFormData(id);
+  const {
+    loading: loadingData,
+    attraction,
+    types,
+    countries,
+    setAttractionFormData,
+  } = useAttractionFormData(id);
   const isUpdate = !!id && !!attraction;
   const { deleteAttraction, isDeleting } = useAttractionDelete();
   const {
@@ -63,10 +69,12 @@ export default function AttractionFormPage() {
     watch,
     formState: { isDirty, isSubmitting },
     setValue,
+    setError,
   } = useForm<AttractionAddOrEditDto>({
     resolver: yupResolver(validationSchema),
   });
   const watchPhotos = watch('photos');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (attraction && !watchPhotos && !isDirty) reset(attraction);
@@ -95,17 +103,29 @@ export default function AttractionFormPage() {
 
   async function handleSubmitData(data: AttractionAddOrEditDto) {
     try {
+      setIsLoading(true);
       const apiCaller = isUpdate
         ? agent.Attractions.update
         : agent.Attractions.add;
-      const response = await apiCaller(data);
-      setAttractionFormData(response);
+      apiCaller(data)
+        .then((response) => {
+          setAttractionFormData(response);
+          toast.success('Attraction saved');
+        })
+        .catch((error) => {
+          forEachError(error, (field, message) =>
+            setError(field as FieldPath<AttractionAddOrEditDto>, {
+              message: message,
+            }),
+          );
+        })
+        .finally(() => setIsLoading(false));
     } catch (e) {
       console.log(e);
     }
   }
 
-  if (loading) return <Loadable loading={loading} />;
+  if (loadingData) return <Loadable loading={loadingData} />;
   if (!!id && !attraction.id) return <NotFound />;
 
   return (
@@ -122,7 +142,7 @@ export default function AttractionFormPage() {
 
         {isUpdate && (
           <LoadingButton
-            disabled={isSubmitting}
+            disabled={isSubmitting || isLoading}
             loading={isDeleting}
             variant="contained"
             color="warning"
@@ -216,7 +236,7 @@ export default function AttractionFormPage() {
               gap={1.5}
             >
               <Button
-                disabled={isDeleting || isSubmitting}
+                disabled={isDeleting || isSubmitting || isLoading}
                 variant="contained"
                 color="inherit"
                 onClick={() => reset(attraction)}
@@ -226,7 +246,7 @@ export default function AttractionFormPage() {
 
               <LoadingButton
                 disabled={isDeleting}
-                loading={isSubmitting}
+                loading={isSubmitting || isLoading}
                 type="submit"
                 variant="contained"
                 color="success"

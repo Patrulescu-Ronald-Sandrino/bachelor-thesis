@@ -12,6 +12,7 @@ import {
 import agent from '../../app/api/agent.ts';
 import { toast } from 'react-toastify';
 import { LoadingButton } from '@mui/lab';
+import { forEachError } from '../../app/util/form.ts';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -23,20 +24,6 @@ export default function RegisterPage() {
   } = useForm({
     mode: 'onTouched',
   });
-
-  function handleApiErrors(errors: string[]) {
-    if (errors) {
-      errors.forEach((error: string) => {
-        if (error.includes('Password')) {
-          setError('password', { message: error });
-        } else if (error.includes('Email')) {
-          setError('email', { message: error });
-        } else if (error.includes('Username')) {
-          setError('username', { message: error });
-        }
-      });
-    }
-  }
 
   return (
     <Container
@@ -61,9 +48,10 @@ export default function RegisterPage() {
               toast.success('Registration successful - you can now login');
               navigate('/login');
             })
-            .catch((error: unknown) => {
-              console.log(error);
-              handleApiErrors(error as string[]);
+            .catch((error) => {
+              forEachError(error, (field, message) =>
+                setError(field, { message: message }),
+              );
             }),
         )}
         noValidate
