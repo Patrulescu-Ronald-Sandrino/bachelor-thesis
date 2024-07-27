@@ -127,6 +127,8 @@ export default function AttractionFormPage() {
             variant="contained"
             color="warning"
             onClick={() => {
+              if (!confirm('Are you sure you want to delete this attraction?'))
+                return;
               deleteAttraction(id)
                 .then(() => {
                   toast.success('Attraction deleted');
