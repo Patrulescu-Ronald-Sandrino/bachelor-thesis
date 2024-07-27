@@ -40,9 +40,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
     public async Task<AttractionDto> CreateAttraction(AttractionAddOrEditDto attractionDto)
     {
         var attraction = mapper.Map<Attraction>(attractionDto);
-        await ValidateAttraction(attraction);
-        Validator.Run(attractionDto.Photos == null || attractionDto.Photos.Length < 1, "PhotoList",
-            ["At least one photo is required"]);
+        await ValidateAttraction(attractionDto, attraction);
 
         attraction.Id = Guid.NewGuid();
         attraction.CreatorId = authUtils.GetCurrentUser().Id;
@@ -61,7 +59,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         EnsureWriteAccess(attraction);
 
         mapper.Map(attractionDto, attraction);
-        await ValidateAttraction(attraction);
+        await ValidateAttraction(attractionDto, attraction);
         await UpdatePhotos(attraction, attractionDto.Photos);
 
         await context.SaveChangesAsync();
@@ -183,14 +181,16 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
             throw new ForbiddenException();
     }
 
-    private async Task ValidateAttraction(Attraction attraction)
+    private async Task ValidateAttraction(AttractionAddOrEditDto attractionDto, Attraction attraction)
     {
         var taskAttractionType = context.AttractionTypes.FindAsync(attraction.AttractionTypeId).AsTask();
         var taskCountry = context.Countries.FindAsync(attraction.CountryId).AsTask();
         await Task.WhenAll(taskAttractionType, taskCountry);
+        var allPhotosAreNull = attractionDto.Photos.All(p => p.CurrentUrl == null && p.NewPhoto == null);
         new Validator()
             .Add(taskAttractionType.Result == null, "AttractionTypeId", ["Attraction type not found"])
             .Add(taskCountry.Result == null, "CountryId", ["Country not found"])
+            .Add(attractionDto.Photos == null || allPhotosAreNull, "Photos", ["At least one photo is required"])
             .Run();
     }
 }
