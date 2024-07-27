@@ -1,11 +1,11 @@
-import { useParams } from 'react-router-dom';
+import { useBeforeUnload, useParams } from 'react-router-dom';
 import useAttractionFormData from './useAttractionFormData.tsx';
 import Loadable from '../../../app/layout/Loadable.tsx';
 import NotFound from '../../../app/errors/NotFound.tsx';
 import * as yup from 'yup';
 import { Control, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import agent from '../../../app/api/agent.ts';
 import { Box, Button, Grid, Paper, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -80,6 +80,18 @@ export default function AttractionFormPage() {
       });
     };
   }, [attraction, reset, watchPhotos, isDirty]);
+
+  useBeforeUnload(
+    useCallback(
+      (event) => {
+        if (isDirty) {
+          event.preventDefault();
+        }
+      },
+      [isDirty],
+    ),
+    { capture: true },
+  );
 
   async function handleSubmitData(data: AttractionAddOrEditDto) {
     try {
