@@ -1,4 +1,5 @@
 import {
+  PAGE_SIZES,
   SearchField,
   SearchFields,
   SortField,
@@ -97,7 +98,7 @@ export default function AttractionListPage() {
             <SelectList
               label="Page size"
               selectedValue={attractionParams.pageSize}
-              items={[6, 12, 24, 48, 96, 192].map((x) => ({
+              items={PAGE_SIZES.map((x) => ({
                 label: x.toString(),
                 value: x,
               }))}

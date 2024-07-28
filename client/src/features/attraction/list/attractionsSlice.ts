@@ -22,7 +22,9 @@ function getAxiosParams(attractionParams: AttractionParams) {
   const params = new URLSearchParams();
   params.append('madeByMe', attractionParams.madeByMe.toString());
   params.append('pageNumber', attractionParams.pageNumber.toString());
-  params.append('pageSize', attractionParams.pageSize.toString());
+  if (attractionParams.pageSize) {
+    params.append('pageSize', attractionParams.pageSize.toString());
+  }
   params.append('sortField', attractionParams.sortField);
   params.append('sortOrder', attractionParams.sortOrder);
   if (attractionParams.searchValue.length > 0) {

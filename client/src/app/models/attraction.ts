@@ -39,10 +39,12 @@ export const SearchFields = [
 ] as const;
 export type SearchField = (typeof SearchFields)[number];
 
+export const PAGE_SIZES = [6, 12, 24, 48, 96, 192]; // defined by backend
+
 export interface AttractionParams {
   madeByMe: boolean;
   pageNumber: number;
-  pageSize: number;
+  pageSize: number | null;
   sortField: SortField;
   sortOrder: SortOrder;
   searchField: SearchField;
