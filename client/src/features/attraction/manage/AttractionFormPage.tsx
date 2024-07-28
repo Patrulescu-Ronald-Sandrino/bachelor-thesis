@@ -67,7 +67,7 @@ export default function AttractionFormPage() {
     reset,
     handleSubmit,
     watch,
-    formState: { isDirty, isSubmitting, isSubmitSuccessful },
+    formState: { isDirty, isSubmitting },
     setValue,
     setError,
   } = useForm<AttractionAddOrEditDto>({
@@ -75,14 +75,17 @@ export default function AttractionFormPage() {
   });
   const watchPhotos = watch('photos');
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitSuccessful, setIsSubmitSuccessful] = useState(false);
 
   useEffect(() => {
-    if ((attraction && !isDirty) || isSubmitSuccessful) {
+    if (isSubmitSuccessful) {
       reset(attraction);
+      setIsSubmitSuccessful(false);
     }
-  }, [attraction, isDirty, isSubmitSuccessful, reset]);
+  }, [attraction, isSubmitSuccessful, reset]);
 
   useEffect(() => {
+    if (attraction && !watchPhotos && !isDirty) reset(attraction);
     return () => {
       if (!watchPhotos) return;
       watchPhotos.forEach((attractionPhotosDto: AttractionPhotosDto) => {
@@ -92,7 +95,7 @@ export default function AttractionFormPage() {
         }
       });
     };
-  }, [watchPhotos]);
+  }, [attraction, isDirty, isSubmitSuccessful, reset, watchPhotos]);
 
   useBeforeUnload(
     useCallback(
@@ -116,9 +119,11 @@ export default function AttractionFormPage() {
         .then((response) => {
           console.log('Setting new response');
           setAttractionFormData(response);
+          setIsSubmitSuccessful(true);
           toast.success('Attraction saved');
         })
         .catch((error) => {
+          setIsSubmitSuccessful(false);
           forEachError(error, (field, message) =>
             setError(field as FieldPath<AttractionAddOrEditDto>, {
               message: message,

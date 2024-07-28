@@ -77,8 +77,6 @@ export default function FormPhotos({ setValue, ...props }: Props) {
   }, [clearPreview]);
 
   const changePhoto = useCallback((file: File | null) => {
-    // clearPreview();
-
     if (!file) {
       setNewPhoto(null);
     } else {
@@ -112,6 +110,7 @@ export default function FormPhotos({ setValue, ...props }: Props) {
   ) {
     setValue('photos', newPhotos, {
       shouldValidate: true,
+      shouldDirty: true,
     });
   }
 
