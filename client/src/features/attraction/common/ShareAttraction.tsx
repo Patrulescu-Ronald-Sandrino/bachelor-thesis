@@ -77,6 +77,7 @@ export default function ShareAttraction({ attraction }: Props) {
   return (
     <IconButton
       onClick={() => setShareOpen(true)}
+      title="Share"
       sx={{ margin: 0, color: 'inherit' }}
     >
       <ShareIcon />

@@ -1,11 +1,12 @@
 import { Attraction } from '../../../app/models/attraction.ts';
 import {
-  Button,
+  Box,
   Card,
   CardActions,
   CardContent,
   CardHeader,
   Grid,
+  IconButton,
   Link,
   Table,
   TableBody,
@@ -15,7 +16,9 @@ import {
   Typography,
 } from '@mui/material';
 import AttractionCardPictures from './AttractionCardPictures.tsx';
-import AttractionEditAndShareIcons from '../common/AttractionEditAndShareIcons.tsx';
+import AttractionCardIcons from '../common/AttractionCardIcons.tsx';
+import CommentIcon from '@mui/icons-material/Comment';
+import EditAttractionIcon from '../common/EditAttractionIcon.tsx';
 
 interface Props {
   attraction: Attraction;
@@ -92,9 +95,18 @@ export function AttractionCard({ attraction, toggleComments }: Props) {
             justifyContent: 'space-between',
           }}
         >
-          <Button onClick={toggleComments}>Toggle comments</Button>
+          <Box display="flex">
+            <IconButton
+              onClick={toggleComments}
+              title="Comments"
+              sx={{ color: 'inherit' }}
+            >
+              <CommentIcon />
+            </IconButton>
+            <AttractionCardIcons attraction={attraction} />
+          </Box>
 
-          <AttractionEditAndShareIcons attraction={attraction} />
+          <EditAttractionIcon attraction={attraction} />
         </CardActions>
       </Card>
     </Grid>

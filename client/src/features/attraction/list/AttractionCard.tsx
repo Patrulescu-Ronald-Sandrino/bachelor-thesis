@@ -1,19 +1,21 @@
 import { Attraction } from '../../../app/models/attraction.ts';
 import {
   Box,
-  Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
   CardMedia,
+  IconButton,
   Link,
   Typography,
 } from '@mui/material';
 import AttractionsIcon from '@mui/icons-material/Attractions';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import PlaceIcon from '@mui/icons-material/Place';
-import AttractionEditAndShareIcons from '../common/AttractionEditAndShareIcons.tsx';
+import AttractionCardIcons from '../common/AttractionCardIcons.tsx';
+import DetailsIcon from '@mui/icons-material/Details';
+import EditAttractionIcon from '../common/EditAttractionIcon.tsx';
 
 const detailsFields = [
   { icon: AttractionsIcon, getter: (a: Attraction) => a.attractionType },
@@ -95,15 +97,19 @@ export default function AttractionCard({ attraction }: Props) {
           justifyContent: 'space-between',
         }}
       >
-        <Button
-          component={Link}
-          href={`/attractions/${attraction.id}`}
-          size="small"
-        >
-          View
-        </Button>
+        <Box display="flex">
+          <IconButton
+            component={Link}
+            href={`/attractions/${attraction.id}`}
+            title="Details"
+            sx={{ color: 'inherit' }}
+          >
+            <DetailsIcon />
+          </IconButton>
+          <AttractionCardIcons attraction={attraction} />
+        </Box>
 
-        <AttractionEditAndShareIcons attraction={attraction} />
+        <EditAttractionIcon attraction={attraction} />
       </CardActions>
     </Card>
   );
