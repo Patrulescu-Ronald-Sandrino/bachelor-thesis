@@ -45,13 +45,13 @@ export default function AttractionCard({ attraction }: Props) {
 
       {attraction.photos.length > 0 ? (
         <CardMedia
-          sx={{ height: 140 }}
+          sx={{ height: 130 }}
           image={attraction.photos[0]}
           title={attraction.name}
         />
       ) : (
         <Box
-          sx={{ height: 140 }}
+          sx={{ height: 130 }}
           display="flex"
           alignItems="center"
           justifyContent="center"

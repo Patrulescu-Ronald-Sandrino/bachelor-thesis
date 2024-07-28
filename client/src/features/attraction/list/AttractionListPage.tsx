@@ -84,8 +84,27 @@ export default function AttractionListPage() {
               }
             />
           </Paper>
+        </Grid>
 
-          <Paper sx={{ mb: 2, p: 2 }}>
+        <Grid item xs={9}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-around"
+            gap={1}
+            mb={1}
+          >
+            <SelectList
+              label="Page size"
+              selectedValue={attractionParams.pageSize}
+              items={[6, 12, 24, 48, 96, 192].map((x) => ({
+                label: x.toString(),
+                value: x,
+              }))}
+              onChange={(value) =>
+                dispatch(setAttractionParams({ pageSize: value }))
+              }
+            />
             <SelectList
               label="Sort field"
               selectedValue={attractionParams.sortField}
@@ -97,9 +116,7 @@ export default function AttractionListPage() {
                 dispatch(setAttractionParams({ sortField: value as SortField }))
               }
             />
-          </Paper>
 
-          <Paper sx={{ mb: 2, p: 2 }}>
             <SelectList
               label="Sort order"
               selectedValue={attractionParams.sortOrder}
@@ -111,10 +128,8 @@ export default function AttractionListPage() {
                 dispatch(setAttractionParams({ sortOrder: value as SortOrder }))
               }
             />
-          </Paper>
-        </Grid>
+          </Box>
 
-        <Grid item xs={9}>
           <Grid container spacing={4}>
             {attractions.map((attraction) => (
               <Grid item xs={4} key={attraction.id}>
@@ -129,7 +144,7 @@ export default function AttractionListPage() {
             ))}
           </Grid>
 
-          <Box mt={3}>
+          <Box mt={1} mb={1}>
             {pageData && (
               <AppPagination
                 pageData={pageData}

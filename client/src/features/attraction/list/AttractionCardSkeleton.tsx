@@ -14,7 +14,7 @@ export default function AttractionCardSkeleton() {
       <CardHeader
         title={<Skeleton animation="wave" height={32} width="80%" />}
       />
-      <Skeleton sx={{ height: 140 }} animation="wave" variant="rectangular" />
+      <Skeleton sx={{ height: 130 }} animation="wave" variant="rectangular" />
       <CardContent sx={{ paddingBottom: 0.5 }}>
         <Box display="flex" flexDirection="column" gap={0.5}>
           <Skeleton animation="wave" height={24} width="60%" />

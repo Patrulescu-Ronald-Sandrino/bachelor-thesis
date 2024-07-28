@@ -65,7 +65,7 @@ function App() {
         {showHeader && (
           <Header darkMode={darkMode} handleThemeChange={handleThemeChange} />
         )}
-        <Container sx={{ mt: 4 }}>
+        <Container sx={{ mt: 3 }}>
           <Outlet />
         </Container>
       </Loadable>
