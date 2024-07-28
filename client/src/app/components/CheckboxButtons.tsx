@@ -10,7 +10,7 @@ interface Props {
   items: string[];
   checked?: string[];
   onChange: (items: string[]) => void;
-  label: string;
+  label?: string;
 }
 
 export default function CheckboxButtons({

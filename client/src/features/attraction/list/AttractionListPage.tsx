@@ -47,6 +47,20 @@ export default function AttractionListPage() {
           </Paper>
 
           <Paper sx={{ mb: 2, p: 2 }}>
+            <CheckboxButtons
+              items={['Made by me']}
+              checked={attractionParams.madeByMe ? ['Made by me'] : []}
+              onChange={(items) =>
+                dispatch(
+                  setAttractionParams({
+                    madeByMe: items.includes('Made by me'),
+                  }),
+                )
+              }
+            />
+          </Paper>
+
+          <Paper sx={{ mb: 2, p: 2 }}>
             <RadioButtonGroup
               label="Search by"
               selectedValue={attractionParams.searchField}

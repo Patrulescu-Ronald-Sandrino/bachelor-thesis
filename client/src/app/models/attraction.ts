@@ -40,6 +40,7 @@ export const SearchFields = [
 export type SearchField = (typeof SearchFields)[number];
 
 export interface AttractionParams {
+  madeByMe: boolean;
   pageNumber: number;
   pageSize: number;
   sortField: SortField;

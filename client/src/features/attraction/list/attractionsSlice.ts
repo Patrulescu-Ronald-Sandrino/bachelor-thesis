@@ -20,6 +20,7 @@ interface AttractionsState {
 
 function getAxiosParams(attractionParams: AttractionParams) {
   const params = new URLSearchParams();
+  params.append('madeByMe', attractionParams.madeByMe.toString());
   params.append('pageNumber', attractionParams.pageNumber.toString());
   params.append('pageSize', attractionParams.pageSize.toString());
   params.append('sortField', attractionParams.sortField);
@@ -65,6 +66,7 @@ export const fetchAttractionTypes = createAsyncThunk(
 
 function initParams() {
   return {
+    madeByMe: false,
     pageNumber: 1,
     pageSize: 6,
     sortField: 'Name',
