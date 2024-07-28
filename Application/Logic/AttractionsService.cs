@@ -22,10 +22,12 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
 {
     public async Task<PagedList<AttractionDto>> GetAttractions(AttractionsQuery query)
     {
+        var currentUserId = authUtils.GetCurrentUser().Id;
         var queryable = context.Attractions
             .Sort(query.SortField, query.SortOrder)
             .Search(query.SearchField, query.SearchValue)
             .Filter(query.Types)
+            .Where(a => !query.MadeByMe || a.CreatorId == currentUserId)
             .ProjectTo<AttractionDto>(mapper.ConfigurationProvider)
             .AsQueryable();
         return await PagedList<AttractionDto>.ToPagedList(queryable, query.PageNumber, query.PageSize);
