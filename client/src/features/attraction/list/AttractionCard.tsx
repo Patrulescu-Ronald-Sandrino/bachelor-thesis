@@ -32,15 +32,19 @@ export default function AttractionCard({ attraction }: Props) {
   return (
     <Card>
       <CardHeader
-        title={attraction.name}
-        titleTypographyProps={{
-          noWrap: true,
-          sx: {
-            fontWeight: 'bold',
-            color: 'primary.main',
-            overflowY: 'clip',
-          },
-        }}
+        title={
+          <Typography
+            title={attraction.name}
+            noWrap
+            sx={{
+              fontWeight: 'bold',
+              color: 'primary.main',
+              overflowY: 'clip',
+            }}
+          >
+            {attraction.name}
+          </Typography>
+        }
       />
 
       {attraction.photos.length > 0 ? (
