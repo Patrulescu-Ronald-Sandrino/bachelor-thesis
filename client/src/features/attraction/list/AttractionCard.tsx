@@ -34,7 +34,12 @@ export default function AttractionCard({ attraction }: Props) {
       <CardHeader
         title={attraction.name}
         titleTypographyProps={{
-          sx: { fontWeight: 'bold', color: 'primary.main' },
+          noWrap: true,
+          sx: {
+            fontWeight: 'bold',
+            color: 'primary.main',
+            overflowY: 'clip',
+          },
         }}
       />
 

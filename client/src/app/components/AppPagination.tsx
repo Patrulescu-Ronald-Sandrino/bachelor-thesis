@@ -27,7 +27,7 @@ export default function AppPagination({ pageData, onPageChange }: Props) {
         {Math.min(currentPage * pageSize, totalCount)} of {totalCount} items
       </Typography>
       <Pagination
-        color="secondary"
+        color="primary"
         size="large"
         count={totalPages}
         page={currentPage}

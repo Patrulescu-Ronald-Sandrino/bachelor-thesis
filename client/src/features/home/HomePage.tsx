@@ -19,9 +19,7 @@ export default function HomePage() {
               <AttractionsIcon fontSize="large" />
             </IconButton>
             <Link href={'/attractions'} sx={{ textDecoration: 'none' }}>
-              <Typography variant="h4" style={{ color: 'black' }}>
-                Attractions
-              </Typography>
+              <Typography variant="h4">Attractions</Typography>
             </Link>
           </Box>
           <Box>
