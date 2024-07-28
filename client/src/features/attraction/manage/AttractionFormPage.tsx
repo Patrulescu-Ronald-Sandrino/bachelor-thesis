@@ -67,7 +67,7 @@ export default function AttractionFormPage() {
     reset,
     handleSubmit,
     watch,
-    formState: { isDirty, isSubmitting },
+    formState: { isDirty, isSubmitting, isSubmitSuccessful },
     setValue,
     setError,
   } = useForm<AttractionAddOrEditDto>({
@@ -77,7 +77,12 @@ export default function AttractionFormPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (attraction && !watchPhotos && !isDirty) reset(attraction);
+    if ((attraction && !isDirty) || isSubmitSuccessful) {
+      reset(attraction);
+    }
+  }, [attraction, isDirty, isSubmitSuccessful, reset]);
+
+  useEffect(() => {
     return () => {
       if (!watchPhotos) return;
       watchPhotos.forEach((attractionPhotosDto: AttractionPhotosDto) => {
@@ -87,7 +92,7 @@ export default function AttractionFormPage() {
         }
       });
     };
-  }, [attraction, reset, watchPhotos, isDirty]);
+  }, [watchPhotos]);
 
   useBeforeUnload(
     useCallback(
@@ -109,6 +114,7 @@ export default function AttractionFormPage() {
         : agent.Attractions.add;
       apiCaller(data)
         .then((response) => {
+          console.log('Setting new response');
           setAttractionFormData(response);
           toast.success('Attraction saved');
         })
