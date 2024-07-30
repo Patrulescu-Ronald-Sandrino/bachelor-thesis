@@ -59,7 +59,15 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
         builder.Entity<Reaction>(x =>
         {
             x.HasKey(r => new { r.UserId, r.AttractionId });
-            x.Property(r => r.Type).HasConversion<string>();
+            x.Property(r => r.Type).HasConversion<string>().IsRequired();
+        });
+
+        builder.Entity<Reaction>().ToTable(b =>
+        {
+            const string checkConstraintName = $"CK_{nameof(Reaction)}_{nameof(Reaction.Type)}";
+            var reactionTypes = EnumUtils.GetValues<ReactionType>().Select(x => $"'{x.ToString()}'");
+            var checkConstraint = $"[{nameof(Reaction.Type)}] IN ({string.Join(", ", reactionTypes)})";
+            b.HasCheckConstraint(checkConstraintName, checkConstraint);
         });
     }
 }

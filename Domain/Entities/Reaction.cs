@@ -8,5 +8,5 @@ public class Reaction
     public User User { get; set; }
     public Guid AttractionId { get; set; }
     public Attraction Attraction { get; set; }
-    public ReactionTypes Type { get; set; }
+    public ReactionType? Type { get; set; }
 }

@@ -1,3 +1,5 @@
+using Domain.Types;
+
 namespace Application.DTOs.Attraction;
 
 public class AttractionDto
@@ -13,6 +15,6 @@ public class AttractionDto
     public Guid AttractionTypeId { get; set; }
     public string AttractionType { get; set; }
     public Guid CreatorId { get; set; }
-
     public string[] Photos { get; set; }
+    public ReactionType? Reaction { get; set; }
 }

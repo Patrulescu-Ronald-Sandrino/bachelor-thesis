@@ -68,7 +68,7 @@ public class AttractionsController(
 
 
     [HttpPut("{id:guid}/react")]
-    public async Task<ActionResult> React(Guid id, ReactionTypes reactionType)
+    public async Task<ActionResult> React(Guid id, ReactionType reactionType)
     {
         await attractionsService.React(id, reactionType);
         return NoContent();

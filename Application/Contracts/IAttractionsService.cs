@@ -18,5 +18,5 @@ public interface IAttractionsService
 
     public Task<Attraction> DeleteAttraction(Guid id);
 
-    public Task React(Guid id, ReactionTypes reactionType);
+    public Task React(Guid id, ReactionType reactionType);
 }

@@ -1,6 +1,6 @@
 namespace Domain.Types;
 
-public enum ReactionTypes
+public enum ReactionType
 {
     Like,
     Dislike,

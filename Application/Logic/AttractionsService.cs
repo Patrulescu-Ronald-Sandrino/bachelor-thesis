@@ -24,11 +24,12 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
     {
         var currentUserId = authUtils.GetCurrentUser().Id;
         var queryable = context.Attractions
+            .AsNoTracking()
             .Sort(query.SortField, query.SortOrder)
             .Search(query.SearchField, query.SearchValue)
             .Filter(query.Types)
             .Where(a => !query.MadeByMe || a.CreatorId == currentUserId)
-            .ProjectTo<AttractionDto>(mapper.ConfigurationProvider)
+            .ProjectTo<AttractionDto>(mapper.ConfigurationProvider, new { currentUserId })
             .AsQueryable();
         return await PagedList<AttractionDto>.ToPagedList(queryable, query.PageNumber, query.PageSize);
     }
@@ -36,7 +37,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
     public async Task<AttractionDto> GetAttraction(Guid id)
     {
         var attraction = await GetOrThrow(id);
-        return mapper.Map<AttractionDto>(attraction);
+        return MapAttraction(attraction);
     }
 
     public async Task<AttractionDto> CreateAttraction(AttractionAddOrEditDto attractionDto)
@@ -52,7 +53,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         attraction.Photos = photos;
 
         await context.SaveChangesAsync();
-        return mapper.Map<AttractionDto>(attraction);
+        return MapAttraction(attraction);
     }
 
     public async Task<AttractionDto> UpdateAttraction(AttractionAddOrEditDto attractionDto)
@@ -65,7 +66,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         await UpdatePhotos(attraction, attractionDto.Photos);
 
         await context.SaveChangesAsync();
-        return mapper.Map<AttractionDto>(attraction);
+        return MapAttraction(attraction);
     }
 
     public async Task<Attraction> DeleteAttraction(Guid id)
@@ -77,7 +78,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         return attraction;
     }
 
-    public async Task React(Guid id, ReactionTypes reactionType)
+    public async Task React(Guid id, ReactionType reactionType)
     {
         await context.Attractions.FindAsyncOrThrow(id);
         var userId = authUtils.GetCurrentUser().Id;
@@ -93,6 +94,13 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         }
 
         await context.SaveChangesAsync();
+    }
+
+    private AttractionDto MapAttraction(Attraction attraction)
+    {
+        var currentUserId = authUtils.GetCurrentUser().Id;
+        return mapper.Map<Attraction, AttractionDto>(attraction, opts => opts.AfterMap((src, dest) => dest.Reaction =
+            src.Reactions.Where(r => r.UserId == currentUserId).Select(r => r.Type).FirstOrDefault()));
     }
 
     private async Task UpdatePhotos(Attraction attraction, AttractionPhotosDto[] newPhotosDto)
@@ -167,9 +175,11 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
 
     private async Task<Attraction> GetOrThrow(Guid id, bool tracking = false)
     {
+        var currentUserId = authUtils.GetCurrentUser().Id;
         var queryable = context.Attractions
             .Include(a => a.Country)
             .Include(a => a.AttractionType)
+            .Include(a => a.Reactions.Where(r => r.UserId == currentUserId))
             .Where(a => a.Id == id);
         queryable = tracking ? queryable.AsTracking() : queryable.AsNoTracking();
         var attraction = await queryable.FirstOrDefaultAsync();

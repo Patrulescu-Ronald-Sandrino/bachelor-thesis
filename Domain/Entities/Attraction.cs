@@ -26,4 +26,6 @@ public class Attraction
         get => PhotosCsv.Split(PhotoCsvSeparator).Where(x => x != string.Empty).ToList();
         set => PhotosCsv = string.Join(PhotoCsvSeparator, value);
     }
+
+    public List<Reaction> Reactions { get; set; } = [];
 }

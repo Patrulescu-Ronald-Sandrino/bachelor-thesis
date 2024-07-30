@@ -10,11 +10,14 @@ namespace Persistence;
 
 public static class Seed
 {
+    private const int AttractionsCount = 20;
     private static readonly string[] AttractionTypeNames = ["Museum", "Park", "Zoo", "Aquarium", "Amusement Park"];
     private static readonly string[] Usernames = ["bob", "tom", "jane"];
 
     private static readonly string[] Photos =
         ["https://i.imgur.com/7GgNR8y.jpeg", "https://i.imgur.com/MhiQZE0.png", "https://i.imgur.com/5qm6RFh.png"];
+
+    private static readonly Random Random = new();
 
     public static async Task SeedData(DataContext context, UserManager<User> userManager,
         ConfigurationManager configuration)
@@ -69,8 +72,7 @@ public static class Seed
             attractionTypes ??= context.AttractionTypes.ToList();
             countries ??= context.Countries.ToList();
 
-            var random = new Random();
-            var ids = GenerateOrderedIds(20);
+            var ids = GenerateOrderedIds(AttractionsCount);
             var users = await userManager.Users.ToListAsync();
             var attractions = Enumerable.Range(0, ids.Count).Select(i => new Attraction
             {
@@ -80,15 +82,36 @@ public static class Seed
                 Address = $"Address {i + 1:00}",
                 Website = i % 2 == 0 ? "https://www.google.com" : "https://example.com/",
                 City = $"City {i % 3 + 1}",
-                CountryId = countries.ElementAt(random.Next(context.Countries.Count())).Id,
-                AttractionTypeId = attractionTypes.ElementAt(random.Next(context.AttractionTypes.Count())).Id,
+                CountryId = countries.ElementAt(Random.Next(context.Countries.Count())).Id,
+                AttractionTypeId = attractionTypes.ElementAt(Random.Next(context.AttractionTypes.Count())).Id,
                 CreatorId = users.ElementAt(i % users.Count).Id,
             });
 
             await context.Attractions.AddRangeAsync(attractions);
         }
 
-        await context.SaveChangesAsync();
+        if (!context.Reactions.Any())
+        {
+            List<Reaction> reactions = [];
+            await foreach (var attraction in context.Attractions)
+            foreach (var user in userManager.Users)
+            {
+                if (Random.Next(1 + 1) == 0) continue;
+
+                reactions.Add(new Reaction
+                {
+                    AttractionId = attraction.Id,
+                    UserId = user.Id,
+                    Type = (ReactionType)Random.Next(Enum.GetValues<ReactionType>().Length),
+                });
+            }
+
+            if (reactions.Count == 0) await SeedData(context, userManager, configuration);
+            await context.Reactions.AddRangeAsync(reactions);
+        }
+
+        var result = await context.SaveChangesAsync();
+        Console.WriteLine($"Successfully seeded the database with {result} entities");
 
         return;
 
