@@ -90,7 +90,10 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         }
         else
         {
-            reaction.Type = reactionType;
+            if (reaction.Type == reactionType)
+                context.Reactions.Remove(reaction);
+            else
+                reaction.Type = reactionType;
         }
 
         await context.SaveChangesAsync();
