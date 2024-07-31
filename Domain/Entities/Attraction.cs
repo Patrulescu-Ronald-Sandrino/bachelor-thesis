@@ -28,4 +28,6 @@ public class Attraction
     }
 
     public List<Reaction> Reactions { get; set; } = [];
+
+    public List<AttractionComment> Comments { get; set; } = [];
 }

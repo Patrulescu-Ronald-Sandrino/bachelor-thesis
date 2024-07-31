@@ -12,6 +12,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
     public DbSet<Attraction> Attractions { get; init; }
     public DbSet<Country> Countries { get; init; }
     public DbSet<Reaction> Reactions { get; init; }
+    public DbSet<AttractionComment> AttractionComments { get; init; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -69,5 +70,10 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
             var checkConstraint = $"[{nameof(Reaction.Type)}] IN ({string.Join(", ", reactionTypes)})";
             b.HasCheckConstraint(checkConstraintName, checkConstraint);
         });
+
+        builder.Entity<AttractionComment>()
+            .HasOne(c => c.Attraction)
+            .WithMany(a => a.Comments)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
