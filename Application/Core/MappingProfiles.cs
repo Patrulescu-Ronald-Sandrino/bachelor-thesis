@@ -1,3 +1,4 @@
+using Application.DTOs;
 using Application.DTOs.Attraction;
 using AutoMapper;
 using Domain.Entities;
@@ -20,5 +21,8 @@ public class MappingProfiles : Profile
             .ForMember(d => d.Photos, o => o.Ignore());
         CreateMap<AttractionDto, Attraction>();
         CreateMap<AttractionType, AttractionType>();
+        CreateMap<AttractionComment, CommentDto>()
+            .ForMember(d => d.AuthorUsername, o => o.MapFrom(s => s.Author.UserName))
+            .ForMember(d => d.AuthorPhoto, o => o.MapFrom(s => s.Author.PhotoUrl));
     }
 }

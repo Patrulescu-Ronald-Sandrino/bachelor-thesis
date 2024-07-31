@@ -38,6 +38,7 @@ public static class ApplicationServicesExtension
         services.AddScoped<AuthUtils>();
         services.AddAutoMapper(typeof(MappingProfiles).Assembly);
         services.Configure<CloudinarySettings>(configuration.GetSection("Cloudinary"));
+        services.AddSignalR();
     }
 
     private static void SwaggerGenSetupAction(SwaggerGenOptions options)

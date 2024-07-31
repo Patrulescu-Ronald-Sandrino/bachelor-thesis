@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Application.Contracts;
 using Application.Contracts.Infrastructure;
+using Application.DTOs;
 using Application.DTOs.Attraction;
 using Application.DTOs.Attraction.Query;
 using Application.DTOs.Pagination;
@@ -97,6 +98,35 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         }
 
         await context.SaveChangesAsync();
+    }
+
+    public async Task<CommentDto> AddComment(Guid attractionId, string body)
+    {
+        var attraction = await GetOrThrow(attractionId, true);
+        var user = authUtils.GetCurrentUser();
+
+        var comment = new AttractionComment
+        {
+            Body = body,
+            Author = user,
+            Attraction = attraction,
+        };
+
+        attraction.Comments.Add(comment);
+
+        var success = await context.SaveChangesAsync() > 0;
+        if (!success) throw new Exception("Failed to add comment");
+
+        return mapper.Map<CommentDto>(comment);
+    }
+
+    public async Task<List<CommentDto>> GetComments(Guid attractionId)
+    {
+        var comments = await context.AttractionComments.Where(c => c.Attraction.Id == attractionId)
+            .OrderBy(c => c.CreatedAt)
+            .ProjectTo<CommentDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+        return comments;
     }
 
     private AttractionDto MapAttraction(Attraction attraction)

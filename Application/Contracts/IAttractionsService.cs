@@ -1,3 +1,4 @@
+using Application.DTOs;
 using Application.DTOs.Attraction;
 using Application.DTOs.Attraction.Query;
 using Application.DTOs.Pagination;
@@ -19,4 +20,8 @@ public interface IAttractionsService
     public Task<Attraction> DeleteAttraction(Guid id);
 
     public Task React(Guid id, ReactionType reactionType);
+
+    public Task<CommentDto> AddComment(Guid attractionId, string body);
+
+    public Task<List<CommentDto>> GetComments(Guid attractionId);
 }
