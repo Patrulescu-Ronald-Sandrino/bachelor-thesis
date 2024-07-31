@@ -14,7 +14,11 @@ export interface Attraction {
   attractionType?: string;
   creatorId: string;
   photos: string[];
+  reaction: Reaction | null;
 }
+
+export const Reactions = ['Like', 'Dislike'] as const;
+export type Reaction = (typeof Reactions)[number];
 
 export const SortFields = [
   'Name',

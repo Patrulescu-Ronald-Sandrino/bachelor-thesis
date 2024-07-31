@@ -7,6 +7,7 @@ import {
   Attraction,
   AttractionAddOrEditDto,
   AttractionFormData,
+  Reaction,
 } from '../models/attraction.ts';
 import { PageResponse } from '../models/pagination.ts';
 import { AttractionType } from '../models/attractionType.ts';
@@ -120,6 +121,8 @@ const Attractions = {
   update: (data: AttractionAddOrEditDto) =>
     requests.put<AttractionFormData>('attractions', createFormData(data)),
   delete: (id: string) => requests.delete(`attractions/${id}`),
+  react: (id: string, reaction: Reaction) =>
+    requests.put(`attractions/${id}/react?reactionType=${reaction}`, {}),
 };
 
 const AttractionTypes = {

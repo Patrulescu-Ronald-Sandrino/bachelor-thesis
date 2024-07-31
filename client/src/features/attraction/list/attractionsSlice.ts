@@ -1,6 +1,7 @@
 import {
   Attraction,
   AttractionParams,
+  Reaction,
   SearchField,
 } from '../../../app/models/attraction.ts';
 import { PageData } from '../../../app/models/pagination.ts';
@@ -66,6 +67,18 @@ export const fetchAttractionTypes = createAsyncThunk(
   },
 );
 
+export const react = createAsyncThunk<
+  void,
+  { attractionId: string; reaction: Reaction }
+>('attractions/react', async ({ attractionId, reaction }, thunkAPI) => {
+  try {
+    await agent.Attractions.react(attractionId, reaction);
+    thunkAPI.dispatch(setReaction({ attractionId, reaction }));
+  } catch (e) {
+    return thunkAPI.rejectWithValue({ error: e });
+  }
+});
+
 function initParams() {
   return {
     madeByMe: false,
@@ -121,6 +134,18 @@ export const attractionsSlice = createSlice({
     setPageData: (state, action: PayloadAction<PageData>) => {
       state.pageData = action.payload;
     },
+    setReaction(
+      state,
+      {
+        payload: { attractionId, reaction },
+      }: PayloadAction<{ attractionId: string; reaction: Reaction }>,
+    ) {
+      const attraction = state.attractions.find((a) => a.id === attractionId);
+      if (attraction) {
+        attraction.reaction =
+          attraction.reaction === reaction ? null : reaction;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAttractions.pending, (state) => {
@@ -154,4 +179,5 @@ export const {
   setSearchField,
   setPageNumber,
   setPageData,
+  setReaction,
 } = attractionsSlice.actions;

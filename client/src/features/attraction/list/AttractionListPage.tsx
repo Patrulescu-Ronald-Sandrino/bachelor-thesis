@@ -97,7 +97,7 @@ export default function AttractionListPage() {
           >
             <SelectList
               label="Page size"
-              selectedValue={attractionParams.pageSize}
+              selectedValue={attractionParams.pageSize!}
               items={PAGE_SIZES.map((x) => ({
                 label: x.toString(),
                 value: x,
