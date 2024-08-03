@@ -38,7 +38,7 @@ export default function AttractionDetailsPage() {
         {showComments ? (
           <>
             {attractionCard}
-            <Comments />
+            <Comments attractionId={attraction.id} />
           </>
         ) : (
           <>

@@ -1,14 +1,18 @@
 import { useController, UseControllerProps } from 'react-hook-form';
 import { TextField } from '@mui/material';
+import { KeyboardEventHandler } from 'react';
 
 interface Props extends UseControllerProps {
-  label: string;
+  label?: string;
   multiline?: boolean;
   rows?: number;
   type?: string;
+  placeholder?: string;
+  onKeyDown?: KeyboardEventHandler | undefined;
+  hideError?: boolean;
 }
 
-export default function FormTextInput(props: Props) {
+export default function FormTextInput({ hideError, ...props }: Props) {
   const { fieldState, field } = useController({ ...props, defaultValue: '' });
   return (
     <TextField
@@ -17,10 +21,12 @@ export default function FormTextInput(props: Props) {
       multiline={props.multiline}
       rows={props.rows}
       type={props.type}
+      placeholder={props.placeholder}
       fullWidth
       variant="outlined"
-      error={!!fieldState.error}
-      helperText={fieldState.error?.message}
+      error={hideError === true ? undefined : !!fieldState.error}
+      helperText={hideError === true ? undefined : fieldState.error?.message}
+      onKeyDown={props.onKeyDown}
     />
   );
 }
