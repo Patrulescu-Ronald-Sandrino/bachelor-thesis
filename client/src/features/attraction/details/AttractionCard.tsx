@@ -76,6 +76,7 @@ export function AttractionCard({ attraction, toggleComments }: Props) {
                       sx={{
                         overflowY: 'auto',
                         height: 100,
+                        whiteSpace: 'pre-wrap',
                       }}
                     >
                       {attraction.description}

@@ -76,11 +76,12 @@ public static class Seed
 
             var ids = GenerateOrderedIds(AttractionsCount);
             var users = await userManager.Users.ToListAsync();
+            var descriptions = await RandomTexts();
             var attractions = Enumerable.Range(0, ids.Count).Select(i => new Attraction
             {
                 Id = ids[i],
                 Name = $"Attraction {i + 1:00}",
-                Description = $"Description {i + 1:00}",
+                Description = string.Join("\n\n", descriptions.OrderBy(_ => Random.Next()).Take(Random.Next(3))),
                 Address = $"Address {i + 1:00}",
                 Website = i % 2 == 0 ? "https://www.google.com" : "https://example.com/",
                 City = $"City {i % 3 + 1}",
@@ -91,6 +92,9 @@ public static class Seed
             });
 
             await context.Attractions.AddRangeAsync(attractions);
+            await context.Reactions.ExecuteDeleteAsync();
+            await context.AttractionComments.ExecuteDeleteAsync();
+            await context.SaveChangesAsync();
         }
 
         if (!context.Reactions.Any())
@@ -127,12 +131,7 @@ public static class Seed
                     .AddSeconds(Random.Next(60));
             }
 
-            async Task<string> RandomText()
-            {
-                return await HttpClient.GetStringAsync(
-                    "https://baconipsum.com/api/?type=meat-and-filler&format=text&paras=" +
-                    (Random.Next(2) + 1));
-            }
+            var texts = await RandomTexts();
 
             await foreach (var attraction in context.Attractions)
             foreach (var user in userManager.Users)
@@ -143,7 +142,7 @@ public static class Seed
                 {
                     Attraction = attraction,
                     Author = user,
-                    Body = await RandomText(),
+                    Body = string.Join("\n\n", texts.OrderBy(_ => Random.Next()).Take(Random.Next(2) + 1)),
                     CreatedAt = RandomDate(),
                 });
             }
@@ -159,5 +158,11 @@ public static class Seed
 
         static List<Guid> GenerateOrderedIds(int count) =>
             Enumerable.Range(0, count).Select(_ => Guid.NewGuid()).Order().ToList();
+    }
+
+    private static async Task<List<string>> RandomTexts()
+    {
+        return (await HttpClient.GetStringAsync("https://loripsum.net/api/plaintext/20")).Split("\n")
+            .Where(x => x != "").ToList();
     }
 }
