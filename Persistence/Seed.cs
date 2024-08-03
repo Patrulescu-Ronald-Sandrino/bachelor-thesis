@@ -1,10 +1,9 @@
-using Config;
 using Domain.Entities;
 using Domain.Types;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Utils;
+using Persistence.Extensions;
 
 namespace Persistence;
 
@@ -35,7 +34,7 @@ public static class Seed
                 {
                     UserName = admin, Email = $"{admin}@test.com", PhotoUrl = "https://i.imgur.com/ZHwzVZ2.png",
                 },
-                configuration.GetOrThrow(ConfigKeys.PasswordAdmin));
+                configuration.GetOrThrow("PasswordAdmin"));
             var userAdmin = await userManager.FindByNameAsync(admin);
             await userManager.AddToRoleAsync(userAdmin!, nameof(UserRoles.Admin));
 
@@ -46,7 +45,7 @@ public static class Seed
                 {
                     UserName = username, Email = $"{username}@test.com", PhotoUrl = Photos[i % Photos.Length],
                 };
-                await userManager.CreateAsync(user, configuration.GetOrThrow(ConfigKeys.PasswordUser));
+                await userManager.CreateAsync(user, configuration.GetOrThrow("PasswordUser"));
                 await userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
             }
         }

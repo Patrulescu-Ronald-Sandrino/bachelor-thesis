@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 
-namespace Utils;
+namespace Persistence.Extensions;
 
 public static class ConfigurationManagerExtensions
 {

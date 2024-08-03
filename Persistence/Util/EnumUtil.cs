@@ -1,6 +1,6 @@
 namespace Utils;
 
-public static class EnumUtils
+public static class EnumUtil
 {
     public static IEnumerable<T> GetValues<T>()
     {

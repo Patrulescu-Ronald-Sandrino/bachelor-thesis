@@ -5,7 +5,6 @@ using Application.Contracts.Infrastructure;
 using Application.Core;
 using Application.Logic;
 using Application.Utils;
-using Config;
 using Domain.Entities;
 using Infrastructure.Photos;
 using Infrastructure.Security;
@@ -84,7 +83,7 @@ public static class ApplicationServicesExtension
             .AddEntityFrameworkStores<DataContext>()
             .AddSignInManager<SignInManager<User>>();
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration[ConfigKeys.TokenKey]!));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"]!));
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

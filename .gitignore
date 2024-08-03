@@ -484,5 +484,6 @@ $RECYCLE.BIN/
 *.swp
 
 *.db-*
+.fuse_hidden*
 
 appsettings.Development.json

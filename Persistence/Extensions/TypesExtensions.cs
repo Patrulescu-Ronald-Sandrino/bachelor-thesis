@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Utils;
+namespace Persistence.Extensions;
 
 public static partial class TypesExtensions
 {

@@ -2,6 +2,7 @@ using Domain.Entities;
 using Domain.Types;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Persistence.Extensions;
 using Utils;
 
 namespace Persistence;
@@ -18,7 +19,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
     {
         base.OnModelCreating(builder);
 
-        var roleTypes = EnumUtils.GetValues<UserRoles>().ToArray();
+        var roleTypes = EnumUtil.GetValues<UserRoles>().ToArray();
         var userRoles = Enumerable.Range(0, roleTypes.Length).Select(i => new UserRole
             {
                 Id = Guid.Empty.OfChar((char)(roleTypes[i] + '0')),
@@ -66,7 +67,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
         builder.Entity<Reaction>().ToTable(b =>
         {
             const string checkConstraintName = $"CK_{nameof(Reaction)}_{nameof(Reaction.Type)}";
-            var reactionTypes = EnumUtils.GetValues<ReactionType>().Select(x => $"'{x.ToString()}'");
+            var reactionTypes = EnumUtil.GetValues<ReactionType>().Select(x => $"'{x.ToString()}'");
             var checkConstraint = $"[{nameof(Reaction.Type)}] IN ({string.Join(", ", reactionTypes)})";
             b.HasCheckConstraint(checkConstraintName, checkConstraint);
         });
