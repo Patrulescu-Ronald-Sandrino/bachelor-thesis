@@ -31,7 +31,8 @@ function formatDate(date: Date) {
 }
 
 export default function Comments({ attractionId }: Props) {
-  const { comments, addComment, loading } = useAttractionComments(attractionId);
+  const { comments, addComment, loading, hasNoComments } =
+    useAttractionComments(attractionId);
   const {
     control,
     reset,
@@ -44,7 +45,7 @@ export default function Comments({ attractionId }: Props) {
   });
 
   return (
-    <Grid item xs={6}>
+    <Grid item xs={6} sx={{ height: '100%' }}>
       <Paper>
         <Typography variant="h5" align="center" py={1}>
           Comments
@@ -71,42 +72,46 @@ export default function Comments({ attractionId }: Props) {
           }}
         />
 
-        {loading && (
+        <Box maxHeight={627} sx={{ overflowY: 'auto' }}>
           <Box display="flex" justifyContent="center" padding={1}>
-            <CircularProgress />
+            {loading ? (
+              <CircularProgress />
+            ) : (
+              hasNoComments && <Typography>No comments yet</Typography>
+            )}
           </Box>
-        )}
 
-        {comments.map((comment) => (
-          <Box
-            key={comment.id}
-            display="flex"
-            alignItems="flex-start"
-            padding={2}
-            gap={2}
-          >
-            <Avatar src={comment.authorPhoto} />
+          {comments.map((comment) => (
+            <Box
+              key={comment.id}
+              display="flex"
+              alignItems="flex-start"
+              padding={2}
+              gap={2}
+            >
+              <Avatar src={comment.authorPhoto} />
 
-            <Box>
-              <Box display="flex" flexDirection="row" alignItems="center">
-                <Typography fontWeight="bold">
-                  {comment.authorUsername}
-                </Typography>
-                <Typography
-                  title={formatDate(comment.createdAt)}
-                  variant="caption"
-                  color="gray"
-                  paddingX={1}
-                >
-                  {formatDistanceToNow(comment.createdAt)} ago
+              <Box>
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Typography fontWeight="bold">
+                    {comment.authorUsername}
+                  </Typography>
+                  <Typography
+                    title={formatDate(comment.createdAt)}
+                    variant="caption"
+                    color="gray"
+                    paddingX={1}
+                  >
+                    {formatDistanceToNow(comment.createdAt)} ago
+                  </Typography>
+                </Box>
+                <Typography variant="body2" style={{ whiteSpace: 'pre-wrap' }}>
+                  {comment.body}
                 </Typography>
               </Box>
-              <Typography variant="body2" style={{ whiteSpace: 'pre-wrap' }}>
-                {comment.body}
-              </Typography>
             </Box>
-          </Box>
-        ))}
+          ))}
+        </Box>
       </Paper>
     </Grid>
   );

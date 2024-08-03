@@ -12,6 +12,7 @@ export default function useAttractionComments(attractionId: string) {
   const user = useAppSelector((state) => state.account.user);
   const [comments, setComments] = useState<ChatComment[]>([]);
   const [loading, setLoading] = useState(false);
+  const [hasNoComments, setHasNoComments] = useState(false);
   const [hubConnection, setHubConnection] = useState<HubConnection | null>(
     null,
   );
@@ -59,9 +60,11 @@ export default function useAttractionComments(attractionId: string) {
       });
       setComments(loadedComments);
       setLoading(false);
+      setHasNoComments(loadedComments.length === 0);
     });
 
     connection.on('ReceiveComment', (comment: ChatComment) => {
+      setHasNoComments(false);
       comment.createdAt = new Date(comment.createdAt);
       setComments((prevComments) => {
         return prevComments.some((c) => c.id === comment.id)
@@ -87,5 +90,5 @@ export default function useAttractionComments(attractionId: string) {
     }
   }
 
-  return { comments, addComment, loading };
+  return { comments, addComment, loading, hasNoComments };
 }
