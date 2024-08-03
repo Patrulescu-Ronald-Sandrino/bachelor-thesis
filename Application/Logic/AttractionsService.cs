@@ -76,6 +76,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         EnsureWriteAccess(attraction);
         context.Remove(attraction);
         await context.SaveChangesAsync();
+        await photoAccessor.DeletePhotos(attraction.Photos);
         return attraction;
     }
 

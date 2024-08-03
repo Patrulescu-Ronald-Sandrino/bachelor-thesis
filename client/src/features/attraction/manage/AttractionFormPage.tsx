@@ -121,6 +121,7 @@ export default function AttractionFormPage() {
           setAttractionFormData(response);
           setIsSubmitSuccessful(true);
           toast.success('Attraction saved');
+          router.navigate(`/attractions/${response.attraction?.id}`);
         })
         .catch((error) => {
           setIsSubmitSuccessful(false);
