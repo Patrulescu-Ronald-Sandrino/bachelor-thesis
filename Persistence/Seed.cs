@@ -69,6 +69,7 @@ public static class Seed
 
         if (!context.Attractions.Any())
         {
+            var photos = await File.ReadAllLinesAsync(Path.Join("..", "Persistence", "pictures.txt"));
             attractionTypes ??= context.AttractionTypes.ToList();
             countries ??= context.Countries.ToList();
 
@@ -85,6 +86,7 @@ public static class Seed
                 CountryId = countries.ElementAt(Random.Next(context.Countries.Count())).Id,
                 AttractionTypeId = attractionTypes.ElementAt(Random.Next(context.AttractionTypes.Count())).Id,
                 CreatorId = users.ElementAt(i % users.Count).Id,
+                Photos = photos.OrderBy(_ => Random.Next()).Take(Random.Next(5) + 1).ToList(),
             });
 
             await context.Attractions.AddRangeAsync(attractions);
