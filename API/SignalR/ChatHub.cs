@@ -5,11 +5,11 @@ namespace API.SignalR;
 
 public class ChatHub(IAttractionsService attractionsService) : Hub
 {
-    public async Task AddComment(Guid attractionId, string body)
+    public async Task SendComment(Comment commentDto)
     {
-        var comment = await attractionsService.AddComment(attractionId, body);
+        var comment = await attractionsService.AddComment(commentDto.AttractionId, commentDto.Body);
 
-        await Clients.Group(attractionId.ToString()).SendAsync("ReceiveComment", comment);
+        await Clients.Group(commentDto.AttractionId.ToString()).SendAsync("ReceiveComment", comment);
     }
 
     public override async Task OnConnectedAsync()
@@ -19,5 +19,11 @@ public class ChatHub(IAttractionsService attractionsService) : Hub
         await Groups.AddToGroupAsync(Context.ConnectionId, attractionId.ToString());
         var comments = await attractionsService.GetComments(attractionId);
         await Clients.Caller.SendAsync("LoadComments", comments);
+    }
+
+    public class Comment
+    {
+        public Guid AttractionId { get; set; }
+        public string Body { get; set; }
     }
 }

@@ -123,7 +123,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
     public async Task<List<CommentDto>> GetComments(Guid attractionId)
     {
         var comments = await context.AttractionComments.Where(c => c.Attraction.Id == attractionId)
-            .OrderBy(c => c.CreatedAt)
+            .OrderByDescending(c => c.CreatedAt)
             .ProjectTo<CommentDto>(mapper.ConfigurationProvider)
             .ToListAsync();
         return comments;

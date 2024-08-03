@@ -34,7 +34,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => { c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true"); });
 }
 
-app.UseCors(options => { options.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4000"); });
+app.UseCors(options =>
+{
+    options.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4000");
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
