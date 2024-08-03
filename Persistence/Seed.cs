@@ -18,6 +18,7 @@ public static class Seed
         ["https://i.imgur.com/7GgNR8y.jpeg", "https://i.imgur.com/MhiQZE0.png", "https://i.imgur.com/5qm6RFh.png"];
 
     private static readonly Random Random = new();
+    private static readonly HttpClient HttpClient = new();
 
     public static async Task SeedData(DataContext context, UserManager<User> userManager,
         ConfigurationManager configuration)
@@ -110,6 +111,45 @@ public static class Seed
 
             if (reactions.Count == 0) await SeedData(context, userManager, configuration);
             await context.Reactions.AddRangeAsync(reactions);
+        }
+
+        if (!context.AttractionComments.Any())
+        {
+            List<AttractionComment> comments = [];
+            var startCreatedBy = new DateTime(2000, 1, 1);
+            var rangeCreatedBy = (DateTime.Now - startCreatedBy).Days;
+
+            DateTime RandomDate()
+            {
+                return startCreatedBy.AddDays(Random.Next(rangeCreatedBy - 1))
+                    .AddHours(Random.Next(24))
+                    .AddMinutes(Random.Next(60))
+                    .AddSeconds(Random.Next(60));
+            }
+
+            async Task<string> RandomText()
+            {
+                return await HttpClient.GetStringAsync(
+                    "https://baconipsum.com/api/?type=meat-and-filler&format=text&paras=" +
+                    (Random.Next(2) + 1));
+            }
+
+            await foreach (var attraction in context.Attractions)
+            foreach (var user in userManager.Users)
+            {
+                if (Random.Next(1 + 1) == 0) continue;
+
+                comments.Add(new AttractionComment
+                {
+                    Attraction = attraction,
+                    Author = user,
+                    Body = await RandomText(),
+                    CreatedAt = RandomDate(),
+                });
+            }
+
+            if (comments.Count == 0) await SeedData(context, userManager, configuration);
+            await context.AttractionComments.AddRangeAsync(comments);
         }
 
         var result = await context.SaveChangesAsync();
