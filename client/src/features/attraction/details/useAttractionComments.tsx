@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 export default function useAttractionComments(attractionId: string) {
   const user = useAppSelector((state) => state.account.user);
   const [comments, setComments] = useState<ChatComment[]>([]);
+  const [loading, setLoading] = useState(false);
   const [hubConnection, setHubConnection] = useState<HubConnection | null>(
     null,
   );
@@ -31,6 +32,8 @@ export default function useAttractionComments(attractionId: string) {
 
   useEffect(() => {
     if (hubConnection) return;
+
+    setLoading(true);
 
     const connection = new HubConnectionBuilder()
       .withUrl(`http://localhost:7000/chat?attractionId=${attractionId}`, {
@@ -55,6 +58,7 @@ export default function useAttractionComments(attractionId: string) {
         comment.createdAt = new Date(comment.createdAt + 'Z');
       });
       setComments(loadedComments);
+      setLoading(false);
     });
 
     connection.on('ReceiveComment', (comment: ChatComment) => {
@@ -73,12 +77,15 @@ export default function useAttractionComments(attractionId: string) {
 
   async function addComment(body: string) {
     try {
-      await hubConnection?.invoke('SendComment', { attractionId, body });
+      setLoading(true);
+      await hubConnection
+        ?.invoke('SendComment', { attractionId, body })
+        .finally(() => setLoading(false));
     } catch (error) {
       toast.error('Error adding comment');
       console.log(error);
     }
   }
 
-  return { comments, addComment };
+  return { comments, addComment, loading };
 }

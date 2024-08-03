@@ -1,4 +1,11 @@
-import { Avatar, Box, Grid, Paper, Typography } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  CircularProgress,
+  Grid,
+  Paper,
+  Typography,
+} from '@mui/material';
 import useAttractionComments from './useAttractionComments.tsx';
 import { formatDistanceToNow } from 'date-fns';
 import { Control, useForm } from 'react-hook-form';
@@ -24,7 +31,7 @@ function formatDate(date: Date) {
 }
 
 export default function Comments({ attractionId }: Props) {
-  const { comments, addComment } = useAttractionComments(attractionId);
+  const { comments, addComment, loading } = useAttractionComments(attractionId);
   const {
     control,
     reset,
@@ -63,6 +70,12 @@ export default function Comments({ attractionId }: Props) {
             }
           }}
         />
+
+        {loading && (
+          <Box display="flex" justifyContent="center" padding={1}>
+            <CircularProgress />
+          </Box>
+        )}
 
         {comments.map((comment) => (
           <Box
