@@ -1,4 +1,5 @@
 using Application.Contracts;
+using Application.Logic.Extensions;
 using AutoMapper;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;

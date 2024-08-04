@@ -3,6 +3,8 @@ using System.Text;
 using API.DTOs;
 using API.Services;
 using Application.Contracts.Infrastructure;
+using Application.Exceptions;
+using Application.Util;
 using Domain.Entities;
 using Domain.Types;
 using Microsoft.AspNetCore.Authorization;
@@ -26,10 +28,9 @@ public class AccountController(
         var user = await userManager.FindByEmailAsync(loginDto.Email);
         if (user == null) return Unauthorized("Invalid email or password");
 
-        if (!user.EmailConfirmed) return Unauthorized("Email not confirmed");
+        if (!user.EmailConfirmed) throw new ValidationException("Email not confirmed");
 
         var result = await signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
-
         if (!result.Succeeded) return Unauthorized("Invalid email or password");
 
         return ToUserDto(user);
@@ -39,23 +40,22 @@ public class AccountController(
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterDto registerDto)
     {
-        var user = new User { Email = registerDto.Email, UserName = registerDto.Username, };
+        var user = new User { Email = registerDto.Email, UserName = registerDto.Username };
 
         var result = await userManager.CreateAsync(user, registerDto.Password);
 
         if (!result.Succeeded)
         {
+            var validator = new Validator();
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError(error.Code, error.Description);
+                validator.Add(error.Code, error.Description);
             }
 
-            return ValidationProblem();
+            validator.Run();
         }
 
         await userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
-
-        if (!result.Succeeded) return BadRequest("Problem registering user");
 
         await SendEmailConfirmation(user);
 
@@ -67,12 +67,12 @@ public class AccountController(
     public async Task<IActionResult> VerifyEmail(string email, string token)
     {
         var user = await userManager.FindByEmailAsync(email);
-        if (user == null) return Unauthorized("Invalid email");
+        if (user == null) throw new ValidationException("Invalid email");
 
         var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
         var result = await userManager.ConfirmEmailAsync(user, decodedToken);
 
-        if (!result.Succeeded) return BadRequest("Could not verify email address");
+        if (result.Errors.Any(x => x.Code == "InvalidToken")) throw new ValidationException("Invalid token");
 
         return Ok("Email confirmed - you can now login");
     }
@@ -82,9 +82,9 @@ public class AccountController(
     public async Task<IActionResult> ResendEmailConfirmation(string email)
     {
         var user = await userManager.FindByEmailAsync(email);
-        if (user == null) return Unauthorized("Invalid email");
+        if (user == null) throw new ValidationException("Invalid email");
 
-        if (user.EmailConfirmed) return Ok("Email already confirmed");
+        if (user.EmailConfirmed) throw new ValidationException("Email already confirmed");
 
         await SendEmailConfirmation(user);
         return Ok("Email verification link resent");

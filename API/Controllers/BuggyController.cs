@@ -1,4 +1,4 @@
-using Domain.Exceptions;
+using Application.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,12 +25,6 @@ public class BuggyController : BaseApiController
         return BadRequest("This is a bad request");
     }
 
-    [HttpGet("bad-request/actual")]
-    public ActionResult GetBadRequestActual()
-    {
-        throw new BadRequestException("This is a bad request");
-    }
-
     [HttpGet("validation-error")]
     public ActionResult GetValidationError()
     {
@@ -42,7 +36,7 @@ public class BuggyController : BaseApiController
     [HttpGet("validation-error/actual")]
     public ActionResult GetValidationErrorActual()
     {
-        throw new ValidationException(new Dictionary<string, string[]>
+        throw new ValidationException("One or more validation errors occurred.", new Dictionary<string, string[]>
         {
             { "Problem1", ["This is the first error", "This is the second error"] },
             { "Problem2", ["This is the third error", "This is the forth error"] }

@@ -4,7 +4,6 @@ using Application.Contracts;
 using Application.Contracts.Infrastructure;
 using Application.Core;
 using Application.Logic;
-using Application.Utils;
 using Domain.Entities;
 using Infrastructure.Email;
 using Infrastructure.Photos;
@@ -36,7 +35,7 @@ public static class ApplicationServicesExtension
         services.AddScoped<IUserAccessor, UserAccessor>();
         services.AddScoped<IPhotoAccessor, PhotoAccessor>();
         services.AddScoped<IEmailSender, EmailSender>();
-        services.AddScoped<AuthUtils>();
+        services.AddScoped<UserService>();
         services.AddAutoMapper(typeof(MappingProfiles).Assembly);
         services.Configure<CloudinarySettings>(configuration.GetSection("Cloudinary"));
         services.AddSignalR();

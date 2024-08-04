@@ -5,12 +5,12 @@ using Application.DTOs;
 using Application.DTOs.Attraction;
 using Application.DTOs.Attraction.Query;
 using Application.DTOs.Pagination;
+using Application.Exceptions;
 using Application.Logic.Extensions;
-using Application.Utils;
+using Application.Util;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Entities;
-using Domain.Exceptions;
 using Domain.Types;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -18,12 +18,16 @@ using Persistence;
 
 namespace Application.Logic;
 
-public class AttractionsService(DataContext context, IMapper mapper, AuthUtils authUtils, IPhotoAccessor photoAccessor)
+public class AttractionsService(
+    DataContext context,
+    IMapper mapper,
+    UserService userService,
+    IPhotoAccessor photoAccessor)
     : IAttractionsService
 {
     public async Task<PagedList<AttractionDto>> GetAttractions(AttractionsQuery query)
     {
-        var currentUserId = authUtils.GetCurrentUser().Id;
+        var currentUserId = userService.GetCurrentUser().Id;
         var queryable = context.Attractions
             .AsNoTracking()
             .Sort(query.SortField, query.SortOrder)
@@ -47,7 +51,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
         await ValidateAttraction(attractionDto, attraction);
 
         attraction.Id = Guid.NewGuid();
-        attraction.CreatorId = authUtils.GetCurrentUser().Id;
+        attraction.CreatorId = userService.GetCurrentUser().Id;
         await context.Attractions.AddAsync(attraction);
 
         var photos = await photoAccessor.UploadPhotos(attractionDto.Photos!.Select(ap => ap.NewPhoto).ToArray());
@@ -83,7 +87,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
     public async Task React(Guid id, ReactionType reactionType)
     {
         await context.Attractions.FindAsyncOrThrow(id);
-        var userId = authUtils.GetCurrentUser().Id;
+        var userId = userService.GetCurrentUser().Id;
         var reaction = await context.Reactions.FindAsync(userId, id);
 
         if (reaction == null)
@@ -104,7 +108,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
     public async Task<CommentDto> AddComment(Guid attractionId, string body)
     {
         var attraction = await GetOrThrow(attractionId, true);
-        var user = authUtils.GetCurrentUser();
+        var user = userService.GetCurrentUser();
 
         var comment = new AttractionComment
         {
@@ -132,7 +136,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
 
     private AttractionDto MapAttraction(Attraction attraction)
     {
-        var currentUserId = authUtils.GetCurrentUser().Id;
+        var currentUserId = userService.GetCurrentUser().Id;
         return mapper.Map<Attraction, AttractionDto>(attraction, opts => opts.AfterMap((src, dest) => dest.Reaction =
             src.Reactions.Where(r => r.UserId == currentUserId).Select(r => r.Type).FirstOrDefault()));
     }
@@ -209,7 +213,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
 
     private async Task<Attraction> GetOrThrow(Guid id, bool tracking = false)
     {
-        var currentUserId = authUtils.GetCurrentUser().Id;
+        var currentUserId = userService.GetCurrentUser().Id;
         var queryable = context.Attractions
             .Include(a => a.Country)
             .Include(a => a.AttractionType)
@@ -223,7 +227,7 @@ public class AttractionsService(DataContext context, IMapper mapper, AuthUtils a
 
     private void EnsureWriteAccess(Attraction attraction)
     {
-        if (attraction.CreatorId != authUtils.GetCurrentUser().Id)
+        if (attraction.CreatorId != userService.GetCurrentUser().Id)
             throw new ForbiddenException();
     }
 

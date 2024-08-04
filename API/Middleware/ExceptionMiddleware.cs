@@ -1,6 +1,6 @@
 using System.Net.Mime;
 using System.Text.Json;
-using Domain.Exceptions;
+using Application.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Middleware;
@@ -18,29 +18,25 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         }
         catch (Exception e)
         {
-            var response = new ProblemDetails();
-            logger.LogError(e, "");
             context.Response.ContentType = MediaTypeNames.Application.Json;
-
-            response.Title = e.Message;
+            var response = new ProblemDetails { Title = e.Message };
 
             switch (e)
             {
                 case ForbiddenException:
                     response.Status = StatusCodes.Status403Forbidden;
                     break;
-                case BadRequestException:
-                    response.Status = StatusCodes.Status400BadRequest;
-                    break;
                 case NotFoundException:
                     response.Status = StatusCodes.Status404NotFound;
                     break;
                 case ValidationException ve:
                     response.Status = StatusCodes.Status422UnprocessableEntity;
-                    response.Extensions.Add("errors", ve.Errors);
+                    if (ve.Errors.Count > 0) response.Extensions.Add("errors", ve.Errors);
                     break;
                 default:
                 {
+                    logger.LogError(e, "");
+
                     response.Status = StatusCodes.Status500InternalServerError;
                     response.Detail = e.StackTrace;
 

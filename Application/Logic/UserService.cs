@@ -2,9 +2,9 @@ using Application.Contracts.Infrastructure;
 using Domain.Entities;
 using Persistence;
 
-namespace Application.Utils;
+namespace Application.Logic;
 
-public class AuthUtils(DataContext context, IUserAccessor userAccessor)
+public class UserService(DataContext context, IUserAccessor userAccessor)
 {
     public User GetCurrentUser()
     {

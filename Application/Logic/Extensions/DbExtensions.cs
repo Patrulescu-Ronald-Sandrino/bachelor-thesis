@@ -1,7 +1,7 @@
-using Domain.Exceptions;
+using Application.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
-namespace Persistence;
+namespace Application.Logic.Extensions;
 
 public static class DbExtensions
 {
