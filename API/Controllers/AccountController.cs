@@ -49,7 +49,9 @@ public class AccountController(
             var validator = new Validator();
             foreach (var error in result.Errors)
             {
-                validator.Add(error.Code, error.Description);
+                foreach (var field in new[] { "Username", "Email", "Password" })
+                    if (error.Description.Contains(field))
+                        validator.Add(field.ToLower(), error.Description);
             }
 
             validator.Run();
@@ -78,8 +80,8 @@ public class AccountController(
     }
 
     [AllowAnonymous]
-    [HttpGet("resend-email-confirmation")]
-    public async Task<IActionResult> ResendEmailConfirmation(string email)
+    [HttpGet("resend-email-verification")]
+    public async Task<IActionResult> ResendEmailVerification(string email)
     {
         var user = await userManager.FindByEmailAsync(email);
         if (user == null) throw new ValidationException("Invalid email");
@@ -95,7 +97,7 @@ public class AccountController(
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
         token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
-        var verifyUrl = $"{Request.Headers.Origin}/account/verify-email?email={user.Email}&token={token}";
+        var verifyUrl = $"{Request.Headers.Origin}/verify-email?email={user.Email}&token={token}";
         var message =
             $"<p>Please click the below link to verify your email address:</p><p><a href='{verifyUrl}'>Click to verify email</a></p>";
         await emailSender.SendEmailAsync(user.Email, "Attractions - Please verify email", message);
