@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/configureStore.ts';
+import { useAppDispatch } from '../store/configureStore.ts';
 import { fetchCurrentUser } from '../../features/account/accountSlice.ts';
 import Loadable from './Loadable.tsx';
 import { ToastContainer } from 'react-toastify';
@@ -12,8 +12,6 @@ import {
   CssBaseline,
   ThemeProvider,
 } from '@mui/material';
-
-const noHeaderPaths = ['/', '/login', '/register'];
 
 function useTheme() {
   const isDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -39,10 +37,7 @@ function useTheme() {
 function App() {
   const dispatch = useAppDispatch();
   const { pathname } = useLocation();
-  const { user } = useAppSelector((state) => state.account);
   const [loading, setLoading] = useState(true);
-
-  const showHeader = !noHeaderPaths.includes(pathname) && !!user;
 
   const initApp = useCallback(async () => {
     try {
@@ -62,7 +57,7 @@ function App() {
       <CssBaseline />
       <ToastContainer position="bottom-right" hideProgressBar theme="colored" />
       <Loadable loading={loading}>
-        {showHeader && (
+        {pathname !== '/' && (
           <Header darkMode={darkMode} handleThemeChange={handleThemeChange} />
         )}
         <Container sx={{ mt: 3 }}>
