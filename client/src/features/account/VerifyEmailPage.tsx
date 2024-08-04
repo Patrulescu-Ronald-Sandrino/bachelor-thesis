@@ -12,7 +12,7 @@ import { LoadingButton } from '@mui/lab';
 import Loadable from '../../app/layout/Loadable.tsx';
 import { useAppSelector } from '../../app/store/configureStore.ts';
 
-export default function VerifyPage() {
+export default function VerifyEmailPage() {
   const { user } = useAppSelector((state) => state.account);
   const [searchParams] = useSearchParams();
   const location = useLocation();
@@ -31,7 +31,7 @@ export default function VerifyPage() {
     agent.Account.verifyEmail(email, token)
       .then(() => {
         toast.success('Email verified successfully');
-        navigate('/login');
+        navigate(`/login?email=${email}`);
       })
       .catch((error) => {
         toast.error(error);

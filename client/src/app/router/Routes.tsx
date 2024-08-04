@@ -10,7 +10,7 @@ import LoginPage from '../../features/account/LoginPage.tsx';
 import RegisterPage from '../../features/account/RegisterPage.tsx';
 import ServerError from '../errors/ServerError.tsx';
 import NotFound from '../errors/NotFound.tsx';
-import VerifyPage from '../../features/account/VerifyPage.tsx';
+import VerifyEmailPage from '../../features/account/VerifyEmailPage.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -20,7 +20,7 @@ export const router = createBrowserRouter([
       { path: '/', element: <HomePage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
-      { path: 'verify-email', element: <VerifyPage /> },
+      { path: 'verify-email', element: <VerifyEmailPage /> },
       { path: 'server-error', element: <ServerError /> },
       {
         element: <RequireAuth />,

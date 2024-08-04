@@ -14,10 +14,11 @@ import {
   useAppDispatch,
   useAppSelector,
 } from '../../app/store/configureStore.ts';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 
 export default function LoginPage() {
+  const [searchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -27,6 +28,7 @@ export default function LoginPage() {
     formState: { isSubmitting, errors, isValid },
   } = useForm({
     mode: 'onTouched',
+    defaultValues: { email: searchParams.get('email') || '', password: '' },
   });
   const { user } = useAppSelector((state) => state.account);
 
