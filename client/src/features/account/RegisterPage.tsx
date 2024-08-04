@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import {
   Box,
@@ -16,10 +16,12 @@ import { forEachError } from '../../app/util/form.ts';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const {
     register,
     handleSubmit,
     setError,
+    getValues,
     formState: { isSubmitting, errors, isValid },
   } = useForm({
     mode: 'onTouched',
@@ -44,12 +46,14 @@ export default function RegisterPage() {
         component="form"
         onSubmit={handleSubmit((data) =>
           agent.Account.register(data)
-            .then(() => {
-              toast.success('Registration successful - you can now login');
-              navigate('/login');
+            .then((response) => {
+              toast.success(response);
+              navigate(`/verify-email?email=${getValues('email')}`, {
+                state: { from: location },
+              });
             })
-            .catch((error) => {
-              forEachError(error, (field, message) =>
+            .catch((errors) => {
+              forEachError(errors, (field, message) =>
                 setError(field, { message: message }),
               );
             }),
@@ -81,6 +85,7 @@ export default function RegisterPage() {
           error={!!errors.email}
           helperText={errors?.email?.message as string}
           autoComplete="email"
+          type="email"
         />
         <TextField
           margin="normal"

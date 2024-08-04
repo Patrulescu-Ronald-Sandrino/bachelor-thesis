@@ -49,8 +49,7 @@ export const fetchAttractions = createAsyncThunk<
     thunkAPI.dispatch(setPageData(response.pageData));
     return response.items;
   } catch (e) {
-    console.log(e);
-    return thunkAPI.rejectWithValue({ error: e });
+    return thunkAPI.rejectWithValue({ error: 'Failed to fetch' });
   }
 });
 

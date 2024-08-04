@@ -72,14 +72,13 @@ axios.interceptors.response.use(
     const { data, status } = error.response as AxiosResponse;
     switch (status) {
       case 422:
-      case 400:
-        if (data.errors) {
-          throw data.errors;
-        }
         toast.error(data.title);
+        if (data.errors) throw data.errors;
         break;
       case 401:
-        toast.error(data.title);
+        if (typeof data === 'string' && data.length > 0) {
+          toast.error(data);
+        }
         break;
       case 403:
         toast.error('You are not allowed to do that!');
@@ -106,8 +105,16 @@ const requests = {
 
 const Account = {
   login: (body: object) => requests.post<User>('account/login', body),
-  register: (values: object) => requests.post<User>('account/register', values),
+  register: (values: object) =>
+    requests.post<string>('account/register', values),
   currentUser: () => requests.get<User>('account'),
+  verifyEmail: (email: string, token: string) =>
+    requests.post<string>(
+      `account/verify-email?email=${email}&token=${token}`,
+      {},
+    ),
+  resendEmailVerification: (email: string) =>
+    requests.get<string>(`account/resend-email-verification?email=${email}`),
 };
 
 const Attractions = {
