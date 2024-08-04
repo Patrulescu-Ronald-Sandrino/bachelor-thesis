@@ -6,6 +6,7 @@ using Application.Core;
 using Application.Logic;
 using Application.Utils;
 using Domain.Entities;
+using Infrastructure.Email;
 using Infrastructure.Photos;
 using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -34,6 +35,7 @@ public static class ApplicationServicesExtension
         services.AddScoped<ICountryService, CountryService>();
         services.AddScoped<IUserAccessor, UserAccessor>();
         services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+        services.AddScoped<IEmailSender, EmailSender>();
         services.AddScoped<AuthUtils>();
         services.AddAutoMapper(typeof(MappingProfiles).Assembly);
         services.Configure<CloudinarySettings>(configuration.GetSection("Cloudinary"));
@@ -73,6 +75,7 @@ public static class ApplicationServicesExtension
                 options.User.RequireUniqueEmail = true;
 
                 options.Password.RequireNonAlphanumeric = false;
+                options.SignIn.RequireConfirmedEmail = true;
                 if (!isDevelopment) return;
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
@@ -81,7 +84,8 @@ public static class ApplicationServicesExtension
             })
             .AddRoles<UserRole>()
             .AddEntityFrameworkStores<DataContext>()
-            .AddSignInManager<SignInManager<User>>();
+            .AddSignInManager<SignInManager<User>>()
+            .AddDefaultTokenProviders();
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"]!));
 
