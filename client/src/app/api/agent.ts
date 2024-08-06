@@ -115,6 +115,10 @@ const Account = {
     ),
   resendEmailVerification: (email: string) =>
     requests.get<string>(`account/resend-email-verification?email=${email}`),
+  forgotPassword: (email: string) =>
+    requests.post<string>(`account/forgot-password?email=${email}`, {}),
+  resetPassword: (email: string, password: string, token: string) =>
+    requests.post<string>(`account/reset-password`, { email, password, token }),
 };
 
 const Attractions = {

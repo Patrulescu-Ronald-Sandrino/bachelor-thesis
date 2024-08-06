@@ -10,9 +10,14 @@ interface Props extends UseControllerProps {
   placeholder?: string;
   onKeyDown?: KeyboardEventHandler | undefined;
   hideError?: boolean;
+  fullWidth?: boolean;
 }
 
-export default function FormTextInput({ hideError, ...props }: Props) {
+export default function FormTextInput({
+  hideError,
+  fullWidth,
+  ...props
+}: Props) {
   const { fieldState, field } = useController({ ...props, defaultValue: '' });
   return (
     <TextField
@@ -22,7 +27,7 @@ export default function FormTextInput({ hideError, ...props }: Props) {
       rows={props.rows}
       type={props.type}
       placeholder={props.placeholder}
-      fullWidth
+      fullWidth={fullWidth}
       variant="outlined"
       error={hideError === true ? undefined : !!fieldState.error}
       helperText={hideError === true ? undefined : fieldState.error?.message}

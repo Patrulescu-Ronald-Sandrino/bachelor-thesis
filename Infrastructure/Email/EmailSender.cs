@@ -23,7 +23,7 @@ public class EmailSender(IConfiguration config) : IEmailSender
         {
             From = new MailAddress(config["mail-email"]),
             To = { toEmail },
-            Subject = subject,
+            Subject = subject + $" [{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff zzz}]",
             Body = html,
             IsBodyHtml = true,
         };

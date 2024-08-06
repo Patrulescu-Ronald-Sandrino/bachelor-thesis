@@ -111,6 +111,10 @@ public static class ApplicationServicesExtension
                     },
                 };
             });
+
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+            options.TokenLifespan = TimeSpan.FromMinutes(10));
+
         services.AddScoped<TokenService>();
     }
 }

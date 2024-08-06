@@ -1,7 +1,6 @@
 import {
   Box,
   Container,
-  Grid,
   Link,
   Paper,
   TextField,
@@ -17,6 +16,10 @@ import {
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 
+function emailToParam(value: string) {
+  return value === '' ? '' : `?email=${value}`;
+}
+
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
@@ -25,6 +28,7 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { isSubmitting, errors, isValid },
   } = useForm({
     mode: 'onTouched',
@@ -104,13 +108,18 @@ export default function LoginPage() {
         >
           Sign In
         </LoadingButton>
-        <Grid container>
-          <Grid item>
-            <Link href={'/register'} underline={'none'}>
-              Don't have an account? Register
-            </Link>
-          </Grid>
-        </Grid>
+        <Box display="flex" justifyContent="space-between">
+          <Link href={'/register'} underline={'none'}>
+            Don't have an account? Register
+          </Link>
+
+          <Link
+            href={`/forgot-password${emailToParam(getValues('email'))}`}
+            underline={'none'}
+          >
+            Forgot password? Reset
+          </Link>
+        </Box>
       </Box>
     </Container>
   );
