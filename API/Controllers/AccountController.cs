@@ -68,26 +68,17 @@ public class AccountController(
     [HttpGet("resend-email-verification")]
     public async Task<IActionResult> ResendEmailVerification(string email)
     {
-        var user = await GetUserForEmailVerification(email);
+        var user = await GetUserAndExpectEmailConfirmedIs(email, false);
         await SendEmailConfirmation(user);
         return Ok("Email verification link resent");
-    }
-
-    private async Task<User> GetUserForEmailVerification(string email)
-    {
-        var user = await userManager.FindByEmailAsync(email);
-        if (user == null) throw new ValidationException("Invalid email");
-
-        if (user.EmailConfirmed) throw new ValidationException("Email already confirmed");
-        return user;
     }
 
     private async Task SendEmailConfirmation(User user)
     {
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-        token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
-        var verifyUrl = $"{Request.Headers.Origin}/verify-email?email={user.Email}&token={token}";
+        var verifyUrl = $"{Request.Headers.Origin}/verify-email?email={user.Email}&token={encodedToken}";
         var message =
             $"<p>Please click the below link to verify your email address:</p><p><a href='{verifyUrl}'>Click to verify email</a></p>";
         await emailSender.SendEmailAsync(user.Email, "Attractions - Please verify email", message);
@@ -97,7 +88,7 @@ public class AccountController(
     [HttpPost("verify-email")]
     public async Task<IActionResult> VerifyEmail(string email, string token)
     {
-        var user = await GetUserForEmailVerification(email);
+        var user = await GetUserAndExpectEmailConfirmedIs(email, false);
 
         var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
         var result = await userManager.ConfirmEmailAsync(user, decodedToken);
@@ -111,8 +102,7 @@ public class AccountController(
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ForgotPassword(string email)
     {
-        var user = await userManager.FindByEmailAsync(email);
-        if (user == null) throw new ValidationException("Invalid email");
+        var user = await GetUserAndExpectEmailConfirmedIs(email, true);
 
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
         token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
@@ -129,8 +119,7 @@ public class AccountController(
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
     {
-        var user = await userManager.FindByEmailAsync(resetPasswordDto.Email);
-        if (user == null) throw new ValidationException("Invalid email");
+        var user = await GetUserAndExpectEmailConfirmedIs(resetPasswordDto.Email, true);
 
         var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(resetPasswordDto.Token));
         var result = await userManager.ResetPasswordAsync(user, decodedToken, resetPasswordDto.Password);
@@ -138,6 +127,17 @@ public class AccountController(
         if (result.Errors.Any(x => x.Code == "InvalidToken")) throw new ValidationException("Invalid token");
 
         return Ok("Password reset successful");
+    }
+
+    private async Task<User> GetUserAndExpectEmailConfirmedIs(string email, bool emailConfirmed)
+    {
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null) throw new ValidationException("Invalid email");
+
+        if (user.EmailConfirmed != emailConfirmed)
+            throw new ValidationException(user.EmailConfirmed ? "Email already confirmed" : "Email not confirmed");
+
+        return user;
     }
 
     [HttpGet]
