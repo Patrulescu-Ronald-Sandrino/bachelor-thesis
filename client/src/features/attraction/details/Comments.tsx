@@ -70,6 +70,7 @@ export default function Comments({ attractionId }: Props) {
                 );
             }
           }}
+          fullWidth
         />
 
         <Box maxHeight={627} sx={{ overflowY: 'auto' }}>

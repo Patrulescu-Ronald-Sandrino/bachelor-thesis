@@ -181,6 +181,7 @@ export default function AttractionFormPage() {
               control={control as unknown as Control}
               label="Name"
               name="name"
+              fullWidth
             />
           </Grid>
 
@@ -207,6 +208,7 @@ export default function AttractionFormPage() {
               control={control as unknown as Control}
               label="City"
               name="city"
+              fullWidth
             />
           </Grid>
 
@@ -215,6 +217,7 @@ export default function AttractionFormPage() {
               control={control as unknown as Control}
               label="Address (Street, Number, Etc)"
               name="address"
+              fullWidth
             />
           </Grid>
 
@@ -223,6 +226,7 @@ export default function AttractionFormPage() {
               control={control as unknown as Control}
               label="Website"
               name="website"
+              fullWidth
             />
           </Grid>
 
@@ -233,6 +237,7 @@ export default function AttractionFormPage() {
               control={control as unknown as Control}
               name="description"
               label="Description"
+              fullWidth
             />
           </Grid>
 
