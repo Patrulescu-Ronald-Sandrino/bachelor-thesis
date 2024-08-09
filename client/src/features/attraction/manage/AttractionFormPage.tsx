@@ -16,7 +16,7 @@ import { router } from '../../../app/router/Routes.tsx';
 import { toast } from 'react-toastify';
 import {
   AttractionAddOrEditDto,
-  AttractionPhotosDto,
+  AttractionPhotoDto,
 } from '../../../app/models/attraction.ts';
 import FormPhotos from './FormPhotos.tsx';
 import { forEachError } from '../../../app/util/form.ts';
@@ -88,10 +88,10 @@ export default function AttractionFormPage() {
     if (attraction && !watchPhotos && !isDirty) reset(attraction);
     return () => {
       if (!watchPhotos) return;
-      watchPhotos.forEach((attractionPhotosDto: AttractionPhotosDto) => {
-        if (attractionPhotosDto.preview) {
-          URL.revokeObjectURL(attractionPhotosDto.preview);
-          attractionPhotosDto.preview = undefined;
+      watchPhotos.forEach((photo: AttractionPhotoDto) => {
+        if (photo.preview && !photo.newPhoto) {
+          URL.revokeObjectURL(photo.preview);
+          photo.preview = undefined;
         }
       });
     };
@@ -117,7 +117,6 @@ export default function AttractionFormPage() {
         : agent.Attractions.add;
       apiCaller(data)
         .then((response) => {
-          console.log('Setting new response');
           setAttractionFormData(response);
           setIsSubmitSuccessful(true);
           toast.success('Attraction saved');
@@ -126,9 +125,13 @@ export default function AttractionFormPage() {
         .catch((error) => {
           setIsSubmitSuccessful(false);
           forEachError(error, (field, message) =>
-            setError(field as FieldPath<AttractionAddOrEditDto>, {
-              message: message,
-            }),
+            setError(
+              field as FieldPath<AttractionAddOrEditDto>,
+              {
+                message: message.join('\n'),
+              },
+              { shouldFocus: true },
+            ),
           );
         })
         .finally(() => setIsLoading(false));

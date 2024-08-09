@@ -54,7 +54,11 @@ export default function RegisterPage() {
             })
             .catch((errors) => {
               forEachError(errors, (field, message) =>
-                setError(field, { message: message }),
+                setError(
+                  field,
+                  { message: message.join('\n') },
+                  { shouldFocus: true },
+                ),
               );
             }),
         )}

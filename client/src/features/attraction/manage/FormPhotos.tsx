@@ -21,7 +21,7 @@ import { generate, swap } from '../../../app/util/array.ts';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
   AttractionAddOrEditDto,
-  AttractionPhotosDto,
+  AttractionPhotoDto,
 } from '../../../app/models/attraction.ts';
 import { PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -53,7 +53,7 @@ interface Props extends UseControllerProps<AttractionAddOrEditDto> {
 export default function FormPhotos({ setValue, ...props }: Props) {
   const { errors } = useFormState({ ...props });
   const { fields, append } = useFieldArray({ ...props, name: 'photos' });
-  const [newPhoto, setNewPhoto] = useState<AttractionPhotosDto | null>(null);
+  const [newPhoto, setNewPhoto] = useState<AttractionPhotoDto | null>(null);
   const [cropper, setCropper] = useState<Cropper>();
 
   const clearPreview = useCallback(() => {
@@ -62,7 +62,7 @@ export default function FormPhotos({ setValue, ...props }: Props) {
     }
   }, [newPhoto]);
 
-  function createPhoto(file: File): AttractionPhotosDto {
+  function createPhoto(file: File): AttractionPhotoDto {
     return {
       newPhoto: file,
       preview: URL.createObjectURL(file),
@@ -71,10 +71,24 @@ export default function FormPhotos({ setValue, ...props }: Props) {
   }
 
   useEffect(() => {
+    fields.forEach((photo, i) => {
+      if (photo.newPhoto && !photo.preview) {
+        setValue(`photos.${i}.preview`, URL.createObjectURL(photo.newPhoto));
+        photo.preview = URL.createObjectURL(photo.newPhoto);
+      }
+    });
+  }, [fields, setValue]);
+
+  useEffect(() => {
     return () => {
       clearPreview();
+      fields.forEach((photo) => {
+        if (photo.newPhoto && photo.preview) {
+          URL.revokeObjectURL(photo.preview);
+        }
+      });
     };
-  }, [clearPreview]);
+  }, [clearPreview, fields]);
 
   const changePhoto = useCallback((file: File | null) => {
     if (!file) {
@@ -97,6 +111,10 @@ export default function FormPhotos({ setValue, ...props }: Props) {
     if (cropper) {
       cropper.getCroppedCanvas().toBlob((blob) => {
         if (blob) {
+          // const file = newPhoto?.newPhoto?.name
+          //   ? new File([blob], newPhoto?.newPhoto?.name)
+          //   : (blob as File);
+          // append(createPhoto(file));
           append(createPhoto(blob as File));
           changePhoto(null);
         }
@@ -129,33 +147,39 @@ export default function FormPhotos({ setValue, ...props }: Props) {
       <Typography>Photos</Typography>
 
       <Grid container spacing={2}>
-        {fields.map((photo, currentIndex) => (
-          <Grid item xs={3} key={photo.id}>
-            <Card>
-              <CardMedia
-                image={photo.preview || photo.currentUrl || ''}
-                style={{ height: 0, paddingTop: '56.25%' }}
-              />
-              <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-                <SelectList
-                  label="Position"
-                  selectedValue={currentIndex + 1}
-                  items={generate(1, fields.length)}
-                  onChange={(newPosition) =>
-                    swapPhotos(currentIndex, newPosition)
-                  }
+        {fields.map((photo, currentIndex) => {
+          return (
+            <Grid item xs={3} key={photo.id}>
+              <Card>
+                <CardMedia
+                  image={photo.preview || photo.currentUrl || ''}
+                  style={{ height: 0, paddingTop: '56.25%' }}
                 />
-                <IconButton onClick={() => deletePhoto(currentIndex)}>
-                  <DeleteIcon />
-                </IconButton>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
+
+                <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+                  <SelectList
+                    label="Position"
+                    selectedValue={currentIndex + 1}
+                    items={generate(1, fields.length)}
+                    onChange={(newPosition) =>
+                      swapPhotos(currentIndex, newPosition)
+                    }
+                  />
+
+                  <IconButton onClick={() => deletePhoto(currentIndex)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </CardActions>
+              </Card>
+            </Grid>
+          );
+        })}
       </Grid>
 
       <FormHelperText error sx={{ mt: 1 }}>
-        {errors.photos?.message}
+        {errors.photos?.message
+          ?.split('\n')
+          .map((message) => <div>{message}</div>)}
       </FormHelperText>
 
       <Grid container marginTop={5}>

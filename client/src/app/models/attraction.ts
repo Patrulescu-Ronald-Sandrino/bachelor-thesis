@@ -62,7 +62,7 @@ export interface AttractionFormData {
   attraction: Attraction | null;
 }
 
-export type AttractionPhotosDto = {
+export type AttractionPhotoDto = {
   newPhoto?: File | null;
   currentUrl?: string | null;
   preview?: string | null;
@@ -77,5 +77,5 @@ export interface AttractionAddOrEditDto {
   city: string;
   countryId: string;
   attractionTypeId: string;
-  photos: AttractionPhotosDto[];
+  photos: AttractionPhotoDto[];
 }

@@ -5,7 +5,7 @@ import { AttractionType } from '../../../app/models/attractionType.ts';
 import {
   AttractionAddOrEditDto,
   AttractionFormData,
-  AttractionPhotosDto,
+  AttractionPhotoDto,
 } from '../../../app/models/attraction.ts';
 
 export default function useAttractionFormData(id?: string) {
@@ -27,7 +27,7 @@ export default function useAttractionFormData(id?: string) {
           currentUrl: url,
           newPhoto: null,
           preview: null,
-        }) as AttractionPhotosDto,
+        }) as AttractionPhotoDto,
     );
     const attractionForEdit = {
       ...response.attraction,

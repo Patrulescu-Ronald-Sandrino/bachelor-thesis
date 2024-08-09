@@ -59,7 +59,10 @@ axios.interceptors.request.use((config) => {
 
 axios.interceptors.response.use(
   async (response) => {
-    if (import.meta.env.DEV) await sleep();
+    if (import.meta.env.DEV) {
+      console.log('[agent.ts] response', response);
+      await sleep();
+    }
 
     const pagination = response.headers['pagination'];
     if (pagination) {
@@ -69,6 +72,10 @@ axios.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
+    if (import.meta.env.DEV) {
+      console.log('[agent.ts] response error', error);
+    }
+
     const { data, status } = error.response as AxiosResponse;
     switch (status) {
       case 422:
