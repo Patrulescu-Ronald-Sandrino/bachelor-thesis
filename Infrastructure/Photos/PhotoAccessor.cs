@@ -10,15 +10,18 @@ namespace Infrastructure.Photos;
 public class PhotoAccessor : IPhotoAccessor
 {
     private readonly Cloudinary _cloudinary;
+    private readonly IEmailSender _emailSender;
 
-    public PhotoAccessor(IOptions<CloudinarySettings> config)
+    public PhotoAccessor(IOptions<CloudinarySettings> config, IEmailSender emailSender)
     {
+        _emailSender = emailSender;
         var account = new Account(
             config.Value.CloudName,
             config.Value.ApiKey,
             config.Value.ApiSecret
         );
         _cloudinary = new Cloudinary(account);
+        _emailSender = emailSender;
     }
 
 
@@ -47,11 +50,13 @@ public class PhotoAccessor : IPhotoAccessor
             if (errors == null) return;
             Console.WriteLine("Failed to delete photos:");
             Console.WriteLine(errors);
+            _emailSender.SendDevEmail("Failed to delete photos", errors);
         }
         catch (Exception e)
         {
             Console.WriteLine("Failed to run delete photos:");
             Console.WriteLine(e);
+            _emailSender.SendDevEmail("Failed to run delete photos", e.Message);
         }
     }
 
