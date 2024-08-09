@@ -179,7 +179,7 @@ export default function FormPhotos({ setValue, ...props }: Props) {
       <FormHelperText error sx={{ mt: 1 }}>
         {errors.photos?.message
           ?.split('\n')
-          .map((message) => <div>{message}</div>)}
+          .map((message) => <span key={message}>{message}</span>)}
       </FormHelperText>
 
       <Grid container marginTop={5}>
