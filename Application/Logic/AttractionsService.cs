@@ -48,13 +48,14 @@ public class AttractionsService(
     public async Task<AttractionDto> CreateAttraction(AttractionAddOrEditDto attractionDto)
     {
         var attraction = mapper.Map<Attraction>(attractionDto);
+        attractionDto.Id = Guid.Empty;
         await ValidateAttraction(attractionDto, attraction);
 
         attraction.Id = Guid.NewGuid();
         attraction.CreatorId = userService.GetCurrentUser().Id;
         await context.Attractions.AddAsync(attraction);
 
-        var photos = await photoAccessor.UploadPhotos(attractionDto.Photos!.Select(ap => ap.NewPhoto).ToArray());
+        var photos = await photoAccessor.UploadPhotos(attractionDto.Photos.Select(ap => ap.NewPhoto).ToArray());
         attraction.Photos = photos;
 
         await context.SaveChangesAsync();
@@ -236,11 +237,35 @@ public class AttractionsService(
         var taskAttractionType = context.AttractionTypes.FindAsync(attraction.AttractionTypeId).AsTask();
         var taskCountry = context.Countries.FindAsync(attraction.CountryId).AsTask();
         await Task.WhenAll(taskAttractionType, taskCountry);
-        var allPhotosAreNull = attractionDto.Photos.All(p => p.CurrentUrl == null && p.NewPhoto == null);
-        new Validator()
+
+        var validator = ValidateAttractionPhotos(attractionDto.Photos, attractionDto.Id == Guid.Empty);
+
+        validator
             .Add(taskAttractionType.Result == null, "AttractionTypeId", ["Attraction type not found"])
             .Add(taskCountry.Result == null, "CountryId", ["Country not found"])
-            .Add(attractionDto.Photos == null || allPhotosAreNull, "Photos", ["At least one photo is required"])
             .Run();
+    }
+
+    private Validator ValidateAttractionPhotos(AttractionPhotosDto[] photos, bool isAdd)
+    {
+        var photoExists =
+            ((Predicate<AttractionPhotosDto>)(isAdd ? _ => false : photo => photo.CurrentUrl != null)).Or(photo =>
+                photo.NewPhoto != null);
+        var hasPhoto = false;
+        var errors = new List<string>();
+
+        foreach (var (photo, position) in photos.Select((photo, i) => (photo, i + 1)))
+        {
+            hasPhoto = hasPhoto || photoExists(photo);
+            if (photo.CurrentUrl == null && photo.NewPhoto != null && photoAccessor.IsTooLarge(photo.NewPhoto))
+                errors.Add($"Photo {position} is too big");
+        }
+
+        var validator = new Validator();
+        validator
+            .Add(hasPhoto == false, "Photos", ["At least one photo is required"])
+            .Add(errors.Count > 0, "Photos", errors.ToArray());
+
+        return validator;
     }
 }

@@ -25,6 +25,11 @@ public class PhotoAccessor : IPhotoAccessor
     }
 
 
+    public bool IsTooLarge(IFormFile photo)
+    {
+        return photo.Length > 10485760;
+    }
+
     public async Task<List<string>> UploadPhotos(IFormFile[] photos)
     {
         var (success, results, exceptions) = await TaskHelper.RunAsync(photos.Select(UploadPhoto).ToList());
@@ -62,7 +67,6 @@ public class PhotoAccessor : IPhotoAccessor
 
     private async Task<string> UploadPhoto(IFormFile file)
     {
-        if (file.Length <= 0) return null;
         await using var stream = file.OpenReadStream();
         var uploadParams = new ImageUploadParams
         {

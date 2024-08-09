@@ -10,5 +10,5 @@ public class AttractionAddOrEditDto
     public string City { get; set; }
     public Guid CountryId { get; set; }
     public Guid AttractionTypeId { get; set; }
-    public AttractionPhotosDto[] Photos { get; set; }
+    public AttractionPhotosDto[] Photos { get; set; } = [];
 }

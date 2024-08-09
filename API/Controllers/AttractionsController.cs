@@ -27,6 +27,7 @@ public class AttractionsController(
         return await attractionsService.GetAttraction(id);
     }
 
+    [DisableRequestSizeLimit]
     [HttpPost]
     public async Task<ActionResult<AttractionFormData>> CreateAttraction(
         [FromForm] AttractionAddOrEditDto attractionDto)
@@ -35,6 +36,7 @@ public class AttractionsController(
         return await GetAttractionFormData(attraction.Id);
     }
 
+    [DisableRequestSizeLimit]
     [HttpPut]
     public async Task<ActionResult<AttractionFormData>> UpdateAttraction(
         [FromForm] AttractionAddOrEditDto attractionDto)
