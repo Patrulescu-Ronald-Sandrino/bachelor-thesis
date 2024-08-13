@@ -11,15 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
-            <HintPath>..\..\..\..\..\usr\share\dotnet\shared\Microsoft.AspNetCore.App\8.0.7\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.AspNetCore.Http.Features">
-            <HintPath>..\..\..\..\..\usr\share\dotnet\shared\Microsoft.AspNetCore.App\8.0.7\Microsoft.AspNetCore.Http.Features.dll</HintPath>
-        </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="CloudinaryDotNet" Version="1.26.2"/>
     </ItemGroup>
 
