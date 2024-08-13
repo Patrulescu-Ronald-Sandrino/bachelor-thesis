@@ -24,8 +24,7 @@ export default function ProfilePage() {
         .finally(() => setLoading(false));
   }, [username]);
 
-  if (loading)
-    return <Loadable loading={loading} message="Loading profile..." />;
+  if (loading) return <Loadable loading={loading} target="profile" />;
   if (!profile) return <NotFound />;
 
   return (
