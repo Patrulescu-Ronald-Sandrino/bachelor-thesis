@@ -32,10 +32,11 @@ public static class ApplicationServicesExtension
         services.AddScoped<IAttractionTypesService, AttractionTypesService>();
         services.AddScoped<IAttractionsService, AttractionsService>();
         services.AddScoped<ICountryService, CountryService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserAccessor, UserAccessor>();
         services.AddScoped<IPhotoAccessor, PhotoAccessor>();
         services.AddScoped<IEmailSender, EmailSender>();
-        services.AddScoped<UserService>();
+        services.AddScoped<AuthUtil>();
         services.AddAutoMapper(typeof(MappingProfiles).Assembly);
         services.Configure<CloudinarySettings>(configuration.GetSection("Cloudinary"));
         services.AddSignalR();

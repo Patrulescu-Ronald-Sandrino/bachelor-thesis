@@ -14,7 +14,7 @@ public static class Seed
     private static readonly string[] Usernames = ["bob", "tom", "jane"];
 
     private static readonly string[] Photos =
-        ["https://i.imgur.com/7GgNR8y.jpeg", "https://i.imgur.com/MhiQZE0.png", "https://i.imgur.com/5qm6RFh.png"];
+        ["https://i.imgur.com/1wkJifZ.png", "https://i.imgur.com/VZGtOMf.png", "https://i.imgur.com/akQ0DAu.png"];
 
     private static readonly Random Random = new();
     private static readonly HttpClient HttpClient = new();
@@ -32,7 +32,7 @@ public static class Seed
             await userManager.CreateAsync(
                 new User
                 {
-                    UserName = admin, Email = $"{admin}@test.com", PhotoUrl = "https://i.imgur.com/ZHwzVZ2.png",
+                    UserName = admin, Email = $"{admin}@test.com", Photo = "https://i.imgur.com/mutuyxN.png",
                 },
                 configuration.GetOrThrow("PasswordAdmin"));
             var userAdmin = await userManager.FindByNameAsync(admin);
@@ -43,7 +43,7 @@ public static class Seed
             {
                 var user = new User
                 {
-                    UserName = username, Email = $"{username}@test.com", PhotoUrl = Photos[i % Photos.Length],
+                    UserName = username, Email = $"{username}@test.com", Photo = Photos[i % Photos.Length],
                 };
                 await userManager.CreateAsync(user, configuration.GetOrThrow("PasswordUser"));
                 await userManager.AddToRoleAsync(user, UserRoles.Member.ToString());

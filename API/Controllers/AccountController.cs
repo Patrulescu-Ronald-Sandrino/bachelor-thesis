@@ -155,7 +155,7 @@ public class AccountController(
             Username = user.UserName,
             Email = user.Email,
             Token = tokenService.CreateToken(user),
-            Image = user.PhotoUrl,
+            Photo = user.Photo,
         };
     }
 }

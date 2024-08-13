@@ -44,7 +44,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
 
         builder.Entity<Attraction>()
             .HasOne(a => a.Creator)
-            .WithMany()
+            .WithMany(u => u.CreatedAttractions)
             .HasForeignKey(a => a.CreatorId)
             .IsRequired();
 
@@ -76,5 +76,9 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
             .HasOne(c => c.Attraction)
             .WithMany(a => a.Comments)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<AttractionComment>()
+            .HasOne(c => c.Author)
+            .WithMany(u => u.AttractionComments);
     }
 }
