@@ -21,7 +21,8 @@ export default function AttractionDetailsPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <Loadable loading={loading} />;
+  if (loading)
+    return <Loadable loading={loading} message="Loading attraction..." />;
   if (!attraction) return <NotFound />;
 
   function toggleComments() {

@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { store } from '../store/configureStore.ts';
 import { toast } from 'react-toastify';
 import { router } from '../router/Routes.tsx';
-import { User } from '../models/user.ts';
+import { UserDto, UserProfile } from '../models/user.ts';
 import {
   Attraction,
   AttractionAddOrEditDto,
@@ -111,10 +111,10 @@ const requests = {
 };
 
 const Account = {
-  login: (body: object) => requests.post<User>('account/login', body),
+  login: (body: object) => requests.post<UserDto>('account/login', body),
   register: (values: object) =>
     requests.post<string>('account/register', values),
-  currentUser: () => requests.get<User>('account'),
+  currentUser: () => requests.get<UserDto>('account'),
   verifyEmail: (email: string, token: string) =>
     requests.post<string>(
       `account/verify-email?email=${email}&token=${token}`,
@@ -147,10 +147,15 @@ const AttractionTypes = {
   list: () => requests.get<AttractionType[]>('attractionTypes'),
 };
 
+const User = {
+  profile: (username: string) => requests.get<UserProfile>(`users/${username}`),
+};
+
 const agent = {
   Account,
   Attractions,
   AttractionTypes,
+  User,
 };
 
 export default agent;

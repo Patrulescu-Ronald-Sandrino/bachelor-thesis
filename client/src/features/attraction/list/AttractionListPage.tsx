@@ -40,7 +40,7 @@ export default function AttractionListPage() {
   } = useAttractions();
 
   return (
-    <Loadable loading={!attractionTypesLoaded}>
+    <Loadable loading={!attractionTypesLoaded} message="Loading attractions...">
       <Grid container columnSpacing={4}>
         <Grid item xs={3}>
           <Paper sx={{ mb: 2 }}>

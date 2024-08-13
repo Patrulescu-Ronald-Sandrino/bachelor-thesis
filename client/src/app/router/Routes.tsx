@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
             element: <AttractionFormPage />,
           })),
           { path: 'attractions/:id', element: <AttractionDetailsPage /> },
-          { path: 'profile', element: <ProfilePage /> },
+          { path: 'user/:username', element: <ProfilePage /> },
         ],
       },
       ...['not-found', '*'].map((path) => ({ path, element: <NotFound /> })),

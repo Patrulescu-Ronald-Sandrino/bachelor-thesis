@@ -4,7 +4,7 @@ import {
   isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { User } from '../../app/models/user.ts';
+import { UserDto } from '../../app/models/user.ts';
 import { FieldValues } from 'react-hook-form';
 import agent from '../../app/api/agent.ts';
 import { router } from '../../app/router/Routes.tsx';
@@ -12,14 +12,14 @@ import { toast } from 'react-toastify';
 import { shallowCopy } from '../../app/util/object.ts';
 
 interface AccountState {
-  user: User | null;
+  user: UserDto | null;
 }
 
 const initialState: AccountState = {
   user: null,
 };
 
-export const signInUser = createAsyncThunk<User, FieldValues>(
+export const signInUser = createAsyncThunk<UserDto, FieldValues>(
   'account/signInUser',
   async (data, thunkApi) => {
     try {
@@ -34,7 +34,7 @@ export const signInUser = createAsyncThunk<User, FieldValues>(
   },
 );
 
-export const fetchCurrentUser = createAsyncThunk<User>(
+export const fetchCurrentUser = createAsyncThunk<UserDto>(
   'account/fetchCurrentUser',
   async (_, thunkApi) => {
     thunkApi.dispatch(setUser(JSON.parse(localStorage.getItem('user')!)));
@@ -60,7 +60,7 @@ function getRolesFromClaims(claims: { [index: string]: string | string[] }) {
   return typeof roleOrRoles === 'string' ? [roleOrRoles] : roleOrRoles;
 }
 
-const getUserWithTokenData = (user: User) => {
+const getUserWithTokenData = (user: UserDto) => {
   const userWithTokenData = shallowCopy(user);
   const claims = JSON.parse(atob(user.token.split('.')[1]));
 
@@ -77,9 +77,9 @@ export const accountSlice = createSlice({
     signOut: (state) => {
       state.user = null;
       localStorage.removeItem('user');
-      router.navigate('/');
+      void router.navigate('/');
     },
-    setUser: (state, action: PayloadAction<User>) => {
+    setUser: (state, action: PayloadAction<UserDto>) => {
       state.user = getUserWithTokenData(action.payload);
     },
   },
@@ -88,14 +88,14 @@ export const accountSlice = createSlice({
       state.user = null;
       localStorage.removeItem('user');
       toast.error('Session expired - please login again');
-      router.navigate('/');
+      void router.navigate('/');
     });
     builder.addCase(signInUser.rejected, (_, action) => {
       throw action.payload;
     });
     builder.addMatcher(
       isAnyOf(signInUser.fulfilled, fetchCurrentUser.fulfilled),
-      (state, action: PayloadAction<User>) => {
+      (state, action: PayloadAction<UserDto>) => {
         state.user = getUserWithTokenData(action.payload);
       },
     );
