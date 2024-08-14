@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using Application.Contracts;
 using Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
@@ -22,5 +23,12 @@ public class UsersController(IUserService userService) : BaseApiController
     public async Task DeletePhoto()
     {
         await userService.DeletePhoto();
+    }
+
+    [HttpPut("bio")]
+    [Consumes(MediaTypeNames.Text.Plain)]
+    public async Task UpdateBio([FromBody] string bio)
+    {
+        await userService.UpdateBio(bio);
     }
 }

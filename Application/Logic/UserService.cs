@@ -45,9 +45,22 @@ public class UserService(DataContext context, AuthUtil authUtil, IPhotoAccessor 
     {
         var user = authUtil.GetCurrentUser();
 
-        if (user.Photo != null) await photoAccessor.DeletePhotos([user.Photo]);
+        if (user.Photo == null) return;
+        await photoAccessor.DeletePhotos([user.Photo]);
 
         user.Photo = null;
+        var success = await context.SaveChangesAsync() > 0;
+
+        if (!success) throw new Exception("Problem saving changes");
+    }
+
+    public async Task UpdateBio(string bio)
+    {
+        var user = authUtil.GetCurrentUser();
+
+        if (bio == user.Bio) return;
+
+        user.Bio = bio;
         var success = await context.SaveChangesAsync() > 0;
 
         if (!success) throw new Exception("Problem saving changes");

@@ -27,12 +27,14 @@ public static class Seed
 
         if (!userManager.Users.Any())
         {
+            var descriptions = await RandomTexts();
             // add admin user
             const string admin = "admin";
             await userManager.CreateAsync(
                 new User
                 {
                     UserName = admin, Email = $"{admin}@test.com", Photo = "https://i.imgur.com/mutuyxN.png",
+                    Bio = string.Join("\n\n", descriptions.OrderBy(_ => Random.Next()).Take(Random.Next(3))),
                 },
                 configuration.GetOrThrow("PasswordAdmin"));
             var userAdmin = await userManager.FindByNameAsync(admin);
@@ -44,6 +46,7 @@ public static class Seed
                 var user = new User
                 {
                     UserName = username, Email = $"{username}@test.com", Photo = Photos[i % Photos.Length],
+                    Bio = string.Join("\n\n", descriptions.OrderBy(_ => Random.Next()).Take(Random.Next(3))),
                 };
                 await userManager.CreateAsync(user, configuration.GetOrThrow("PasswordUser"));
                 await userManager.AddToRoleAsync(user, UserRoles.Member.ToString());

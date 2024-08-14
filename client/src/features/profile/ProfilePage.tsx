@@ -30,11 +30,11 @@ export default function ProfilePage() {
   return (
     <Grid container rowGap={2}>
       <Grid item xs={12}>
-        <ProfileHeader user={profile} />
+        <ProfileHeader profile={profile} />
       </Grid>
 
       <Grid item xs={12}>
-        <ProfileContent />
+        <ProfileContent profile={profile} />
       </Grid>
     </Grid>
   );

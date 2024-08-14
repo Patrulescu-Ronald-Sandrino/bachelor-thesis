@@ -5,6 +5,7 @@ import { AboutTab } from './tabs/AboutTab.tsx';
 import { FriendsTab } from './tabs/FriendsTab.tsx';
 import { CollectionsTab } from './tabs/CollectionsTab.tsx';
 import CreatedAttractionsTab from './tabs/CreatedAttractionsTab.tsx';
+import { UserProfile } from '../../app/models/user.ts';
 
 const TAB_TYPES = [
   'about',
@@ -14,22 +15,27 @@ const TAB_TYPES = [
 ] as const;
 type TAB_TYPE = (typeof TAB_TYPES)[number];
 
-const tabs: {
-  [key in TAB_TYPE]: { name: string; component: React.JSX.Element };
-} = {
-  about: { name: 'About', component: <AboutTab /> },
-  friends: { name: 'Friends', component: <FriendsTab /> },
-  collections: { name: 'Collections', component: <CollectionsTab /> },
-  'created-attractions': {
-    name: 'Created attractions',
-    component: <CreatedAttractionsTab />,
-  },
-};
 const defaultTab = 'about' as TAB_TYPE;
 
 const tabParamName = 'tab';
 
-export default function ProfileContent() {
+interface Props {
+  profile: UserProfile;
+}
+
+export default function ProfileContent({ profile }: Props) {
+  const tabs: {
+    [key in TAB_TYPE]: { name: string; component: React.JSX.Element };
+  } = {
+    about: { name: 'About', component: <AboutTab profile={profile} /> },
+    friends: { name: 'Friends', component: <FriendsTab /> },
+    collections: { name: 'Collections', component: <CollectionsTab /> },
+    'created-attractions': {
+      name: 'Created attractions',
+      component: <CreatedAttractionsTab />,
+    },
+  };
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Get the current tab from query params

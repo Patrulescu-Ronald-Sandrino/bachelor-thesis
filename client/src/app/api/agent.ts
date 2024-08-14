@@ -152,6 +152,8 @@ const User = {
   changePhoto: (photo: Blob) =>
     requests.post<string>('users/photo', createFormData({ photo })),
   deletePhoto: () => requests.delete('users/photo'),
+  updateBio: (bio: string) =>
+    axios.put('users/bio', bio, { headers: { 'Content-Type': 'text/plain' } }),
 };
 
 const agent = {

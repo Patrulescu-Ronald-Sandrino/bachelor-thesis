@@ -13,15 +13,13 @@ import { toast } from 'react-toastify';
 import { setUserPhoto } from '../account/accountSlice.ts';
 
 interface Props {
-  user: UserProfile;
+  profile: UserProfile;
 }
 
-export default function ProfileHeader({ user }: Props) {
+export default function ProfileHeader({ profile }: Props) {
   const dispatch = useAppDispatch();
-  const loggedInUsername = useAppSelector(
-    (state) => state.account.user?.username,
-  );
-  const isSelf = loggedInUsername === user.username;
+  const user = useAppSelector((state) => state.account.user);
+  const isSelf = user?.username === profile.username;
 
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -31,7 +29,7 @@ export default function ProfileHeader({ user }: Props) {
     agent.User.changePhoto(file)
       .then((response) => {
         dispatch(setUserPhoto(response));
-        user.photo = response;
+        profile.photo = response;
         toast.success('Photo changed');
       })
       .catch((e) => {
@@ -46,7 +44,7 @@ export default function ProfileHeader({ user }: Props) {
     agent.User.deletePhoto()
       .then(() => {
         dispatch(setUserPhoto(null));
-        user.photo = null;
+        profile.photo = null;
         toast.success('Photo deleted');
       })
       .catch((e) => {
@@ -63,8 +61,8 @@ export default function ProfileHeader({ user }: Props) {
           <Box display="flex" alignItems="center" gap={2} m={2}>
             <Box position="relative">
               <Avatar
-                src={user.photo as string | undefined}
-                sx={{ width: 150, height: 150, opacity: 0.8 }}
+                src={profile.photo as string | undefined}
+                sx={{ width: 150, height: 150, opacity: 0.6 }}
               />
 
               {isSelf && (
@@ -98,7 +96,7 @@ export default function ProfileHeader({ user }: Props) {
                       />
                     </LoadingButton>
 
-                    {user.photo && (
+                    {profile.photo && (
                       <LoadingButton
                         color="inherit"
                         onClick={deletePhoto}
@@ -113,7 +111,7 @@ export default function ProfileHeader({ user }: Props) {
             </Box>
 
             <Typography variant="h5" fontWeight="bold">
-              {user.username}
+              {profile.username}
             </Typography>
           </Box>
         </Grid>
@@ -122,12 +120,12 @@ export default function ProfileHeader({ user }: Props) {
           <Box display="flex" justifyContent="center" gap={2} pt={2}>
             <InfoItem
               name="Created attractions"
-              value={`${user.createdAttractions}`}
+              value={`${profile.createdAttractions}`}
             />
 
             <InfoItem
               name="Written comments"
-              value={`${user.writtenComments}`}
+              value={`${profile.writtenComments}`}
             />
           </Box>
 

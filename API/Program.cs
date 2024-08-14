@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using API.Extensions;
+using API.Formatters;
 using API.Middleware;
 using API.SignalR;
 using Domain.Entities;
@@ -18,6 +19,9 @@ builder.Services.AddControllers(options =>
     {
         var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
         options.Filters.Add(new AuthorizeFilter(policy));
+
+        options.InputFormatters.Add(new StringInputFormatter());
+        options.AllowEmptyInputInBodyModelBinding = true;
     })
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddApplicationServices(configuration);

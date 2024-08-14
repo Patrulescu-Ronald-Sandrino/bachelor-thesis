@@ -8,4 +8,5 @@ public interface IUserService
     public Task<UserProfileDto> GetProfile(string username);
     public Task<string> ChangePhoto(IFormFile photo);
     Task DeletePhoto();
+    Task UpdateBio(string bio);
 }
