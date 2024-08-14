@@ -65,7 +65,7 @@ public class PhotoAccessor : IPhotoAccessor
         }
     }
 
-    private async Task<string> UploadPhoto(IFormFile file)
+    public async Task<string> UploadPhoto(IFormFile file)
     {
         await using var stream = file.OpenReadStream();
         var uploadParams = new ImageUploadParams

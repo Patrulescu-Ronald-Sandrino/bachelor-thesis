@@ -82,6 +82,9 @@ export const accountSlice = createSlice({
     setUser: (state, action: PayloadAction<UserDto>) => {
       state.user = getUserWithTokenData(action.payload);
     },
+    setUserPhoto: (state, action: PayloadAction<string | null>) => {
+      if (state.user) state.user.photo = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchCurrentUser.rejected, (state) => {
@@ -102,4 +105,4 @@ export const accountSlice = createSlice({
   },
 });
 
-export const { signOut, setUser } = accountSlice.actions;
+export const { signOut, setUser, setUserPhoto } = accountSlice.actions;

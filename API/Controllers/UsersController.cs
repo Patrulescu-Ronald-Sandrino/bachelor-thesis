@@ -11,4 +11,16 @@ public class UsersController(IUserService userService) : BaseApiController
     {
         return await userService.GetProfile(username);
     }
+
+    [HttpPost("photo")]
+    public async Task<string> ChangePhoto([FromForm] IFormFile photo)
+    {
+        return await userService.ChangePhoto(photo);
+    }
+
+    [HttpDelete("photo")]
+    public async Task DeletePhoto()
+    {
+        await userService.DeletePhoto();
+    }
 }

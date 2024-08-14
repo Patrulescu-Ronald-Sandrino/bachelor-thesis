@@ -36,7 +36,7 @@ export default function HeaderMenu() {
         sx={{ textTransform: 'none', typography: 'h6' }}
       >
         <Box display="flex" alignItems="center" gap={0.5}>
-          {user.photo && <Avatar src={user.photo} />}
+          <Avatar src={user.photo} />
           <Typography variant="h6">{user?.username}</Typography>
         </Box>
       </Button>

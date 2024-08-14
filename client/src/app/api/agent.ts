@@ -149,6 +149,9 @@ const AttractionTypes = {
 
 const User = {
   profile: (username: string) => requests.get<UserProfile>(`users/${username}`),
+  changePhoto: (photo: Blob) =>
+    requests.post<string>('users/photo', createFormData({ photo })),
+  deletePhoto: () => requests.delete('users/photo'),
 };
 
 const agent = {
