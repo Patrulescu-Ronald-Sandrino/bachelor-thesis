@@ -62,7 +62,11 @@ export default function ProfileHeader({ profile }: Props) {
             <Box position="relative">
               <Avatar
                 src={profile.photo as string | undefined}
-                sx={{ width: 150, height: 150, opacity: 0.6 }}
+                sx={{ width: 150, height: 150 }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.opacity = isSelf ? `${0.5}` : `${1}`)
+                }
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = `${1}`)}
               />
 
               {isSelf && (
