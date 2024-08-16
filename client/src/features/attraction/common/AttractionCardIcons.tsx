@@ -9,10 +9,10 @@ import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import { LoadingButton } from '@mui/lab';
 import { useAppDispatch } from '../../../app/store/configureStore.ts';
 import { react } from '../list/attractionsSlice.ts';
-import { useLocation } from 'react-router-dom';
 
 interface Props {
   attraction: Attraction;
+  onUpdateReaction?: (reaction: Reaction | null) => void;
 }
 
 const reactions: {
@@ -24,19 +24,19 @@ const reactions: {
   { type: 'Dislike', on: <ThumbDownAltIcon />, off: <ThumbDownOffAltIcon /> },
 ];
 
-export default function AttractionCardIcons({ attraction }: Props) {
-  const { pathname } = useLocation();
+export default function AttractionCardIcons({
+  attraction,
+  onUpdateReaction = () => void 0,
+}: Props) {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
 
-  const handleReaction = async (reaction: Reaction) => {
+  const handleClickReaction = async (reaction: Reaction) => {
     setLoading(true);
     dispatch(react({ attractionId: attraction.id, reaction: reaction }))
       .then(() => {
-        if (pathname.includes(attraction.id)) {
-          attraction.reaction =
-            attraction.reaction === reaction ? null : reaction;
-        }
+        const newReaction = attraction.reaction === reaction ? null : reaction;
+        onUpdateReaction(newReaction);
       })
       .finally(() => setLoading(false));
   };
@@ -48,7 +48,7 @@ export default function AttractionCardIcons({ attraction }: Props) {
           <LoadingButton
             loading={loading}
             sx={{ color: 'inherit', minWidth: 'auto' }}
-            onClick={() => handleReaction(r.type as Reaction)}
+            onClick={() => handleClickReaction(r.type as Reaction)}
           >
             {attraction.reaction === r.type ? r.on : r.off}
           </LoadingButton>

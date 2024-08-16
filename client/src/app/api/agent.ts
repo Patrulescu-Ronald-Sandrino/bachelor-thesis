@@ -141,6 +141,10 @@ const Attractions = {
   delete: (id: string) => requests.delete(`attractions/${id}`),
   react: (id: string, reaction: Reaction) =>
     requests.put(`attractions/${id}/react?reactionType=${reaction}`, {}),
+  created: (username: string, page: number) =>
+    requests.get<PageResponse<Attraction>>(
+      `attractions/${username}?pageNumber=${page}`,
+    ),
 };
 
 const AttractionTypes = {

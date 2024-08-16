@@ -75,4 +75,12 @@ public class AttractionsController(
         await attractionsService.React(id, reactionType);
         return NoContent();
     }
+
+    [HttpGet("{username}")]
+    public async Task<List<AttractionDto>> GetCreatedAttractions(string username, [FromQuery] int pageNumber)
+    {
+        var response = await attractionsService.GetCreatedAttractions(username, pageNumber);
+        Response.AddPaginationHeader(response.PageData);
+        return response;
+    }
 }

@@ -1,4 +1,4 @@
-import { Attraction } from '../../../app/models/attraction.ts';
+import { Attraction, Reaction } from '../../../app/models/attraction.ts';
 import {
   Box,
   Card,
@@ -23,9 +23,14 @@ import EditAttractionIcon from '../common/EditAttractionIcon.tsx';
 interface Props {
   attraction: Attraction;
   toggleComments: () => void;
+  onUpdateReaction: (reaction: Reaction | null) => void;
 }
 
-export function AttractionCard({ attraction, toggleComments }: Props) {
+export function AttractionCard({
+  attraction,
+  toggleComments,
+  onUpdateReaction,
+}: Props) {
   return (
     <Grid item xs={6}>
       <Card>
@@ -104,7 +109,10 @@ export function AttractionCard({ attraction, toggleComments }: Props) {
             >
               <CommentIcon />
             </IconButton>
-            <AttractionCardIcons attraction={attraction} />
+            <AttractionCardIcons
+              attraction={attraction}
+              onUpdateReaction={onUpdateReaction}
+            />
           </Box>
 
           <EditAttractionIcon attraction={attraction} />

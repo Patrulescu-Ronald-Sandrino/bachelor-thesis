@@ -32,7 +32,7 @@ export default function ProfileContent({ profile }: Props) {
     collections: { name: 'Collections', component: <CollectionsTab /> },
     'created-attractions': {
       name: 'Created attractions',
-      component: <CreatedAttractionsTab />,
+      component: <CreatedAttractionsTab username={profile.username} />,
     },
   };
 

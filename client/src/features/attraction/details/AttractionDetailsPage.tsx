@@ -29,7 +29,13 @@ export default function AttractionDetailsPage() {
   }
 
   const attractionCard = (
-    <AttractionCard attraction={attraction} toggleComments={toggleComments} />
+    <AttractionCard
+      attraction={attraction}
+      toggleComments={toggleComments}
+      onUpdateReaction={(reaction) =>
+        setAttraction({ ...attraction, reaction })
+      }
+    />
   );
 
   return (

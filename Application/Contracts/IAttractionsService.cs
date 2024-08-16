@@ -24,4 +24,6 @@ public interface IAttractionsService
     public Task<CommentDto> AddComment(Guid attractionId, string body);
 
     public Task<List<CommentDto>> GetComments(Guid attractionId);
+
+    public Task<PagedList<AttractionDto>> GetCreatedAttractions(string username, int pageNumber);
 }

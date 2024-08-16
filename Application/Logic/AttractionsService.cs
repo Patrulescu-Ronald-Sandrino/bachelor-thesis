@@ -27,16 +27,8 @@ public class AttractionsService(
 {
     public async Task<PagedList<AttractionDto>> GetAttractions(AttractionsQuery query)
     {
-        var currentUserId = authUtil.GetCurrentUser().Id;
-        var queryable = context.Attractions
-            .AsNoTracking()
-            .Sort(query.SortField, query.SortOrder)
-            .Search(query.SearchField, query.SearchValue)
-            .Filter(query.Types)
-            .Where(a => !query.MadeByMe || a.CreatorId == currentUserId)
-            .ProjectTo<AttractionDto>(mapper.ConfigurationProvider, new { currentUserId })
-            .AsQueryable();
-        return await PagedList<AttractionDto>.ToPagedList(queryable, query.PageNumber, query.PageSize);
+        var userId = authUtil.GetCurrentUser().Id;
+        return await GetAttractions(query, userId);
     }
 
     public async Task<AttractionDto> GetAttraction(Guid id)
@@ -133,6 +125,31 @@ public class AttractionsService(
             .ProjectTo<CommentDto>(mapper.ConfigurationProvider)
             .ToListAsync();
         return comments;
+    }
+
+    public async Task<PagedList<AttractionDto>> GetCreatedAttractions(string username, int pageNumber)
+    {
+        var user = context.Users.FirstOrDefault(u => u.UserName == username) ??
+                   throw new NotFoundException("User not found");
+        var attractionsQuery = new AttractionsQuery { PageSize = 6, MadeByMe = true, PageNumber = pageNumber };
+
+        return await GetAttractions(attractionsQuery, user.Id);
+    }
+
+    private async Task<PagedList<AttractionDto>> GetAttractions(AttractionsQuery query, Guid creatorId)
+    {
+        var currentUserId = authUtil.GetCurrentUser().Id;
+        var queryable = context.Attractions
+            .AsNoTracking()
+            .Sort(query.SortField, query.SortOrder)
+            .Search(query.SearchField, query.SearchValue)
+            .Filter(query.Types)
+            // MadeByMe here actually means - made by creatorId
+            .Where(a => !query.MadeByMe || a.CreatorId == creatorId)
+            .ProjectTo<AttractionDto>(mapper.ConfigurationProvider, new { currentUserId })
+            .AsQueryable();
+
+        return await PagedList<AttractionDto>.ToPagedList(queryable, query.PageNumber, query.PageSize);
     }
 
     private AttractionDto MapAttraction(Attraction attraction)

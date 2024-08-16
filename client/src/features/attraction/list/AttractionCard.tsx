@@ -1,4 +1,4 @@
-import { Attraction } from '../../../app/models/attraction.ts';
+import { Attraction, Reaction } from '../../../app/models/attraction.ts';
 import {
   Box,
   Card,
@@ -28,9 +28,13 @@ const detailsFields = [
 
 interface Props {
   attraction: Attraction;
+  onUpdateReaction?: (reaction: Reaction | null) => void;
 }
 
-export default function AttractionCard({ attraction }: Props) {
+export default function AttractionCard({
+  attraction,
+  onUpdateReaction,
+}: Props) {
   return (
     <Card>
       <CardHeader
@@ -106,7 +110,10 @@ export default function AttractionCard({ attraction }: Props) {
           >
             <DetailsIcon />
           </IconButton>
-          <AttractionCardIcons attraction={attraction} />
+          <AttractionCardIcons
+            attraction={attraction}
+            onUpdateReaction={onUpdateReaction}
+          />
         </Box>
 
         <EditAttractionIcon attraction={attraction} />
