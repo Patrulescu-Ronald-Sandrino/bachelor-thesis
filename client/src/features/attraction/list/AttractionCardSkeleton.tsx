@@ -24,8 +24,10 @@ export default function AttractionCardSkeleton() {
       </CardContent>
       <CardActions>
         <>
-          <Skeleton animation="wave" height={32} width="20%" />
-          <Skeleton animation="wave" height={32} width="10%" />
+          <Skeleton animation="wave" height={32} width="12%" />
+          <Skeleton animation="wave" height={32} width="12%" />
+          <Skeleton animation="wave" height={32} width="12%" />
+          <Skeleton animation="wave" height={32} width="12%" />
         </>
       </CardActions>
     </Grid>
