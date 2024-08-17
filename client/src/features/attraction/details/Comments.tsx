@@ -12,6 +12,8 @@ import { Control, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import FormTextInput from '../../../app/components/form/FormTextInput.tsx';
+import MouseOverPopover from '../../../app/components/MouseOverPopover.tsx';
+import ProfileCard from './ProfileCard.tsx';
 
 interface Props {
   attractionId: string;
@@ -90,13 +92,32 @@ export default function Comments({ attractionId }: Props) {
               padding={2}
               gap={2}
             >
-              <Avatar src={comment.authorPhoto} />
+              <MouseOverPopover
+                popoverContent={
+                  <ProfileCard
+                    username={comment.authorUsername}
+                    photo={comment.authorPhoto}
+                  />
+                }
+              >
+                <Avatar src={comment.authorPhoto} />
+              </MouseOverPopover>
 
               <Box>
                 <Box display="flex" flexDirection="row" alignItems="center">
-                  <Typography fontWeight="bold">
-                    {comment.authorUsername}
-                  </Typography>
+                  <MouseOverPopover
+                    popoverContent={
+                      <ProfileCard
+                        username={comment.authorUsername}
+                        photo={comment.authorPhoto}
+                      />
+                    }
+                  >
+                    <Typography fontWeight="bold">
+                      {comment.authorUsername}
+                    </Typography>
+                  </MouseOverPopover>
+
                   <Typography
                     title={formatDate(comment.createdAt)}
                     variant="caption"
@@ -106,6 +127,7 @@ export default function Comments({ attractionId }: Props) {
                     {formatDistanceToNow(comment.createdAt)} ago
                   </Typography>
                 </Box>
+
                 <Typography variant="body2" style={{ whiteSpace: 'pre-wrap' }}>
                   {comment.body}
                 </Typography>
