@@ -35,6 +35,7 @@ public static class Seed
                 {
                     UserName = admin, Email = $"{admin}@test.com", Photo = "https://i.imgur.com/mutuyxN.png",
                     Bio = string.Join("\n\n", descriptions.OrderBy(_ => Random.Next()).Take(Random.Next(3))),
+                    EmailConfirmed = true,
                 },
                 configuration.GetOrThrow("PasswordAdmin"));
             var userAdmin = await userManager.FindByNameAsync(admin);
@@ -47,6 +48,7 @@ public static class Seed
                 {
                     UserName = username, Email = $"{username}@test.com", Photo = Photos[i % Photos.Length],
                     Bio = string.Join("\n\n", descriptions.OrderBy(_ => Random.Next()).Take(Random.Next(3))),
+                    EmailConfirmed = true,
                 };
                 await userManager.CreateAsync(user, configuration.GetOrThrow("PasswordUser"));
                 await userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
@@ -87,7 +89,7 @@ public static class Seed
                 Address = $"Address {i + 1:00}",
                 Website = i % 2 == 0 ? "https://www.google.com" : "https://example.com/",
                 City = $"City {i % 3 + 1}",
-                CountryId = countries.ElementAt(Random.Next(context.Countries.Count())).Id,
+                CountryId = countries.ElementAt(Random.Next(countries.Count)).Id,
                 AttractionTypeId = attractionTypes.ElementAt(Random.Next(context.AttractionTypes.Count())).Id,
                 CreatorId = users.ElementAt(i % users.Count).Id,
                 Photos = photos.OrderBy(_ => Random.Next()).Take(Random.Next(5) + 1).ToList(),
