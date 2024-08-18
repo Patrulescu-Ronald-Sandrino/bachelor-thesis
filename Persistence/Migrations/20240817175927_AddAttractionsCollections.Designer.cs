@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -10,9 +11,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240817175927_AddAttractionsCollections")]
+    partial class AddAttractionsCollections
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
@@ -129,6 +132,7 @@ namespace Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Thumbnail")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Visibility")
@@ -138,9 +142,6 @@ namespace Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
-
-                    b.HasIndex("Id", "OwnerId", "Index")
-                        .IsUnique();
 
                     b.ToTable("AttractionsCollections", t =>
                         {
@@ -166,13 +167,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("AttractionId");
 
-                    b.HasIndex("CollectionId", "AttractionId")
-                        .IsUnique();
-
-                    b.HasIndex("CollectionId", "AttractionId", "Index")
-                        .IsUnique();
-
-                    b.ToTable("AttractionsCollectionsItems");
+                    b.ToTable("AttractionsCollectionItem");
                 });
 
             modelBuilder.Entity("Domain.Entities.Country", b =>

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Persistence.Extensions;
+using Persistence.Util;
 
 namespace Persistence;
 
@@ -98,6 +99,7 @@ public static class Seed
             await context.Attractions.AddRangeAsync(attractions);
             await context.Reactions.ExecuteDeleteAsync();
             await context.AttractionComments.ExecuteDeleteAsync();
+            await context.AttractionsCollections.ExecuteDeleteAsync();
             await context.SaveChangesAsync();
         }
 
@@ -153,6 +155,52 @@ public static class Seed
 
             if (comments.Count == 0) await SeedData(context, userManager, configuration);
             await context.AttractionComments.AddRangeAsync(comments);
+        }
+
+
+        if (!context.AttractionsCollections.Any())
+        {
+            var attractions = await context.Attractions.ToListAsync();
+            List<AttractionsCollection> collections = [];
+
+            foreach (var user in userManager.Users)
+            {
+                var collectionsCount = Random.Next(5);
+                var descriptions = await RandomTexts();
+
+                foreach (var i in Enumerable.Range(1, collectionsCount))
+                {
+                    List<AttractionsCollectionItem> collectionItems = [];
+                    var visibilities = EnumUtil.GetValues<Visibility>().ToList();
+                    var collection = new AttractionsCollection
+                    {
+                        Name = $"Collection of {user.UserName} #{i}",
+                        Description =
+                            string.Join("\n\n", descriptions.OrderBy(_ => Random.Next()).Take(Random.Next(3))),
+                        // Thumbnail is deferred
+                        Visibility = visibilities.ElementAt(Random.Next(visibilities.Count)),
+                        Index = Convert.ToUInt32(i),
+                        OwnerId = user.Id,
+                    };
+
+                    collectionItems.AddRange(attractions.OrderBy(_ => Random.Next()).Take(Random.Next(10)).Select(
+                        (a, j) => new AttractionsCollectionItem
+                        {
+                            AttractionId = a.Id,
+                            Attraction = a,
+                            Note = string.Join("\n\n", descriptions.OrderBy(_ => Random.Next()).Take(Random.Next(3))),
+                            Index = Convert.ToUInt32(j),
+                        }));
+
+                    collection.CollectionItems = collectionItems;
+                    collection.Thumbnail = collectionItems.Select(ci => ci.Attraction.Photos.FirstOrDefault())
+                        .FirstOrDefault();
+
+                    collections.Add(collection);
+                }
+            }
+
+            await context.AttractionsCollections.AddRangeAsync(collections);
         }
 
         var result = await context.SaveChangesAsync();

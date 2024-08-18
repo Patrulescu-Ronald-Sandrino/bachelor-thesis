@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -10,9 +11,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240818131444_AddAttractionsCollectionsItemsTable")]
+    partial class AddAttractionsCollectionsItemsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
@@ -139,9 +142,6 @@ namespace Persistence.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.HasIndex("Id", "OwnerId", "Index")
-                        .IsUnique();
-
                     b.ToTable("AttractionsCollections", t =>
                         {
                             t.HasCheckConstraint("CK_AttractionsCollection_Visibility_IN_ENUM", "[Visibility] IN ('Public', 'Private')");
@@ -165,12 +165,6 @@ namespace Persistence.Migrations
                     b.HasKey("CollectionId", "AttractionId");
 
                     b.HasIndex("AttractionId");
-
-                    b.HasIndex("CollectionId", "AttractionId")
-                        .IsUnique();
-
-                    b.HasIndex("CollectionId", "AttractionId", "Index")
-                        .IsUnique();
 
                     b.ToTable("AttractionsCollectionsItems");
                 });

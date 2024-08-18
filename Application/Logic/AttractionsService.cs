@@ -27,14 +27,14 @@ public class AttractionsService(
 {
     public async Task<PagedList<AttractionDto>> GetAttractions(AttractionsQuery query)
     {
-        var userId = authUtil.GetCurrentUser().Id;
-        return await GetAttractions(query, userId);
+        var currentUserId = await authUtil.GetCurrentUserId();
+        return await GetAttractions(query, currentUserId);
     }
 
     public async Task<AttractionDto> GetAttraction(Guid id)
     {
         var attraction = await GetOrThrow(id);
-        return MapAttraction(attraction);
+        return await MapAttraction(attraction);
     }
 
     public async Task<AttractionDto> CreateAttraction(AttractionAddOrEditDto attractionDto)
@@ -44,33 +44,37 @@ public class AttractionsService(
         await ValidateAttraction(attractionDto, attraction);
 
         attraction.Id = Guid.NewGuid();
-        attraction.CreatorId = authUtil.GetCurrentUser().Id;
+        attraction.CreatorId = await authUtil.GetCurrentUserId();
         await context.Attractions.AddAsync(attraction);
 
         var photos = await photoAccessor.UploadPhotos(attractionDto.Photos.Select(ap => ap.NewPhoto).ToArray());
         attraction.Photos = photos;
 
         await context.SaveChangesAsync();
-        return MapAttraction(attraction);
+        return await MapAttraction(attraction);
     }
 
     public async Task<AttractionDto> UpdateAttraction(AttractionAddOrEditDto attractionDto)
     {
         var attraction = await GetOrThrow(attractionDto.Id, true);
-        EnsureWriteAccess(attraction);
+        await EnsureWriteAccess(attraction);
 
         mapper.Map(attractionDto, attraction);
         await ValidateAttraction(attractionDto, attraction);
         await UpdatePhotos(attraction, attractionDto.Photos);
 
         await context.SaveChangesAsync();
-        return MapAttraction(attraction);
+        return await MapAttraction(attraction);
     }
 
     public async Task<Attraction> DeleteAttraction(Guid id)
     {
         var attraction = await context.Attractions.FindAsyncOrThrow(id);
-        EnsureWriteAccess(attraction);
+        await EnsureWriteAccess(attraction);
+
+        if (await context.AttractionsCollectionsItems.AnyAsync(ci => ci.AttractionId == id))
+            throw new ValidationException("Attraction is used in collection/s");
+
         context.Remove(attraction);
         await context.SaveChangesAsync();
         await photoAccessor.DeletePhotos(attraction.Photos);
@@ -80,7 +84,7 @@ public class AttractionsService(
     public async Task React(Guid id, ReactionType reactionType)
     {
         await context.Attractions.FindAsyncOrThrow(id);
-        var userId = authUtil.GetCurrentUser().Id;
+        var userId = await authUtil.GetCurrentUserId();
         var reaction = await context.Reactions.FindAsync(userId, id);
 
         if (reaction == null)
@@ -101,7 +105,7 @@ public class AttractionsService(
     public async Task<CommentDto> AddComment(Guid attractionId, string body)
     {
         var attraction = await GetOrThrow(attractionId, true);
-        var user = authUtil.GetCurrentUser();
+        var user = await authUtil.GetCurrentUser();
 
         var comment = new AttractionComment
         {
@@ -138,7 +142,7 @@ public class AttractionsService(
 
     private async Task<PagedList<AttractionDto>> GetAttractions(AttractionsQuery query, Guid creatorId)
     {
-        var currentUserId = authUtil.GetCurrentUser().Id;
+        var currentUserId = await authUtil.GetCurrentUserId();
         var queryable = context.Attractions
             .AsNoTracking()
             .Sort(query.SortField, query.SortOrder)
@@ -152,9 +156,9 @@ public class AttractionsService(
         return await PagedList<AttractionDto>.ToPagedList(queryable, query.PageNumber, query.PageSize);
     }
 
-    private AttractionDto MapAttraction(Attraction attraction)
+    private async Task<AttractionDto> MapAttraction(Attraction attraction)
     {
-        var currentUserId = authUtil.GetCurrentUser().Id;
+        var currentUserId = await authUtil.GetCurrentUserId();
         return mapper.Map<Attraction, AttractionDto>(attraction, opts => opts.AfterMap((src, dest) => dest.Reaction =
             src.Reactions.Where(r => r.UserId == currentUserId).Select(r => r.Type).FirstOrDefault()));
     }
@@ -231,7 +235,7 @@ public class AttractionsService(
 
     private async Task<Attraction> GetOrThrow(Guid id, bool tracking = false)
     {
-        var currentUserId = authUtil.GetCurrentUser().Id;
+        var currentUserId = await authUtil.GetCurrentUserId();
         var queryable = context.Attractions
             .Include(a => a.Country)
             .Include(a => a.AttractionType)
@@ -243,9 +247,9 @@ public class AttractionsService(
         return attraction;
     }
 
-    private void EnsureWriteAccess(Attraction attraction)
+    private async Task EnsureWriteAccess(Attraction attraction)
     {
-        if (attraction.CreatorId != authUtil.GetCurrentUser().Id)
+        if (attraction.CreatorId != await authUtil.GetCurrentUserId())
             throw new ForbiddenException();
     }
 

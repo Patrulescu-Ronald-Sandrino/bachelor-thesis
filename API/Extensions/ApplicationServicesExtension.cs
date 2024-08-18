@@ -33,6 +33,7 @@ public static class ApplicationServicesExtension
         services.AddScoped<IAttractionsService, AttractionsService>();
         services.AddScoped<ICountryService, CountryService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAttractionsCollectionsService, AttractionsCollectionsService>();
         services.AddScoped<IUserAccessor, UserAccessor>();
         services.AddScoped<IPhotoAccessor, PhotoAccessor>();
         services.AddScoped<IEmailSender, EmailSender>();

@@ -3,7 +3,7 @@ using Domain.Types;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Extensions;
-using Utils;
+using Persistence.Util;
 
 namespace Persistence;
 
@@ -14,6 +14,8 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
     public DbSet<Country> Countries { get; init; }
     public DbSet<Reaction> Reactions { get; init; }
     public DbSet<AttractionComment> AttractionComments { get; init; }
+    public DbSet<AttractionsCollection> AttractionsCollections { get; init; }
+    public DbSet<AttractionsCollectionItem> AttractionsCollectionsItems { get; init; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -27,58 +29,94 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
                 NormalizedName = roleTypes[i].ToString().ToUpper()
             })
             .ToArray();
-        builder.Entity<UserRole>()
-            .HasData(userRoles);
 
-        builder.Entity<Attraction>()
-            .HasOne(a => a.AttractionType)
-            .WithMany()
-            .HasForeignKey(a => a.AttractionTypeId)
-            .IsRequired();
+        builder.Entity<UserRole>(b =>
+        {
+            b.HasData(userRoles);
 
-        builder.Entity<Attraction>()
-            .HasOne(a => a.Country)
-            .WithMany()
-            .HasForeignKey(a => a.CountryId)
-            .IsRequired();
+            b.Wrapper().HasEnumValueCheckConstraint<UserRoles>(nameof(UserRole.Name));
+        });
 
-        builder.Entity<Attraction>()
-            .HasOne(a => a.Creator)
-            .WithMany(u => u.CreatedAttractions)
-            .HasForeignKey(a => a.CreatorId)
-            .IsRequired();
+        builder.Entity<Attraction>(b =>
+        {
+            b.HasOne(a => a.AttractionType)
+                .WithMany()
+                .HasForeignKey(a => a.AttractionTypeId)
+                .IsRequired();
 
-        builder.Entity<Attraction>()
-            .Ignore(a => a.Photos)
-            .Property(a => a.PhotosCsv)
-            .IsRequired()
-            .HasDefaultValue("");
+            b.HasOne(a => a.Country)
+                .WithMany()
+                .HasForeignKey(a => a.CountryId)
+                .IsRequired();
+
+            b.HasOne(a => a.Creator)
+                .WithMany(u => u.CreatedAttractions)
+                .HasForeignKey(a => a.CreatorId)
+                .IsRequired();
+
+            b.Ignore(a => a.Photos)
+                .Property(a => a.PhotosCsv)
+                .IsRequired()
+                .HasDefaultValue("");
+        });
 
         builder.Entity<AttractionType>()
             .HasIndex(at => at.Name)
             .IsUnique();
 
-        builder.Entity<Reaction>(x =>
+        builder.Entity<Reaction>(b =>
         {
-            x.HasKey(r => new { r.UserId, r.AttractionId });
-            x.Property(r => r.Type).HasConversion<string>().IsRequired();
+            b.HasKey(r => new { r.UserId, r.AttractionId });
+
+            b.Property(r => r.Type).HasConversion<string>().IsRequired();
+            b.Wrapper().HasEnumValueCheckConstraint<ReactionType>(nameof(Reaction.Type));
         });
 
-        builder.Entity<Reaction>().ToTable(b =>
+        builder.Entity<AttractionComment>(b =>
         {
-            const string checkConstraintName = $"CK_{nameof(Reaction)}_{nameof(Reaction.Type)}";
-            var reactionTypes = EnumUtil.GetValues<ReactionType>().Select(x => $"'{x.ToString()}'");
-            var checkConstraint = $"[{nameof(Reaction.Type)}] IN ({string.Join(", ", reactionTypes)})";
-            b.HasCheckConstraint(checkConstraintName, checkConstraint);
+            b.HasOne(c => c.Attraction)
+                .WithMany(a => a.Comments)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            b.HasOne(c => c.Author)
+                .WithMany(u => u.AttractionComments);
         });
 
-        builder.Entity<AttractionComment>()
-            .HasOne(c => c.Attraction)
-            .WithMany(a => a.Comments)
-            .OnDelete(DeleteBehavior.Cascade);
+        SetUpAttractionsCollections(builder);
+    }
 
-        builder.Entity<AttractionComment>()
-            .HasOne(c => c.Author)
-            .WithMany(u => u.AttractionComments);
+    private static void SetUpAttractionsCollections(ModelBuilder builder)
+    {
+        builder.Entity<AttractionsCollection>(b =>
+        {
+            b.Property(c => c.Name).IsRequired();
+            b.Property(c => c.Description).IsRequired();
+
+            b.HasOne(c => c.Owner)
+                .WithMany();
+
+            b.Property(c => c.Visibility)
+                .HasConversion<string>()
+                .IsRequired();
+
+            b.Wrapper().HasEnumValueCheckConstraint<Visibility>(nameof(AttractionsCollection.Visibility));
+
+            b.HasIndex(c => new { c.Id, c.OwnerId, c.Index }).IsUnique();
+        });
+
+        builder.Entity<AttractionsCollectionItem>(b =>
+        {
+            b.HasOne(i => i.Collection)
+                .WithMany(c => c.CollectionItems)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            b.HasOne(i => i.Attraction)
+                .WithMany();
+
+            b.HasKey(i => new { i.CollectionId, i.AttractionId });
+
+            b.HasIndex(ci => new { ci.CollectionId, ci.AttractionId }).IsUnique();
+            b.HasIndex(ci => new { ci.CollectionId, ci.AttractionId, ci.Index }).IsUnique();
+        });
     }
 }

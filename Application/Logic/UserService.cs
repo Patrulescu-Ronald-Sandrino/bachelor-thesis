@@ -29,7 +29,7 @@ public class UserService(DataContext context, AuthUtil authUtil, IPhotoAccessor 
 
     public async Task<string> ChangePhoto(IFormFile photo)
     {
-        var user = authUtil.GetCurrentUser();
+        var user = await authUtil.GetCurrentUser();
 
         if (user.Photo != null) await photoAccessor.DeletePhotos([user.Photo]);
 
@@ -43,7 +43,7 @@ public class UserService(DataContext context, AuthUtil authUtil, IPhotoAccessor 
 
     public async Task DeletePhoto()
     {
-        var user = authUtil.GetCurrentUser();
+        var user = await authUtil.GetCurrentUser();
 
         if (user.Photo == null) return;
         await photoAccessor.DeletePhotos([user.Photo]);
@@ -56,7 +56,7 @@ public class UserService(DataContext context, AuthUtil authUtil, IPhotoAccessor 
 
     public async Task UpdateBio(string bio)
     {
-        var user = authUtil.GetCurrentUser();
+        var user = await authUtil.GetCurrentUser();
 
         if (bio == user.Bio) return;
 
