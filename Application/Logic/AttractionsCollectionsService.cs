@@ -40,8 +40,8 @@ public class AttractionsCollectionsService(DataContext context, IMapper mapper, 
         collection.OwnerId = userId;
 
         // index
-        var index = await context.AttractionsCollections.Where(c => c.OwnerId == userId).Select(c => c.Index + 1)
-            .OrderBy(u => u).FirstOrDefaultAsync();
+        var index = (await context.AttractionsCollections.Where(c => c.OwnerId == userId)
+            .MaxAsync(c => (uint?)(c.Index + 1))).GetValueOrDefault();
         collection.Index = index;
 
         // handle attraction ids
@@ -234,6 +234,8 @@ public class AttractionsCollectionsService(DataContext context, IMapper mapper, 
         var userId = await EnsureWriteAccessOfUser(username);
         var collection =
             await context.AttractionsCollections.Where(c => c.Id == id && c.OwnerId == userId)
+                .Include(c => c.CollectionItems.OrderBy(ci => ci.Index))
+                .ThenInclude(ci => ci.Attraction)
                 .FirstOrDefaultAsync() ?? throw new NotFoundException();
         return collection;
     }
