@@ -29,7 +29,10 @@ export default function ProfileContent({ profile }: Props) {
   } = {
     about: { name: 'About', component: <AboutTab profile={profile} /> },
     friends: { name: 'Friends', component: <FriendsTab /> },
-    collections: { name: 'Collections', component: <CollectionsTab /> },
+    collections: {
+      name: 'Collections',
+      component: <CollectionsTab username={profile.username} />,
+    },
     'created-attractions': {
       name: 'Created attractions',
       component: <CreatedAttractionsTab username={profile.username} />,

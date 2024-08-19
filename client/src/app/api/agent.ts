@@ -11,6 +11,7 @@ import {
 } from '../models/attraction.ts';
 import { PageResponse } from '../models/pagination.ts';
 import { AttractionType } from '../models/attractionType.ts';
+import { AttractionCollection } from '../models/attractionCollection.ts';
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -151,6 +152,15 @@ const AttractionTypes = {
   list: () => requests.get<AttractionType[]>('attractionTypes'),
 };
 
+const AttractionsCollections = {
+  get: (username: string) =>
+    requests.get<AttractionCollection[]>(`attractions/${username}/collections`),
+  updateOrder: (username: string, ids: string[]) =>
+    requests.put(`attractions/${username}/collections/order`, ids),
+  delete: (username: string, id: string) =>
+    requests.delete(`attractions/${username}/collections/${id}`),
+};
+
 const User = {
   profile: (username: string) => requests.get<UserProfile>(`users/${username}`),
   changePhoto: (photo: Blob) =>
@@ -164,6 +174,7 @@ const agent = {
   Account,
   Attractions,
   AttractionTypes,
+  AttractionsCollections,
   User,
 };
 

@@ -36,14 +36,17 @@ export default function HeaderMenu() {
         sx={{ textTransform: 'none', typography: 'h6' }}
       >
         <Box display="flex" alignItems="center" gap={0.5}>
-          <Avatar src={user.photo} />
+          <Avatar src={user.photo as string | undefined} />
+
           <Typography variant="h6">{user?.username}</Typography>
         </Box>
       </Button>
+
       <Menu anchorEl={anchorEl} open={isMenuOpen} onClose={handleClose}>
         <MenuItem component={Link} href={`/user/${user.username}`}>
           Profile
         </MenuItem>
+
         <MenuItem onClick={() => dispatch(signOut())}>Logout</MenuItem>
       </Menu>
     </div>

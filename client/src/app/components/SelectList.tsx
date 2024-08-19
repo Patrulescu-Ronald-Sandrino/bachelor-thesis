@@ -1,10 +1,11 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 interface Props<TValue> {
-  label: string;
+  label?: string;
   selectedValue: TValue;
   items: { value: TValue; label: string }[] | TValue[];
   onChange: (value: TValue) => void;
+  notFullWidth?: boolean;
 }
 
 export default function SelectList<TValue extends string | number>({
@@ -12,9 +13,10 @@ export default function SelectList<TValue extends string | number>({
   selectedValue,
   items,
   onChange,
+  notFullWidth,
 }: Props<TValue>) {
   return (
-    <FormControl fullWidth>
+    <FormControl fullWidth={notFullWidth !== true}>
       <InputLabel>{label}</InputLabel>
       <Select
         labelId={label}
