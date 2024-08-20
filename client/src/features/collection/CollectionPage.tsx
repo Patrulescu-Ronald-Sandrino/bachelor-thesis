@@ -403,17 +403,16 @@ export default function CollectionPage() {
                 titleName={item.attractionName}
                 titleUrl={`/attractions/${item.attractionId}`}
                 body={
-                  isReordering ? (
+                  isReordering || !isSelf ? (
                     item.note
                   ) : (
                     <span
                       onClick={() => {
-                        if (!isSelf) return;
                         setNote(item.note);
                         setItemNoteDialogAttractionId(item.attractionId);
                       }}
-                      style={{ cursor: isSelf ? 'pointer' : 'default' }}
-                      title={isSelf ? 'Click to edit' : undefined}
+                      style={{ cursor: 'pointer' }}
+                      title="Click to edit"
                     >
                       {item.note ? (
                         item.note
@@ -463,7 +462,7 @@ export default function CollectionPage() {
                   <div onClick={() => handleDeleteItem(item.attractionId)}>
                     Delete
                   </div>,
-                ]}
+                ].filter(() => isSelf)}
               />
             ))}
           </Paper>

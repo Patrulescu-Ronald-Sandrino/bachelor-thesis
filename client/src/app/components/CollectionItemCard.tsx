@@ -117,7 +117,7 @@ export default function CollectionItemCard(props: Props) {
         )}
       </Box>
 
-      {props.actions && !props.isEditable && (
+      {props.actions && !props.isEditable && props.actions.length > 0 && (
         <div onClick={(e) => e.stopPropagation()}>
           <AppMenu
             button={
