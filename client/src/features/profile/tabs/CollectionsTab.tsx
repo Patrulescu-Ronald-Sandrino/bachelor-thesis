@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import agent from '../../../app/api/agent.ts';
 import { toast } from 'react-toastify';
 import Loadable from '../../../app/layout/Loadable.tsx';
@@ -19,6 +19,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CollectionItemCard from '../../../app/components/CollectionItemCard.tsx';
 import { swap } from '../../../app/util/array.ts';
 import { LoadingButton } from '@mui/lab';
+import useCollections from '../../common/useCollections.tsx';
 
 interface Props {
   username: string;
@@ -28,9 +29,6 @@ export function CollectionsTab({ username }: Props) {
   const user = useAppSelector((state) => state.account.user);
   const isSelf = user?.username === username;
 
-  const [collections, setCollections] = useState<AttractionCollection[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const [isReordering, setIsReordering] = useState(false);
   const [oldCollections, setOldCollections] = useState<AttractionCollection[]>(
     [],
@@ -38,15 +36,7 @@ export function CollectionsTab({ username }: Props) {
   const [loadingUpdateOrder, setLoadingUpdateOrder] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
-  useEffect(() => {
-    agent.AttractionsCollections.getAll(username)
-      .then((collections) => {
-        setCollections(collections);
-        setLoading(false);
-      })
-      .catch((error) => toast.error(error))
-      .finally(() => setLoading(false));
-  }, [username]);
+  const { collections, setCollections, loading } = useCollections(username);
 
   function setIsReorderingAndLog(value: boolean) {
     console.log(`setIsReordering(${value})`);
@@ -178,7 +168,7 @@ export function CollectionsTab({ username }: Props) {
                     photo={item.attractionPhoto}
                     titleName={item.attractionName}
                     titleUrl={`/attractions/${item.attractionId}`}
-                    body={item.note ? `Note: ${item.note}` : undefined}
+                    body={item.note}
                   />
                 ))}
               </CollectionItemCard>

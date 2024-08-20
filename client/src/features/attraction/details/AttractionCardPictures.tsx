@@ -41,7 +41,12 @@ export default function AttractionCardPictures({ pictures }: Props) {
 
   return (
     <Box position="relative">
-      <CardMedia sx={{ height: height }} image={pictures[index]} />
+      <CardMedia
+        sx={{ height: height }}
+        image={pictures[index]}
+        onMouseEnter={(e) => (e.currentTarget.style.opacity = `${0.75}`)}
+        onMouseLeave={(e) => (e.currentTarget.style.opacity = `${1}`)}
+      />
 
       {actions.map((item) => (
         <div
@@ -53,7 +58,7 @@ export default function AttractionCardPictures({ pictures }: Props) {
           }}
           key={item.side}
         >
-          <IconButton onClick={item.handler} sx={{ color: 'black' }}>
+          <IconButton onClick={item.handler} sx={{ color: 'inherit' }}>
             {item.icon}
           </IconButton>
         </div>

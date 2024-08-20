@@ -7,18 +7,31 @@ import NotFound from '../../../app/errors/NotFound.tsx';
 import { Container, Grid } from '@mui/material';
 import { AttractionCard } from './AttractionCard.tsx';
 import Comments from './Comments.tsx';
+import { CollectionsContextProvider } from '../../common/CollectionsContext.tsx';
+import { useCollectionsContext } from '../../common/useCollectionsContext.tsx';
 
 export default function AttractionDetailsPage() {
+  return (
+    <CollectionsContextProvider>
+      <AttractionDetailsPageInner />
+    </CollectionsContextProvider>
+  );
+}
+
+function AttractionDetailsPageInner() {
   const { id } = useParams<{ id: string }>();
   const [attraction, setAttraction] = useState<Attraction | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingAttraction, setLoadingAttraction] = useState(true);
   const [showComments, setShowComments] = useState(false);
+
+  const { loading: loadingCollections } = useCollectionsContext();
+  const loading = loadingAttraction || loadingCollections;
 
   useEffect(() => {
     agent.Attractions.fetch(id!)
       .then((response) => setAttraction(response))
       .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
+      .finally(() => setLoadingAttraction(false));
   }, [id]);
 
   if (loading) return <Loadable loading={loading} target="attraction" />;

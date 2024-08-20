@@ -43,7 +43,7 @@ function ThreadsIcon() {
   );
 }
 
-export default function ShareAttraction({ attraction }: Props) {
+export default function ShareAttractionIcon({ attraction }: Props) {
   const [shareOpen, setShareOpen] = useState(false);
 
   function closeShare() {

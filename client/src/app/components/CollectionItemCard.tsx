@@ -111,7 +111,7 @@ export default function CollectionItemCard(props: Props) {
               variant="body2"
               sx={{ overflowY: 'auto', maxHeight: 60, whiteSpace: 'pre-wrap' }}
             >
-              {props.titleUrl.startsWith('/attractions') && 'Note: '}
+              {props.titleUrl.startsWith('/attractions') && <b>{'Note: '}</b>}
               {props.body}
             </Typography>
           </CardContentNoPadding>

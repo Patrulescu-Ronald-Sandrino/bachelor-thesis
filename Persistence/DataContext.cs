@@ -93,7 +93,8 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
             b.Property(c => c.Description).IsRequired();
 
             b.HasOne(c => c.Owner)
-                .WithMany();
+                .WithMany()
+                .HasForeignKey(c => c.OwnerId);
 
             b.Property(c => c.Visibility)
                 .HasConversion<string>()
@@ -108,10 +109,12 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
         {
             b.HasOne(i => i.Collection)
                 .WithMany(c => c.CollectionItems)
+                .HasForeignKey(c => c.CollectionId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             b.HasOne(i => i.Attraction)
-                .WithMany();
+                .WithMany()
+                .HasForeignKey(i => i.AttractionId);
 
             b.HasKey(i => new { i.CollectionId, i.AttractionId });
 

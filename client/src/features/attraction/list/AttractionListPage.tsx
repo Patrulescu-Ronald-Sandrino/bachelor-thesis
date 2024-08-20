@@ -27,8 +27,18 @@ import {
 } from './attractionsSlice.ts';
 import AttractionCardSkeleton from './AttractionCardSkeleton.tsx';
 import SelectList from '../../../app/components/SelectList.tsx';
+import { CollectionsContextProvider } from '../../common/CollectionsContext.tsx';
+import { useCollectionsContext } from '../../common/useCollectionsContext.tsx';
 
 export default function AttractionListPage() {
+  return (
+    <CollectionsContextProvider>
+      <AttractionListPageInner />
+    </CollectionsContextProvider>
+  );
+}
+
+function AttractionListPageInner() {
   const dispatch = useAppDispatch();
   const { attractionParams } = useAppSelector((state) => state.attractions);
   const {
@@ -38,9 +48,13 @@ export default function AttractionListPage() {
     attractionTypes,
     pageData,
   } = useAttractions();
+  const { loading: loadingCollections } = useCollectionsContext();
 
   return (
-    <Loadable loading={!attractionTypesLoaded} target="attractions">
+    <Loadable
+      loading={!attractionTypesLoaded || loadingCollections}
+      target="attractions"
+    >
       <Grid container columnSpacing={4}>
         <Grid item xs={3}>
           <Paper sx={{ mb: 2 }}>

@@ -11,7 +11,7 @@ import {
 } from '../models/attraction.ts';
 import { PageResponse } from '../models/pagination.ts';
 import { AttractionType } from '../models/attractionType.ts';
-import { AttractionCollection } from '../models/attractionCollection.ts';
+import { AttractionCollection, Item } from '../models/attractionCollection.ts';
 
 const HEADERS_CONTENT_TEXT = { headers: { 'Content-Type': 'text/plain' } };
 
@@ -184,6 +184,16 @@ const AttractionsCollections = {
     ),
   delete: (username: string, id: string) =>
     requests.delete(`attractions/${username}/collections/${id}`),
+  addItem: (
+    username: string,
+    id: string,
+    attractionId: string,
+    note?: string,
+  ) =>
+    requests.post<AttractionCollection>(
+      `attractions/${username}/collections/${id}/items`,
+      { attractionId, note } as Item,
+    ),
   updateItemNote: (
     username: string,
     id: string,
