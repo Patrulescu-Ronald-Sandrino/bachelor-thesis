@@ -17,6 +17,7 @@ import { ReactNode } from 'react';
 import { MoreHoriz } from '@mui/icons-material';
 import AppMenu from './AppMenu.tsx';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 import SelectList from './SelectList.tsx';
 
 const CardContentNoPadding = styled(CardContent)(`
@@ -25,6 +26,20 @@ const CardContentNoPadding = styled(CardContent)(`
     padding-bottom: 0;
   }
 `);
+
+const imageSize = { height: 90, width: 160 };
+
+const photoPlaceholder = (
+  <div
+    className="centered-flex"
+    style={{
+      ...imageSize,
+      backgroundColor: 'lightgray',
+    }}
+  >
+    <img alt="No photo" />
+  </div>
+);
 
 interface Props {
   isEditable: boolean;
@@ -71,10 +86,11 @@ export default function CollectionItemCard(props: Props) {
         <Typography>{props.position}.</Typography>
       )}
 
-      <CardMedia
-        image={props.photo}
-        sx={{ height: 90, width: 160, flexShrink: 0 }}
-      />
+      {props.photo ? (
+        <CardMedia image={props.photo} sx={{ ...imageSize, flexShrink: 0 }} />
+      ) : (
+        photoPlaceholder
+      )}
 
       <Box display="flex" flexDirection="column" sx={{ flexGrow: 1 }}>
         <CardHeader
@@ -90,9 +106,11 @@ export default function CollectionItemCard(props: Props) {
         {props.body && (
           <CardContentNoPadding sx={{ padding: 0, paddingBottom: 0 }}>
             <Typography
+              component={'div'}
               variant="body2"
-              sx={{ overflowY: 'auto', maxHeight: 60 }}
+              sx={{ overflowY: 'auto', maxHeight: 60, whiteSpace: 'pre-wrap' }}
             >
+              {props.titleUrl.startsWith('/attractions') && 'Note: '}
               {props.body}
             </Typography>
           </CardContentNoPadding>
@@ -121,13 +139,19 @@ export default function CollectionItemCard(props: Props) {
       ) : (
         <Accordion>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            sx={{ flexDirection: 'row-reverse', padding: 0.5 }}
+            expandIcon={
+              props.children.length ? (
+                <ExpandMoreIcon />
+              ) : (
+                <HorizontalRuleIcon />
+              )
+            }
+            sx={{ flexDirection: 'row-reverse', padding: 0.5, gap: 1 }}
           >
             {self}
           </AccordionSummary>
 
-          <AccordionDetails>
+          <AccordionDetails sx={{ paddingX: 5 }}>
             <Stack spacing={2}>{...props.children}</Stack>
           </AccordionDetails>
         </Accordion>

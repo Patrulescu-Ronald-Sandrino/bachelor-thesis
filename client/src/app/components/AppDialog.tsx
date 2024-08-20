@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, ReactNode } from 'react';
 import {
   Box,
   Dialog,
@@ -12,26 +12,43 @@ interface Props extends PropsWithChildren {
   title: string;
   open: boolean;
   onClose: () => void;
+  headerActions?: ReactNode;
 }
 
-export default function AppDialog({ title, open, onClose, children }: Props) {
+export default function AppDialog({
+  title,
+  open,
+  onClose,
+  headerActions,
+  children,
+}: Props) {
+  const allHeaderActions = (
+    <Box display="flex" alignItems="center">
+      {headerActions}
+
+      <IconButton onClick={onClose} color="inherit" title="Close">
+        <CloseIcon />
+      </IconButton>
+    </Box>
+  );
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
       onClick={(event) => event.stopPropagation()}
     >
-      <Box display="flex" justifyContent="space-between">
-        <Box flexGrow={0.5} />
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <div style={{ visibility: 'hidden' }}>{allHeaderActions}</div>
 
-        <DialogTitle align="center">{title}</DialogTitle>
+        <DialogTitle align="center" sx={{ paddingY: 1.25 }}>
+          {title}
+        </DialogTitle>
 
-        <IconButton onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
+        {allHeaderActions}
       </Box>
 
-      <DialogContent dividers sx={{ paddingTop: 0 }}>
+      <DialogContent dividers sx={{ paddingTop: 1 }}>
         {children}
       </DialogContent>
     </Dialog>

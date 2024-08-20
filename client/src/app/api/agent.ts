@@ -13,6 +13,8 @@ import { PageResponse } from '../models/pagination.ts';
 import { AttractionType } from '../models/attractionType.ts';
 import { AttractionCollection } from '../models/attractionCollection.ts';
 
+const HEADERS_CONTENT_TEXT = { headers: { 'Content-Type': 'text/plain' } };
+
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
 
 function createFormData(
@@ -153,12 +155,57 @@ const AttractionTypes = {
 };
 
 const AttractionsCollections = {
-  get: (username: string) =>
+  getAll: (username: string) =>
     requests.get<AttractionCollection[]>(`attractions/${username}/collections`),
+  get: (username: string, id: string) =>
+    requests.get<AttractionCollection>(
+      `attractions/${username}/collections/${id}`,
+    ),
+  add: (username: string, data: AttractionCollection) =>
+    requests.post<AttractionCollection>(
+      `attractions/${username}/collections`,
+      data,
+    ),
+  update: (username: string, data: AttractionCollection) =>
+    requests.put<AttractionCollection>(
+      `attractions/${username}/collections`,
+      data,
+    ),
   updateOrder: (username: string, ids: string[]) =>
     requests.put(`attractions/${username}/collections/order`, ids),
+  updateCollectionThumbnail: (
+    username: string,
+    id: string,
+    thumbnail: string,
+  ) =>
+    requests.put<AttractionCollection>(
+      `attractions/${username}/collections/${id}/thumbnail?thumbnail=${thumbnail}`,
+      {},
+    ),
   delete: (username: string, id: string) =>
     requests.delete(`attractions/${username}/collections/${id}`),
+  updateItemNote: (
+    username: string,
+    id: string,
+    attractionId: string,
+    note: string | null,
+  ) =>
+    axios
+      .put<AttractionCollection>(
+        `attractions/${username}/collections/${id}/items/${attractionId}/note`,
+        note,
+        HEADERS_CONTENT_TEXT,
+      )
+      .then(responseBody),
+  updateItemsOrder: (username: string, collectionId: string, ids: string[]) =>
+    requests.put(
+      `attractions/${username}/collections/${collectionId}/items/order`,
+      ids,
+    ),
+  deleteItem: (username: string, collectionId: string, attractionId: string) =>
+    requests.delete<AttractionCollection>(
+      `attractions/${username}/collections/${collectionId}/items/${attractionId}`,
+    ),
 };
 
 const User = {
@@ -166,8 +213,7 @@ const User = {
   changePhoto: (photo: Blob) =>
     requests.post<string>('users/photo', createFormData({ photo })),
   deletePhoto: () => requests.delete('users/photo'),
-  updateBio: (bio: string) =>
-    axios.put('users/bio', bio, { headers: { 'Content-Type': 'text/plain' } }),
+  updateBio: (bio: string) => axios.put('users/bio', bio, HEADERS_CONTENT_TEXT),
 };
 
 const agent = {

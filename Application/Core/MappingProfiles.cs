@@ -43,14 +43,7 @@ public class MappingProfiles : Profile
             .ForMember(d => d.Index, o => o.Ignore())
             .ForMember(d => d.OwnerId, o => o.MapFrom(_ => currentUserId))
             .ForMember(d => d.Owner, o => o.Ignore())
-            .ForMember(d => d.CollectionItems,
-                o => o.MapFrom((src, dest, d, context) =>
-                    src.Items.Select((ci, i) =>
-                    {
-                        var collectionItem = context.Mapper.Map<AttractionsCollectionItem>(ci);
-                        collectionItem.Index = Convert.ToUInt32(i);
-                        return collectionItem;
-                    })))
+            .ForMember(d => d.CollectionItems, o => o.Ignore())
             ;
     }
 }

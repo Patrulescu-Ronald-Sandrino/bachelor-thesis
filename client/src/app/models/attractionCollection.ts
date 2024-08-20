@@ -3,7 +3,7 @@ export interface AttractionCollection {
   name: string;
   description: string;
   thumbnail: string;
-  visibility: string;
+  visibility: Visibility;
   items: Item[];
 }
 
@@ -13,3 +13,6 @@ export interface Item {
   attractionPhoto: string;
   note: string;
 }
+
+export const Visibilities = ['Public', 'Private'] as const;
+export type Visibility = (typeof Visibilities)[number];

@@ -39,7 +39,7 @@ export function CollectionsTab({ username }: Props) {
   const [loadingDelete, setLoadingDelete] = useState(false);
 
   useEffect(() => {
-    agent.AttractionsCollections.get(username)
+    agent.AttractionsCollections.getAll(username)
       .then((collections) => {
         setCollections(collections);
         setLoading(false);

@@ -55,12 +55,15 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+
       <ToastContainer position="bottom-right" hideProgressBar theme="colored" />
+
       <Loadable loading={loading} target="app">
         {pathname !== '/' && (
           <Header darkMode={darkMode} handleThemeChange={handleThemeChange} />
         )}
-        <Container sx={{ mt: 3 }}>
+
+        <Container sx={{ marginY: 3 }}>
           <Outlet />
         </Container>
       </Loadable>

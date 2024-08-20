@@ -13,6 +13,7 @@ import NotFound from '../errors/NotFound.tsx';
 import VerifyEmailPage from '../../features/account/VerifyEmailPage.tsx';
 import ResetPasswordPage from '../../features/account/ResetPasswordPage.tsx';
 import ForgotPasswordPage from '../../features/account/ForgotPasswordPage.tsx';
+import CollectionPage from '../../features/collection/CollectionPage.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +37,14 @@ export const router = createBrowserRouter([
           })),
           { path: 'attractions/:id', element: <AttractionDetailsPage /> },
           { path: 'user/:username', element: <ProfilePage /> },
+          {
+            path: 'user/:username/collections/add',
+            element: <CollectionPage />,
+          },
+          {
+            path: 'user/:username/collections/:id',
+            element: <CollectionPage />,
+          },
         ],
       },
       ...['not-found', '*'].map((path) => ({ path, element: <NotFound /> })),
