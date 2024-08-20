@@ -14,10 +14,10 @@ export default function RequireAuth({ roles }: Props) {
 
   useEffect(() => {
     if (!user) {
-      router.navigate('/login', { state: { from: location } });
+      void router.navigate('/login', { state: { from: location } });
     } else if (roles && !roles.some((r) => user.roles?.includes(r))) {
       toast.error('Not authorized to access this area');
-      router.navigate('/attractions');
+      void router.navigate('/attractions');
     }
   }, [location, roles, user]);
 

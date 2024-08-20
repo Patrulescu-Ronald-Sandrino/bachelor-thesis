@@ -165,7 +165,7 @@ public static class Seed
 
             foreach (var user in userManager.Users)
             {
-                var collectionsCount = Random.Next(5);
+                var collectionsCount = Random.Next(10);
                 var descriptions = await RandomTexts();
 
                 foreach (var i in Enumerable.Range(1, collectionsCount))

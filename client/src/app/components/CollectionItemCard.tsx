@@ -35,6 +35,7 @@ const photoPlaceholder = (
     style={{
       ...imageSize,
       backgroundColor: 'lightgray',
+      flexShrink: 0,
     }}
   >
     <img alt="No photo" />

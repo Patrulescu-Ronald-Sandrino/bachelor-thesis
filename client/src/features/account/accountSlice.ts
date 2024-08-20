@@ -27,8 +27,6 @@ export const signInUser = createAsyncThunk<UserDto, FieldValues>(
       localStorage.setItem('user', JSON.stringify(user));
       return user;
     } catch (e) {
-      // TODO: check if this is the correct way to handle errors
-      console.log(e);
       return thunkApi.rejectWithValue(e);
     }
   },
@@ -43,8 +41,6 @@ export const fetchCurrentUser = createAsyncThunk<UserDto>(
       localStorage.setItem('user', JSON.stringify(user));
       return user;
     } catch (e) {
-      // TODO: check if this is the correct way to handle errors
-      console.log(e);
       return thunkApi.rejectWithValue(e);
     }
   },
@@ -91,7 +87,9 @@ export const accountSlice = createSlice({
       state.user = null;
       localStorage.removeItem('user');
       toast.error('Session expired - please login again');
-      void router.navigate('/');
+      void router.navigate('/login', {
+        state: { from: router.state.location },
+      });
     });
     builder.addCase(signInUser.rejected, (_, action) => {
       throw action.payload;
