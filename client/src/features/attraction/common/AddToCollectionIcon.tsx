@@ -40,6 +40,14 @@ export default function AddToCollectionIcon({
   const [loading, setLoading] = useState(false);
 
   const [newCollectionDialogOpen, setNewCollectionDialogOpen] = useState(false);
+  const [filterPopoverIsOpen, setFilterPopoverIsOpen] = useState<
+    boolean | undefined
+  >();
+
+  function handleSetNewCollectionDialogOpen(value: boolean) {
+    setNewCollectionDialogOpen(value);
+    setFilterPopoverIsOpen(value ? undefined : true);
+  }
 
   function handleToggleIncludeItem(index: number) {
     setLoading(true);
@@ -73,7 +81,9 @@ export default function AddToCollectionIcon({
 
           <IconButton
             title="Add collection"
-            onClick={() => setNewCollectionDialogOpen(true)}
+            onClick={() => {
+              handleSetNewCollectionDialogOpen(true);
+            }}
             color="inherit"
           >
             <AddIcon />
@@ -124,16 +134,6 @@ export default function AddToCollectionIcon({
       <Backdrop open={loading}>
         <CircularProgress />
       </Backdrop>
-
-      <AddToCollectionNewDialog
-        username={username}
-        attraction={attraction}
-        isOpen={newCollectionDialogOpen}
-        close={() => setNewCollectionDialogOpen(false)}
-        appendCollection={(collection) =>
-          setCollections([...collections, collection])
-        }
-      />
     </>
   );
 
@@ -149,6 +149,7 @@ export default function AddToCollectionIcon({
           vertical: 'bottom',
           horizontal: 'center',
         }}
+        filterIsOpen={filterPopoverIsOpen}
       >
         <LoadingButton sx={{ color: 'inherit', minWidth: 'auto' }}>
           {indicesOfCollectionsContained.size > 0 ? (
@@ -158,6 +159,16 @@ export default function AddToCollectionIcon({
           )}
         </LoadingButton>
       </MouseOverPopover>
+
+      <AddToCollectionNewDialog
+        username={username}
+        attraction={attraction}
+        isOpen={newCollectionDialogOpen}
+        close={() => handleSetNewCollectionDialogOpen(false)}
+        appendCollection={(collection) =>
+          setCollections([...collections, collection])
+        }
+      />
     </>
   );
 }

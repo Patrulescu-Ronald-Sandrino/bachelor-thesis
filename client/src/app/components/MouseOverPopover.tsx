@@ -5,6 +5,7 @@ interface Props extends PropsWithChildren {
   popoverContent: ReactNode;
   anchorOrigin?: PopoverOrigin;
   transformOrigin?: PopoverOrigin;
+  filterIsOpen?: boolean;
 }
 
 export default function MouseOverPopover({
@@ -12,6 +13,7 @@ export default function MouseOverPopover({
   popoverContent,
   anchorOrigin,
   transformOrigin,
+  filterIsOpen,
 }: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -23,7 +25,7 @@ export default function MouseOverPopover({
     setAnchorEl(null);
   }
 
-  const open = Boolean(anchorEl);
+  const open = Boolean(anchorEl) && (filterIsOpen ?? true);
 
   return (
     <div onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
