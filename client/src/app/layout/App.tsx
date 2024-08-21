@@ -56,7 +56,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
 
-      <ToastContainer position="bottom-right" hideProgressBar theme="colored" />
+      <ToastContainer position="bottom-right" theme="colored" />
 
       <Loadable loading={loading} target="app">
         {pathname !== '/' && (
