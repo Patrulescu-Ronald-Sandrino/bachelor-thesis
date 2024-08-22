@@ -20,4 +20,20 @@
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
   </ItemGroup>
 
+    <ItemGroup>
+        <Compile Remove="wwwroot\**"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Remove="wwwroot\**"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Remove="wwwroot\**"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="wwwroot\**"/>
+    </ItemGroup>
+
 </Project>

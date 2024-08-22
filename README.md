@@ -58,6 +58,15 @@ Run the React application:
 npm run dev -- --host --port 4000
 ```
 
+Create a React production build:
+
+https://vitejs.dev/guide/env-and-mode.html
+
+```bash
+# exclude wwwroot from solution (but not individual files)
+npm run build
+```
+
 ## Utils
 
 SQLite URL: `jdbc:sqlite:PATH/bt.db`
