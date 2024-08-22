@@ -1,5 +1,5 @@
 using Application.Contracts;
-using Domain.Entities;
+using Application.DTOs;
 using Domain.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,35 +9,35 @@ namespace API.Controllers;
 public class AttractionTypesController(IAttractionTypesService attractionTypesService) : BaseApiController
 {
     [HttpGet]
-    public async Task<List<AttractionType>> GetAttractionTypes()
+    public async Task<List<AttractionTypeDto>> Get()
     {
-        return await attractionTypesService.GetAttractionTypes();
+        return await attractionTypesService.Get();
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<AttractionType> GetAttractionType(Guid id)
+    public async Task<AttractionTypeDto> Find(Guid id)
     {
-        return await attractionTypesService.GetAttractionType(id);
+        return await attractionTypesService.Find(id);
     }
 
     [Authorize(Roles = nameof(UserRoles.Admin))]
     [HttpPost]
-    public async Task<ActionResult<AttractionType>> CreateAttractionType(AttractionType attractionType)
+    public async Task<AttractionTypeDto> Add([FromQuery] string name)
     {
-        return await attractionTypesService.CreateAttractionType(attractionType);
+        return await attractionTypesService.Add(name);
     }
 
     [Authorize(Roles = nameof(UserRoles.Admin))]
     [HttpPut]
-    public async Task<AttractionType> UpdateAttractionType(AttractionType attractionType)
+    public async Task<AttractionTypeDto> Update(AttractionTypeDto attractionTypeDto)
     {
-        return await attractionTypesService.UpdateAttractionType(attractionType);
+        return await attractionTypesService.Update(attractionTypeDto);
     }
 
     [Authorize(Roles = nameof(UserRoles.Admin))]
     [HttpDelete("{id:guid}")]
-    public async Task<ActionResult<AttractionType>> DeleteAttractionType(Guid id)
+    public async Task<AttractionTypeDto> Delete(Guid id)
     {
-        return await attractionTypesService.DeleteAttractionType(id);
+        return await attractionTypesService.Delete(id);
     }
 }

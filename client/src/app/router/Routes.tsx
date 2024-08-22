@@ -14,6 +14,7 @@ import VerifyEmailPage from '../../features/account/VerifyEmailPage.tsx';
 import ResetPasswordPage from '../../features/account/ResetPasswordPage.tsx';
 import ForgotPasswordPage from '../../features/account/ForgotPasswordPage.tsx';
 import CollectionPage from '../../features/collection/CollectionPage.tsx';
+import AttractionTypesPage from '../../features/attraction/types/AttractionTypesPage.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +46,12 @@ export const router = createBrowserRouter([
             path: 'user/:username/collections/:id',
             element: <CollectionPage />,
           },
+        ],
+      },
+      {
+        element: <RequireAuth roles={['Admin']} />,
+        children: [
+          { path: 'attraction-types', element: <AttractionTypesPage /> },
         ],
       },
       ...['not-found', '*'].map((path) => ({ path, element: <NotFound /> })),

@@ -1,6 +1,8 @@
 using Application.Contracts;
-using Application.Logic.Extensions;
+using Application.DTOs;
+using Application.Exceptions;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -9,37 +11,61 @@ namespace Application.Logic;
 
 public class AttractionTypesService(DataContext context, IMapper mapper) : IAttractionTypesService
 {
-    public async Task<List<AttractionType>> GetAttractionTypes()
+    public async Task<List<AttractionTypeDto>> Get()
     {
-        return await context.AttractionTypes.ToListAsync();
+        return await Get(null);
     }
 
-    public async Task<AttractionType> GetAttractionType(Guid id)
+    public async Task<AttractionTypeDto> Find(Guid id)
     {
-        return await context.AttractionTypes.FindAsyncOrThrow(id);
+        var attractionTypes = await Get(id);
+        return attractionTypes.Count switch
+        {
+            > 1 => throw new Exception($"Multiple attraction types found with the same id - {id}"),
+            _ => attractionTypes.FirstOrDefault() ?? throw new NotFoundException(),
+        };
     }
 
-    public async Task<AttractionType> CreateAttractionType(AttractionType attractionType)
+    public async Task<AttractionTypeDto> Add(string name)
     {
-        attractionType.Id = Guid.NewGuid();
+        var attractionType = new AttractionType { Id = Guid.NewGuid(), Name = name };
         await context.AttractionTypes.AddAsync(attractionType);
         await context.SaveChangesAsync();
-        return attractionType;
+        return mapper.Map<AttractionTypeDto>(attractionType);
     }
 
-    public async Task<AttractionType> UpdateAttractionType(AttractionType attractionType)
+    public async Task<AttractionTypeDto> Update(AttractionTypeDto attractionTypeDto)
     {
-        var attractionTypeToEdit = await context.AttractionTypes.FindAsyncOrThrow(attractionType.Id);
-        mapper.Map(attractionType, attractionTypeToEdit);
+        var attractionType = await FindInner(attractionTypeDto.Id);
+        attractionType.Name = attractionTypeDto.Name;
         await context.SaveChangesAsync();
-        return attractionTypeToEdit;
+        return mapper.Map<AttractionTypeDto>(attractionType);
     }
 
-    public async Task<AttractionType> DeleteAttractionType(Guid id)
+    public async Task<AttractionTypeDto> Delete(Guid id)
     {
-        var attractionType = await context.AttractionTypes.FindAsyncOrThrow(id);
+        var attractionType = await FindInner(id);
+
+        if (attractionType.Attractions.Count > 0) throw new ValidationException("Attraction type is in use");
+
         context.Remove(attractionType);
         await context.SaveChangesAsync();
-        return attractionType;
+        return mapper.Map<AttractionTypeDto>(attractionType);
+    }
+
+    private async Task<List<AttractionTypeDto>> Get(Guid? id)
+    {
+        var attractionTypes = await context.AttractionTypes.Where(at => !id.HasValue || at.Id == id)
+            .Include(at => at.Attractions)
+            .ProjectTo<AttractionTypeDto>(mapper.ConfigurationProvider).ToListAsync();
+        return attractionTypes;
+    }
+
+    private async Task<AttractionType> FindInner(Guid id)
+    {
+        return await context.AttractionTypes
+            .Where(at => at.Id == id)
+            .Include(at => at.Attractions)
+            .FirstOrDefaultAsync() ?? throw new NotFoundException();
     }
 }

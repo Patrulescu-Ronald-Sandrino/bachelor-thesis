@@ -428,7 +428,7 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Entities.Attraction", b =>
                 {
                     b.HasOne("Domain.Entities.AttractionType", "AttractionType")
-                        .WithMany()
+                        .WithMany("Attractions")
                         .HasForeignKey("AttractionTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -573,6 +573,11 @@ namespace Persistence.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Reactions");
+                });
+
+            modelBuilder.Entity("Domain.Entities.AttractionType", b =>
+                {
+                    b.Navigation("Attractions");
                 });
 
             modelBuilder.Entity("Domain.Entities.AttractionsCollection", b =>

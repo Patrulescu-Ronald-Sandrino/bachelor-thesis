@@ -55,7 +55,7 @@ public class AttractionsController(
     public async Task<ActionResult<AttractionFormData>> GetAttractionFormData(Guid? id)
     {
         var taskCountries = countryService.GetCountries();
-        var taskAttractionTypes = attractionTypesService.GetAttractionTypes();
+        var taskAttractionTypes = attractionTypesService.Get();
         var taskAttraction = id.Map(attractionsService.GetAttraction, Task<AttractionDto>.Factory.StartNew(() => null));
 
         await Task.WhenAll(taskCountries, taskAttractionTypes, taskAttraction);

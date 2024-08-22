@@ -40,7 +40,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
         builder.Entity<Attraction>(b =>
         {
             b.HasOne(a => a.AttractionType)
-                .WithMany()
+                .WithMany(at => at.Attractions)
                 .HasForeignKey(a => a.AttractionTypeId)
                 .IsRequired();
 

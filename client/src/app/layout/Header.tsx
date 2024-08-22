@@ -12,6 +12,7 @@ import HeaderMenu from './HeaderMenu.tsx';
 import AddIcon from '@mui/icons-material/Add';
 import AttractionsIcon from '@mui/icons-material/Attractions';
 import { useAppSelector } from '../store/configureStore.ts';
+import { EditNote } from '@mui/icons-material';
 
 interface Props {
   darkMode: boolean;
@@ -49,6 +50,18 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
         <Box display="flex" alignItems="center">
           {user ? (
             <>
+              {user.roles?.includes('Admin') && (
+                <IconButton
+                  component={Link}
+                  href="/attraction-types"
+                  size="small"
+                  color="inherit"
+                  title={'Manage attraction types'}
+                >
+                  <EditNote fontSize="large" />
+                </IconButton>
+              )}
+
               <IconButton
                 component={Link}
                 href="/attractions/add"

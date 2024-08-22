@@ -46,5 +46,8 @@ public class MappingProfiles : Profile
             .ForMember(d => d.CollectionItems,
                 o => o.MapFrom((dto, _, _, ctx) =>
                     ctx.Mapper.Map<List<AttractionsCollectionItem>>(dto.Items)));
+
+        CreateMap<AttractionType, AttractionTypeDto>()
+            .ForMember(d => d.Usages, o => o.MapFrom(s => s.Attractions.Count));
     }
 }

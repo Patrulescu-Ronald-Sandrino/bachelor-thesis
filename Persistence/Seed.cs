@@ -91,7 +91,7 @@ public static class Seed
                 Website = i % 2 == 0 ? "https://www.google.com" : "https://example.com/",
                 City = $"City {i % 3 + 1}",
                 CountryId = countries.ElementAt(Random.Next(countries.Count)).Id,
-                AttractionTypeId = attractionTypes.ElementAt(Random.Next(context.AttractionTypes.Count())).Id,
+                AttractionTypeId = attractionTypes.ElementAt(Random.Next(attractionTypes.Count)).Id,
                 CreatorId = users.ElementAt(i % users.Count).Id,
                 Photos = photos.OrderBy(_ => Random.Next()).Take(Random.Next(5) + 1).ToList(),
             });
@@ -208,8 +208,10 @@ public static class Seed
 
         return;
 
-        static List<Guid> GenerateOrderedIds(int count) =>
-            Enumerable.Range(0, count).Select(_ => Guid.NewGuid()).Order().ToList();
+        static List<Guid> GenerateOrderedIds(int count)
+        {
+            return Enumerable.Range(0, count).Select(_ => Guid.NewGuid()).Order().ToList();
+        }
     }
 
     private static async Task<List<string>> RandomTexts()

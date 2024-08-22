@@ -152,6 +152,11 @@ const Attractions = {
 
 const AttractionTypes = {
   list: () => requests.get<AttractionType[]>('attractionTypes'),
+  add: (name: string) =>
+    requests.post<AttractionType>(`attractionTypes?name=${name}`, {}),
+  update: (id: string, name: string) =>
+    requests.put<AttractionType>(`attractionTypes`, { id, name }),
+  delete: (id: string) => requests.delete(`attractionTypes/${id}`),
 };
 
 const AttractionsCollections = {
