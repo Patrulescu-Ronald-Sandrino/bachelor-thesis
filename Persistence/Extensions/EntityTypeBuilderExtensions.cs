@@ -16,7 +16,7 @@ public static class EntityTypeBuilderExtensions
             var tableName = typeof(TTable).Name;
             var checkConstraintName = $"CK_{tableName}_{columnName}_IN_ENUM";
             var values = EnumUtil.GetValues<TColumn>().Select(x => $"'{x}'");
-            var checkConstraint = $"[{columnName}] IN ({string.Join(", ", values)})";
+            var checkConstraint = $""" "{columnName}" IN ({string.Join(", ", values)}) """;
             b.HasCheckConstraint(checkConstraintName, checkConstraint);
         });
     }

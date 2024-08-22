@@ -1,4 +1,3 @@
-using Domain;
 using Domain.Entities;
 using Domain.Types;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -38,6 +37,10 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
 
             b.Wrapper().HasEnumValueCheckConstraint<UserRoles>(nameof(UserRole.Name));
         });
+
+        builder.Entity<Country>()
+            .HasIndex(c => c.Name)
+            .IsUnique();
 
         builder.Entity<Attraction>(b =>
         {
@@ -143,8 +146,8 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
 
             b.Property(f => f.Status).HasConversion<string>().IsRequired();
             b.Wrapper().HasEnumValueCheckConstraint<FriendshipStatus>(nameof(Friendship.Status));
-
-            b.ToTable(tb => tb.HasCheckConstraint("NoSelfFriendship", "SenderId <> ReceiverId"));
+            b.ToTable(tb => tb.HasCheckConstraint("NoSelfFriendship",
+                $""" "{nameof(Friendship.SenderId)}" <> "{nameof(Friendship.ReceiverId)}" """));
         });
     }
 }

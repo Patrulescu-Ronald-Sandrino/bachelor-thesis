@@ -73,6 +73,8 @@ public static class Seed
             }
         }
 
+        var users = await userManager.Users.ToListAsync();
+
         if (!context.AttractionTypes.Any())
         {
             var ids = GenerateOrderedIds(AttractionTypeNames.Length);
@@ -97,8 +99,7 @@ public static class Seed
             countries ??= context.Countries.ToList();
 
             var ids = GenerateOrderedIds(20);
-            var users = await userManager.Users.ToListAsync();
-            var attractions = Enumerable.Range(0, ids.Count).Select(i => new Attraction
+            var attractionsNew = Enumerable.Range(0, ids.Count).Select(i => new Attraction
             {
                 Id = ids[i],
                 Name = $"Attraction {i + 1:00}",
@@ -112,18 +113,20 @@ public static class Seed
                 Photos = photos.OrderBy(_ => Random.Next()).Take(Random.Next(5) + 1).ToList(),
             });
 
-            await context.Attractions.AddRangeAsync(attractions);
+            await context.Attractions.AddRangeAsync(attractionsNew);
             await context.Reactions.ExecuteDeleteAsync();
             await context.AttractionComments.ExecuteDeleteAsync();
             await context.AttractionsCollections.ExecuteDeleteAsync();
             await context.SaveChangesAsync();
         }
 
+        var attractions = await context.Attractions.ToListAsync();
+
         if (!context.Reactions.Any())
         {
             List<Reaction> reactions = [];
-            await foreach (var attraction in context.Attractions)
-            foreach (var user in userManager.Users)
+            foreach (var attraction in attractions)
+            foreach (var user in users)
             {
                 if (Random.Next(1 + 1) == 0) continue;
 
@@ -144,7 +147,7 @@ public static class Seed
             List<AttractionComment> comments = [];
 
             await foreach (var attraction in context.Attractions)
-            foreach (var user in userManager.Users)
+            foreach (var user in users)
             {
                 if (Random.Next(1 + 1) == 0) continue;
 
@@ -164,10 +167,9 @@ public static class Seed
 
         if (!context.AttractionsCollections.Any())
         {
-            var attractions = await context.Attractions.ToListAsync();
             List<AttractionsCollection> collections = [];
 
-            foreach (var user in userManager.Users)
+            foreach (var user in users)
             {
                 var collectionsCount = Random.Next(10);
 
@@ -208,7 +210,6 @@ public static class Seed
 
         if (!context.Friendships.Any())
         {
-            var users = await userManager.Users.ToListAsync();
             var friendshipTypes = new List<FriendshipStatus?> { null }
                 .Concat(EnumUtil.GetValues<FriendshipStatus>().Select(x => (FriendshipStatus?)x)).ToImmutableList();
             List<Friendship> friendships = [];
