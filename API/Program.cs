@@ -38,6 +38,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => { c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true"); });
 }
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseCors(options =>
 {
     options.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4000");
@@ -47,6 +50,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapFallbackToController("Index", "Fallback");
+
 app.MapHub<ChatHub>("/chat");
 
 using var scope = app.Services.CreateScope();
