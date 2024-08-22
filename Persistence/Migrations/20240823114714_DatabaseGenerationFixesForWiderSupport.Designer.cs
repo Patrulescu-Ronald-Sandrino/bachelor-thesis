@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -10,9 +11,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240823114714_DatabaseGenerationFixesForWiderSupport")]
+    partial class DatabaseGenerationFixesForWiderSupport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
@@ -61,7 +64,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("CreatorId");
 
-                    b.ToTable("Attractions", (string)null);
+                    b.ToTable("Attractions");
                 });
 
             modelBuilder.Entity("Domain.Entities.AttractionComment", b =>
@@ -88,7 +91,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("AttractionComments", (string)null);
+                    b.ToTable("AttractionComments");
                 });
 
             modelBuilder.Entity("Domain.Entities.AttractionType", b =>
@@ -105,7 +108,7 @@ namespace Persistence.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("AttractionTypes", (string)null);
+                    b.ToTable("AttractionTypes");
                 });
 
             modelBuilder.Entity("Domain.Entities.AttractionsCollection", b =>
@@ -142,7 +145,7 @@ namespace Persistence.Migrations
                     b.HasIndex("Id", "OwnerId", "Index")
                         .IsUnique();
 
-                    b.ToTable("AttractionsCollections", null, t =>
+                    b.ToTable("AttractionsCollections", t =>
                         {
                             t.HasCheckConstraint("CK_AttractionsCollection_Visibility_IN_ENUM", " \"Visibility\" IN ('Public', 'Friends', 'Private') ");
                         });
@@ -172,7 +175,7 @@ namespace Persistence.Migrations
                     b.HasIndex("CollectionId", "AttractionId", "Index")
                         .IsUnique();
 
-                    b.ToTable("AttractionsCollectionsItems", (string)null);
+                    b.ToTable("AttractionsCollectionsItems");
                 });
 
             modelBuilder.Entity("Domain.Entities.Country", b =>
@@ -186,7 +189,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Countries", (string)null);
+                    b.ToTable("Countries");
                 });
 
             modelBuilder.Entity("Domain.Entities.Friendship", b =>
@@ -208,7 +211,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("ReceiverId");
 
-                    b.ToTable("Friendships", null, t =>
+                    b.ToTable("Friendships", t =>
                         {
                             t.HasCheckConstraint("CK_Friendship_Status_IN_ENUM", " \"Status\" IN ('Accepted', 'Pending') ");
 
@@ -232,7 +235,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("AttractionId");
 
-                    b.ToTable("Reactions", null, t =>
+                    b.ToTable("Reactions", t =>
                         {
                             t.HasCheckConstraint("CK_Reaction_Type_IN_ENUM", " \"Type\" IN ('Like', 'Dislike') ");
                         });
