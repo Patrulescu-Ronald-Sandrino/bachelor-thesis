@@ -1,3 +1,4 @@
+using Domain;
 using Domain.Entities;
 using Domain.Types;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -16,6 +17,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
     public DbSet<AttractionComment> AttractionComments { get; init; }
     public DbSet<AttractionsCollection> AttractionsCollections { get; init; }
     public DbSet<AttractionsCollectionItem> AttractionsCollectionsItems { get; init; }
+    public DbSet<Friendship> Friendships { get; init; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -83,6 +85,8 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
         });
 
         SetUpAttractionsCollections(builder);
+
+        SetUpFriendships(builder);
     }
 
     private static void SetUpAttractionsCollections(ModelBuilder builder)
@@ -120,6 +124,27 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<User, Use
 
             b.HasIndex(ci => new { ci.CollectionId, ci.AttractionId }).IsUnique();
             b.HasIndex(ci => new { ci.CollectionId, ci.AttractionId, ci.Index }).IsUnique();
+        });
+    }
+
+    private static void SetUpFriendships(ModelBuilder builder)
+    {
+        builder.Entity<Friendship>(b =>
+        {
+            b.HasKey(f => new { f.SenderId, f.ReceiverId });
+
+            b.HasOne(f => f.Sender)
+                .WithMany(u => u.FriendshipsSent)
+                .HasForeignKey(f => f.SenderId);
+
+            b.HasOne(f => f.Receiver)
+                .WithMany(u => u.FriendshipsReceived)
+                .HasForeignKey(f => f.ReceiverId);
+
+            b.Property(f => f.Status).HasConversion<string>().IsRequired();
+            b.Wrapper().HasEnumValueCheckConstraint<FriendshipStatus>(nameof(Friendship.Status));
+
+            b.ToTable(tb => tb.HasCheckConstraint("NoSelfFriendship", "SenderId <> ReceiverId"));
         });
     }
 }

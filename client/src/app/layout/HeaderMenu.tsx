@@ -10,7 +10,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../store/configureStore.ts';
 import React, { useState } from 'react';
 import { signOut } from '../../features/account/accountSlice.ts';
-import NotFound from '../errors/NotFound.tsx';
+import NotFoundPage from '../errors/NotFoundPage.tsx';
 
 export default function HeaderMenu() {
   const dispatch = useAppDispatch();
@@ -26,7 +26,7 @@ export default function HeaderMenu() {
     setAnchorEl(null);
   }
 
-  if (!user) return <NotFound />;
+  if (!user) return <NotFoundPage />;
 
   return (
     <div>

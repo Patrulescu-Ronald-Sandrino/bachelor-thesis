@@ -14,5 +14,5 @@ export interface Item {
   note: string;
 }
 
-export const Visibilities = ['Public', 'Private'] as const;
+export const Visibilities = ['Public', 'Friends', 'Private'] as const;
 export type Visibility = (typeof Visibilities)[number];

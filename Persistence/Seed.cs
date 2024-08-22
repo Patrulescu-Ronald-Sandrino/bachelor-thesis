@@ -1,3 +1,6 @@
+using System.Collections.Immutable;
+using System.Diagnostics;
+using Domain;
 using Domain.Entities;
 using Domain.Types;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +13,6 @@ namespace Persistence;
 
 public static class Seed
 {
-    private const int AttractionsCount = 20;
     private static readonly string[] AttractionTypeNames = ["Museum", "Park", "Zoo", "Aquarium", "Amusement Park"];
     private static readonly string[] Usernames = ["bob", "tom", "jane"];
 
@@ -23,12 +25,14 @@ public static class Seed
     public static async Task SeedData(DataContext context, UserManager<User> userManager,
         ConfigurationManager configuration)
     {
+        var stopwatch = Stopwatch.StartNew();
+
+        var descriptions = await RandomTexts();
         List<AttractionType> attractionTypes = null;
         List<Country> countries = null;
 
         if (!userManager.Users.Any())
         {
-            var descriptions = await RandomTexts();
             // add admin user
             const string admin = "admin";
             await userManager.CreateAsync(
@@ -48,6 +52,19 @@ public static class Seed
                 var user = new User
                 {
                     UserName = username, Email = $"{username}@test.com", Photo = Photos[i % Photos.Length],
+                    Bio = string.Join("\n\n", descriptions.OrderBy(_ => Random.Next()).Take(Random.Next(3))),
+                    EmailConfirmed = true,
+                };
+                await userManager.CreateAsync(user, configuration.GetOrThrow("PasswordUser"));
+                await userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
+            }
+
+            // add generic users
+            foreach (var i in Enumerable.Range(1, 20))
+            {
+                var user = new User
+                {
+                    UserName = $"user{i:00}", Email = $"user{i:00}@test.com", Photo = Photos[i % Photos.Length],
                     Bio = string.Join("\n\n", descriptions.OrderBy(_ => Random.Next()).Take(Random.Next(3))),
                     EmailConfirmed = true,
                 };
@@ -79,9 +96,8 @@ public static class Seed
             attractionTypes ??= context.AttractionTypes.ToList();
             countries ??= context.Countries.ToList();
 
-            var ids = GenerateOrderedIds(AttractionsCount);
+            var ids = GenerateOrderedIds(20);
             var users = await userManager.Users.ToListAsync();
-            var descriptions = await RandomTexts();
             var attractions = Enumerable.Range(0, ids.Count).Select(i => new Attraction
             {
                 Id = ids[i],
@@ -126,18 +142,6 @@ public static class Seed
         if (!context.AttractionComments.Any())
         {
             List<AttractionComment> comments = [];
-            var startCreatedBy = new DateTime(2000, 1, 1);
-            var rangeCreatedBy = (DateTime.Now - startCreatedBy).Days;
-
-            DateTime RandomDate()
-            {
-                return startCreatedBy.AddDays(Random.Next(rangeCreatedBy - 1))
-                    .AddHours(Random.Next(24))
-                    .AddMinutes(Random.Next(60))
-                    .AddSeconds(Random.Next(60));
-            }
-
-            var texts = await RandomTexts();
 
             await foreach (var attraction in context.Attractions)
             foreach (var user in userManager.Users)
@@ -148,7 +152,7 @@ public static class Seed
                 {
                     Attraction = attraction,
                     Author = user,
-                    Body = string.Join("\n\n", texts.OrderBy(_ => Random.Next()).Take(Random.Next(2) + 1)),
+                    Body = string.Join("\n\n", descriptions.OrderBy(_ => Random.Next()).Take(Random.Next(2) + 1)),
                     CreatedAt = RandomDate(),
                 });
             }
@@ -166,7 +170,6 @@ public static class Seed
             foreach (var user in userManager.Users)
             {
                 var collectionsCount = Random.Next(10);
-                var descriptions = await RandomTexts();
 
                 foreach (var i in Enumerable.Range(1, collectionsCount))
                 {
@@ -203,8 +206,35 @@ public static class Seed
             await context.AttractionsCollections.AddRangeAsync(collections);
         }
 
+        if (!context.Friendships.Any())
+        {
+            var users = await userManager.Users.ToListAsync();
+            var friendshipTypes = new List<FriendshipStatus?> { null }
+                .Concat(EnumUtil.GetValues<FriendshipStatus>().Select(x => (FriendshipStatus?)x)).ToImmutableList();
+            List<Friendship> friendships = [];
+
+            // (n^2 - n)/2 friendships
+            for (var i = 0; i < users.Count; i++)
+            for (var j = i + 1; j < users.Count; j++)
+            {
+                var friendshipType = friendshipTypes.ElementAt(Random.Next(friendshipTypes.Count));
+                if (friendshipType == null) continue;
+                friendships.Add(new Friendship
+                {
+                    SenderId = users[i].Id,
+                    ReceiverId = users[j].Id,
+                    Status = friendshipType.Value,
+                    ModifiedAt = RandomDate(),
+                });
+            }
+
+            await context.Friendships.AddRangeAsync(friendships);
+        }
+
         var result = await context.SaveChangesAsync();
-        Console.WriteLine($"Successfully seeded the database with {result} entities");
+        stopwatch.Stop();
+        Console.WriteLine(
+            $"Successfully seeded the database with {result} entities in {stopwatch.ElapsedMilliseconds / 1000:F3}s");
 
         return;
 
@@ -219,4 +249,19 @@ public static class Seed
         return (await HttpClient.GetStringAsync("https://loripsum.net/api/plaintext/20")).Split("\n")
             .Where(x => x != "").ToList();
     }
+
+    #region random date
+
+    private static readonly DateTime StartCreatedAt = new(2000, 1, 1);
+    private static readonly int RangeCreatedBy = (DateTime.Now - StartCreatedAt).Days;
+
+    private static DateTime RandomDate()
+    {
+        return StartCreatedAt.AddDays(Random.Next(RangeCreatedBy - 1))
+            .AddHours(Random.Next(24))
+            .AddMinutes(Random.Next(60))
+            .AddSeconds(Random.Next(60));
+    }
+
+    #endregion
 }

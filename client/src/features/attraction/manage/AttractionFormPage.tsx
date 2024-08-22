@@ -1,7 +1,7 @@
 import { useBeforeUnload, useParams } from 'react-router-dom';
 import useAttractionFormData from './useAttractionFormData.tsx';
 import Loadable from '../../../app/layout/Loadable.tsx';
-import NotFound from '../../../app/errors/NotFound.tsx';
+import NotFoundPage from '../../../app/errors/NotFoundPage.tsx';
 import * as yup from 'yup';
 import { Control, FieldPath, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -141,7 +141,7 @@ export default function AttractionFormPage() {
   }
 
   if (loadingData) return <Loadable loading={loadingData} />;
-  if (!!id && !attraction.id) return <NotFound />;
+  if (!!id && !attraction.id) return <NotFoundPage />;
 
   return (
     <Box component={Paper} sx={{ p: 4 }}>

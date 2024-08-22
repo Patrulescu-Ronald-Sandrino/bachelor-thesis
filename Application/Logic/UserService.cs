@@ -1,7 +1,9 @@
 using Application.Contracts;
 using Application.Contracts.Infrastructure;
 using Application.DTOs;
+using Application.DTOs.Friendship;
 using Application.Exceptions;
+using Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -12,10 +14,25 @@ public class UserService(DataContext context, AuthUtil authUtil, IPhotoAccessor 
 {
     public async Task<UserProfileDto> GetProfile(string username)
     {
+        var currentUserId = await authUtil.GetCurrentUserId();
         var user = await context.Users.Where(u => u.UserName == username)
             .Include(user => user.CreatedAttractions)
             .Include(user => user.AttractionComments)
+            .Include(user => user.FriendshipsSent.Where(f => f.ReceiverId == currentUserId))
+            .Include(user => user.FriendshipsReceived.Where(f => f.SenderId == currentUserId))
             .FirstOrDefaultAsync() ?? throw new NotFoundException();
+
+        var friendshipStatus = FriendshipStatusDto.None;
+        var friendshipSent = user.FriendshipsSent.FirstOrDefault();
+        var friendshipReceived = user.FriendshipsReceived.FirstOrDefault();
+        if (friendshipSent != null)
+            friendshipStatus = friendshipSent.Status == FriendshipStatus.Accepted
+                ? FriendshipStatusDto.Accepted
+                : FriendshipStatusDto.Received;
+        if (friendshipReceived != null)
+            friendshipStatus = friendshipReceived.Status == FriendshipStatus.Accepted
+                ? FriendshipStatusDto.Accepted
+                : FriendshipStatusDto.Requested;
 
         return new UserProfileDto
         {
@@ -24,6 +41,7 @@ public class UserService(DataContext context, AuthUtil authUtil, IPhotoAccessor 
             CreatedAttractions = user.CreatedAttractions.Count,
             WrittenComments = user.AttractionComments.Count,
             Bio = user.Bio,
+            FriendshipStatus = friendshipStatus,
         };
     }
 

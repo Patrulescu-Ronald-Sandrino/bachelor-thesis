@@ -4,7 +4,7 @@ import ProfileHeader from './ProfileHeader.tsx';
 import ProfileContent from './ProfileContent.tsx';
 import { useEffect, useState } from 'react';
 import agent from '../../app/api/agent.ts';
-import NotFound from '../../app/errors/NotFound.tsx';
+import NotFoundPage from '../../app/errors/NotFoundPage.tsx';
 import { router } from '../../app/router/Routes.tsx';
 import { UserProfile } from '../../app/models/user.ts';
 import { toast } from 'react-toastify';
@@ -25,12 +25,12 @@ export default function ProfilePage() {
   }, [username]);
 
   if (loading) return <Loadable loading={loading} target="profile" />;
-  if (!profile) return <NotFound />;
+  if (!profile) return <NotFoundPage />;
 
   return (
     <Grid container rowGap={2}>
       <Grid item xs={12}>
-        <ProfileHeader profile={profile} />
+        <ProfileHeader profile={profile} setProfile={setProfile} />
       </Grid>
 
       <Grid item xs={12}>

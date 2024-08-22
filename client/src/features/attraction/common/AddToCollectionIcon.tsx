@@ -1,5 +1,5 @@
 import { Attraction } from '../../../app/models/attraction.ts';
-import { useCollectionsContext } from '../../common/useCollectionsContext.tsx';
+import { useCollectionsContext } from '../../common/collections/useCollectionsContext.tsx';
 import { LoadingButton } from '@mui/lab';
 import { CheckBox, TurnedIn, TurnedInNot } from '@mui/icons-material';
 import MouseOverPopover from '../../../app/components/MouseOverPopover.tsx';

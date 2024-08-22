@@ -1,3 +1,5 @@
+import { FriendshipStatus } from './friendship.ts';
+
 export interface UserDto {
   username: string;
   email: string;
@@ -13,4 +15,5 @@ export interface UserProfile {
   createdAttractions: number;
   writtenComments: number;
   bio: string;
+  friendshipStatus: FriendshipStatus;
 }
