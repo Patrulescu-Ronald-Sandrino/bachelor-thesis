@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -10,9 +11,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240821100231_AddFriendship")]
+    partial class AddFriendship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
@@ -197,7 +200,7 @@ namespace Persistence.Migrations
                     b.Property<Guid>("ReceiverId")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ModifiedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
@@ -211,8 +214,6 @@ namespace Persistence.Migrations
                     b.ToTable("Friendships", t =>
                         {
                             t.HasCheckConstraint("CK_Friendship_Status_IN_ENUM", "[Status] IN ('Accepted', 'Pending')");
-
-                            t.HasCheckConstraint("NoSelfFriendship", "SenderId <> ReceiverId");
                         });
                 });
 
@@ -528,13 +529,13 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Entities.Friendship", b =>
                 {
                     b.HasOne("Domain.Entities.User", "Receiver")
-                        .WithMany("FriendshipsReceived")
+                        .WithMany()
                         .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.User", "Sender")
-                        .WithMany("FriendshipsSent")
+                        .WithMany()
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -636,10 +637,6 @@ namespace Persistence.Migrations
                     b.Navigation("AttractionComments");
 
                     b.Navigation("CreatedAttractions");
-
-                    b.Navigation("FriendshipsReceived");
-
-                    b.Navigation("FriendshipsSent");
                 });
 #pragma warning restore 612, 618
         }

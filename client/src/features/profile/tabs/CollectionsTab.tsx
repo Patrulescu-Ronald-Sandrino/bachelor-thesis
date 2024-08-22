@@ -19,7 +19,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CollectionItemCard from '../../../app/components/CollectionItemCard.tsx';
 import { swap } from '../../../app/util/array.ts';
 import { LoadingButton } from '@mui/lab';
-import useCollections from '../../common/useCollections.tsx';
+import useCollections from '../../common/collections/useCollections.tsx';
 
 interface Props {
   username: string;
@@ -145,6 +145,7 @@ export function CollectionsTab({ username }: Props) {
                 count={collections.length}
                 photo={collection.thumbnail}
                 titleName={collection.name}
+                visibility={isSelf ? collection.visibility : undefined}
                 titleUrl={collectionUrl}
                 body={collection.description}
                 actions={[

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { AttractionCollection } from '../../app/models/attractionCollection.ts';
-import agent from '../../app/api/agent.ts';
+import { AttractionCollection } from '../../../app/models/attractionCollection.ts';
+import agent from '../../../app/api/agent.ts';
 import { toast } from 'react-toastify';
 
 export default function useCollections(username: string) {

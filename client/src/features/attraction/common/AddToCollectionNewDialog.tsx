@@ -35,7 +35,7 @@ export default function AddToCollectionNewDialog({
   const [loading, setLoading] = useState(false);
   const canAddNewCollection = [name, description].every((x) => x !== '');
   const saveButtonStyle = !canAddNewCollection
-    ? { color: 'gray', cursor: 'default' }
+    ? { color: 'gray', cursor: 'not-allowed' }
     : {};
 
   function handleAddNewCollection() {

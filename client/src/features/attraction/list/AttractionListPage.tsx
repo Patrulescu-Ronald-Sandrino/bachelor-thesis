@@ -27,8 +27,8 @@ import {
 } from './attractionsSlice.ts';
 import AttractionCardSkeleton from './AttractionCardSkeleton.tsx';
 import SelectList from '../../../app/components/SelectList.tsx';
-import { CollectionsContextProvider } from '../../common/CollectionsContext.tsx';
-import { useCollectionsContext } from '../../common/useCollectionsContext.tsx';
+import { CollectionsContextProvider } from '../../common/collections/CollectionsContext.tsx';
+import { useCollectionsContext } from '../../common/collections/useCollectionsContext.tsx';
 
 export default function AttractionListPage() {
   return (
@@ -120,6 +120,7 @@ function AttractionListPageInner() {
                 dispatch(setAttractionParams({ pageSize: value }))
               }
             />
+
             <SelectList
               label="Sort field"
               selectedValue={attractionParams.sortField}
@@ -145,28 +146,32 @@ function AttractionListPageInner() {
             />
           </Box>
 
-          <Grid container spacing={4}>
-            {attractions.map((attraction) => (
-              <Grid item xs={4} key={attraction.id}>
-                {/*for fixing skeleton height*/}
-                {/*{Math.random() < 0.5 ? (*/}
-                {!attractionsLoaded ? (
-                  <AttractionCardSkeleton />
-                ) : (
-                  <AttractionCard attraction={attraction} />
-                )}
-              </Grid>
-            ))}
-          </Grid>
+          {pageData && (
+            <>
+              {pageData.totalCount > 0 && (
+                <Grid container spacing={4}>
+                  {attractions.map((attraction) => (
+                    <Grid item xs={4} key={attraction.id}>
+                      {/*for fixing skeleton height*/}
+                      {/*{Math.random() < 0.5 ? (*/}
+                      {!attractionsLoaded ? (
+                        <AttractionCardSkeleton />
+                      ) : (
+                        <AttractionCard attraction={attraction} />
+                      )}
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
 
-          <Box mt={1} mb={1}>
-            {pageData && (
-              <AppPagination
-                pageData={pageData}
-                onPageChange={(page: number) => dispatch(setPageNumber(page))}
-              />
-            )}
-          </Box>
+              <Box mt={1}>
+                <AppPagination
+                  pageData={pageData}
+                  onPageChange={(page: number) => dispatch(setPageNumber(page))}
+                />
+              </Box>
+            </>
+          )}
         </Grid>
       </Grid>
     </Loadable>
