@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { useAppSelector } from '../store/configureStore.ts';
 
-export default function NotFound() {
+export default function NotFoundPage() {
   const { user } = useAppSelector((state) => state.account);
 
   return (

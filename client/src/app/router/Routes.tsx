@@ -8,8 +8,8 @@ import AttractionDetailsPage from '../../features/attraction/details/AttractionD
 import RequireAuth from './RequireAuth.tsx';
 import LoginPage from '../../features/account/LoginPage.tsx';
 import RegisterPage from '../../features/account/RegisterPage.tsx';
-import ServerError from '../errors/ServerError.tsx';
-import NotFound from '../errors/NotFound.tsx';
+import ServerErrorPage from '../errors/ServerErrorPage.tsx';
+import NotFoundPage from '../errors/NotFoundPage.tsx';
 import VerifyEmailPage from '../../features/account/VerifyEmailPage.tsx';
 import ResetPasswordPage from '../../features/account/ResetPasswordPage.tsx';
 import ForgotPasswordPage from '../../features/account/ForgotPasswordPage.tsx';
@@ -27,7 +27,7 @@ export const router = createBrowserRouter([
       { path: 'verify-email', element: <VerifyEmailPage /> },
       { path: 'forgot-password', element: <ForgotPasswordPage /> },
       { path: 'reset-password', element: <ResetPasswordPage /> },
-      { path: 'server-error', element: <ServerError /> },
+      { path: 'server-error', element: <ServerErrorPage /> },
       {
         element: <RequireAuth />,
         children: [
@@ -54,7 +54,10 @@ export const router = createBrowserRouter([
           { path: 'attraction-types', element: <AttractionTypesPage /> },
         ],
       },
-      ...['not-found', '*'].map((path) => ({ path, element: <NotFound /> })),
+      ...['not-found', '*'].map((path) => ({
+        path,
+        element: <NotFoundPage />,
+      })),
     ],
   },
 ]);

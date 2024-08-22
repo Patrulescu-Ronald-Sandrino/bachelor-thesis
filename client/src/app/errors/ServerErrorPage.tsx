@@ -1,7 +1,7 @@
 import { Container, Divider, Paper, Typography } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 
-export default function ServerError() {
+export default function ServerErrorPage() {
   const { state } = useLocation();
 
   return (
@@ -11,8 +11,10 @@ export default function ServerError() {
           <Typography gutterBottom variant="h3" color="secondary">
             {state.error.title}
           </Typography>
+
           <Divider />
-          <Typography variant="body1">
+
+          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
             {state.error.detail || 'Internal server error'}
           </Typography>
         </>
