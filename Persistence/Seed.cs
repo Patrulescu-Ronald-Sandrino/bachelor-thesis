@@ -252,15 +252,23 @@ public static class Seed
 
     #region random date
 
-    private static readonly DateTime StartCreatedAt = new(2000, 1, 1);
-    private static readonly int RangeCreatedBy = (DateTime.Now - StartCreatedAt).Days;
+    private static readonly DateTime Now = DateTime.UtcNow;
+    private static readonly DateTime StartCreatedAt = Now.AddYears(-2);
+    private static readonly int RangeCreatedBy = (Now - StartCreatedAt).Days;
 
     private static DateTime RandomDate()
     {
         return StartCreatedAt.AddDays(Random.Next(RangeCreatedBy - 1))
-            .AddHours(Random.Next(24))
-            .AddMinutes(Random.Next(60))
-            .AddSeconds(Random.Next(60));
+            .AddHours(RandomInt(TimeSpan.FromDays(1).TotalHours))
+            .AddMinutes(RandomInt(TimeSpan.FromHours(1).TotalMinutes))
+            .AddSeconds(RandomInt(TimeSpan.FromMinutes(1).TotalSeconds))
+            .AddMilliseconds(RandomInt(TimeSpan.FromSeconds(1).TotalMilliseconds))
+            .AddMicroseconds(RandomInt(TimeSpan.FromMilliseconds(1).TotalMicroseconds));
+
+        int RandomInt(double timeSpan)
+        {
+            return Random.Next(Convert.ToInt32(timeSpan));
+        }
     }
 
     #endregion
