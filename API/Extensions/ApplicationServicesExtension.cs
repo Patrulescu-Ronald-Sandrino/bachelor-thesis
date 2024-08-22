@@ -1,4 +1,5 @@
 using System.Text;
+using API.Middleware;
 using API.Services;
 using Application.Contracts;
 using Application.Contracts.Infrastructure;
@@ -9,6 +10,7 @@ using Infrastructure.Email;
 using Infrastructure.Photos;
 using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -25,10 +27,12 @@ public static class ApplicationServicesExtension
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(SwaggerGenSetupAction);
+
         services.AddDbContext<DataContext>(options =>
         {
             options.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
         });
+
         services.AddScoped<IAttractionTypesService, AttractionTypesService>();
         services.AddScoped<IAttractionsService, AttractionsService>();
         services.AddScoped<ICountryService, CountryService>();
@@ -41,6 +45,9 @@ public static class ApplicationServicesExtension
         services.AddAutoMapper(typeof(MappingProfiles).Assembly);
         services.Configure<CloudinarySettings>(configuration.GetSection("Cloudinary"));
         services.AddSignalR();
+
+        services.AddHttpContextAccessor();
+        services.AddSingleton<IAuthorizationHandler, RolesAuthorizationHandler>();
     }
 
     private static void SwaggerGenSetupAction(SwaggerGenOptions options)
