@@ -21,7 +21,7 @@ public class TokenService(IConfiguration configuration, UserManager<User> userMa
         var roles = userManager.GetRolesAsync(user).Result;
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"]!));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtTokenKey"]!));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
         var tokenDescriptor = new SecurityTokenDescriptor
