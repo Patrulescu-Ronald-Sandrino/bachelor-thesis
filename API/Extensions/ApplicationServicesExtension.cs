@@ -40,6 +40,7 @@ public static class ApplicationServicesExtension
         services.AddScoped<IAttractionsCollectionsService, AttractionsCollectionsService>();
         services.AddScoped<IUserAccessor, UserAccessor>();
         services.AddScoped<IFriendshipService, FriendshipService>();
+        services.AddScoped<IAdminService, AdminService>();
         services.AddScoped<IPhotoAccessor, PhotoAccessor>();
         services.AddScoped<IEmailSender, EmailSender>();
         services.AddScoped<AuthUtil>();
