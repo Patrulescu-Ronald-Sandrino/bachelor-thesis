@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import agent from '../../../app/api/agent.ts';
 import { Attraction } from '../../../app/models/attraction.ts';
 import Loadable from '../../../app/layout/Loadable.tsx';
-import NotFound from '../../../app/errors/NotFound.tsx';
+import NotFoundPage from '../../../app/errors/NotFoundPage.tsx';
 import { Container, Grid } from '@mui/material';
 import { AttractionCard } from './AttractionCard.tsx';
 import Comments from './Comments.tsx';
-import { CollectionsContextProvider } from '../../common/CollectionsContext.tsx';
-import { useCollectionsContext } from '../../common/useCollectionsContext.tsx';
+import { CollectionsContextProvider } from '../../common/collections/CollectionsContext.tsx';
+import { useCollectionsContext } from '../../common/collections/useCollectionsContext.tsx';
 
 export default function AttractionDetailsPage() {
   return (
@@ -35,7 +35,7 @@ function AttractionDetailsPageInner() {
   }, [id]);
 
   if (loading) return <Loadable loading={loading} target="attraction" />;
-  if (!attraction) return <NotFound />;
+  if (!attraction) return <NotFoundPage />;
 
   function toggleComments() {
     setShowComments((prevState) => !prevState);

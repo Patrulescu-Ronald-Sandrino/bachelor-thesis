@@ -12,6 +12,7 @@ import {
 import { PageResponse } from '../models/pagination.ts';
 import { AttractionType } from '../models/attractionType.ts';
 import { AttractionCollection, Item } from '../models/attractionCollection.ts';
+import { FriendshipsDto, FriendshipStatus } from '../models/friendship.ts';
 
 const HEADERS_CONTENT_TEXT = { headers: { 'Content-Type': 'text/plain' } };
 
@@ -231,12 +232,22 @@ const User = {
   updateBio: (bio: string) => axios.put('users/bio', bio, HEADERS_CONTENT_TEXT),
 };
 
+const Friendships = {
+  list: (username: string) =>
+    requests.get<FriendshipsDto>(`friendships/${username}`),
+  add: (username: string) =>
+    requests.post<FriendshipStatus>(`friendships/${username}`, {}),
+  delete: (username: string) =>
+    requests.delete<FriendshipStatus>(`friendships/${username}`),
+};
+
 const agent = {
   Account,
   Attractions,
   AttractionTypes,
   AttractionsCollections,
   User,
+  Friendships,
 };
 
 export default agent;

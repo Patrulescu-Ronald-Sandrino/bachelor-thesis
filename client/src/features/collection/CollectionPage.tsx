@@ -25,7 +25,7 @@ import {
 } from '../../app/models/attractionCollection.ts';
 import agent from '../../app/api/agent.ts';
 import Loadable from '../../app/layout/Loadable.tsx';
-import NotFound from '../../app/errors/NotFound.tsx';
+import NotFoundPage from '../../app/errors/NotFoundPage.tsx';
 import { Control, useForm } from 'react-hook-form';
 import FormTextInput from '../../app/components/form/FormTextInput.tsx';
 import FormSelectList from '../../app/components/form/FormSelectList.tsx';
@@ -97,7 +97,7 @@ export default function CollectionPage() {
   }, [isNew, username, id, reset]);
 
   if (loadingGet) return <Loadable loading={loadingGet} target="collection" />;
-  if (!isNew && !collection && !loadingGet) return <NotFound />;
+  if (!isNew && !collection && !loadingGet) return <NotFoundPage />;
 
   function handleAddCollection(data: AttractionCollection) {
     setLoading(true);

@@ -5,6 +5,7 @@ using Application.Exceptions;
 using Application.Logic.Extensions;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Domain;
 using Domain.Entities;
 using Domain.Types;
 using Microsoft.EntityFrameworkCore;
@@ -212,11 +213,18 @@ public class AttractionsCollectionsService(DataContext context, IMapper mapper, 
 
     private async Task<List<AttractionsCollectionDto>> GetCollections(string username, Guid? id)
     {
-        var currentUser = await authUtil.GetCurrentUser();
+        var currentUserId = await authUtil.GetCurrentUserId();
         return await context.AttractionsCollections
-            .Where(c => c.Owner.UserName == username &&
-                        (c.OwnerId == currentUser.Id || c.Visibility == Visibility.Public) &&
-                        (!id.HasValue || c.Id == id))
+            .Where(c => c.Owner.UserName == username)
+            .Where(c => !id.HasValue || c.Id == id)
+            .Where(c => c.OwnerId == currentUserId
+                        || c.Visibility == Visibility.Public
+                        || (c.Visibility == Visibility.Friends
+                            //@formatter:off
+                            && (c.Owner.FriendshipsSent.Any(f => f.Status == FriendshipStatus.Accepted && f.ReceiverId == currentUserId)
+                                || c.Owner.FriendshipsReceived.Any(f => f.Status == FriendshipStatus.Accepted && f.SenderId == currentUserId))
+                            //@formatter:on
+                        ))
             .OrderBy(c => c.Index)
             .ProjectTo<AttractionsCollectionDto>(mapper.ConfigurationProvider)
             .ToListAsync();

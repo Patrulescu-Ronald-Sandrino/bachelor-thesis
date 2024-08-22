@@ -1,6 +1,6 @@
-import { AttractionCollection } from '../../app/models/attractionCollection.ts';
+import { AttractionCollection } from '../../../app/models/attractionCollection.ts';
 import { createContext, PropsWithChildren } from 'react';
-import { useAppSelector } from '../../app/store/configureStore.ts';
+import { useAppSelector } from '../../../app/store/configureStore.ts';
 import useCollections from './useCollections.tsx';
 
 interface CollectionsContextValue {

@@ -10,4 +10,7 @@ public class User : IdentityUser<Guid>
     public ICollection<Attraction> CreatedAttractions { get; set; } = [];
 
     public ICollection<AttractionComment> AttractionComments { get; set; } = [];
+
+    public List<Friendship> FriendshipsSent { get; set; } = [];
+    public List<Friendship> FriendshipsReceived { get; set; } = [];
 }

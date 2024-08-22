@@ -28,7 +28,10 @@ export default function ProfileContent({ profile }: Props) {
     [key in TAB_TYPE]: { name: string; component: React.JSX.Element };
   } = {
     about: { name: 'About', component: <AboutTab profile={profile} /> },
-    friends: { name: 'Friends', component: <FriendsTab /> },
+    friends: {
+      name: 'Friends',
+      component: <FriendsTab username={profile.username} />,
+    },
     collections: {
       name: 'Collections',
       component: <CollectionsTab username={profile.username} />,
