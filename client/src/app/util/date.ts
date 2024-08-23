@@ -1,5 +1,10 @@
+export function stringToDate(value: string) {
+  const valueUtc = value.endsWith('Z') ? value : value + 'Z';
+  return new Date(valueUtc);
+}
+
 export function formatDateDetailed(date: Date | string) {
-  const result = date instanceof Date ? date : new Date(date);
+  const result = date instanceof Date ? date : stringToDate(date);
   return result.toLocaleString('ja-JP', {
     year: 'numeric',
     month: '2-digit',
@@ -13,5 +18,7 @@ export function formatDateDetailed(date: Date | string) {
 }
 
 export function dateDiff(date1: string, date2: string) {
-  return new Date(date1).getTime() - new Date(date2).getTime();
+  const dateToNumber = (date: string) => new Date(stringToDate(date)).getTime();
+
+  return dateToNumber(date1) - dateToNumber(date2);
 }
