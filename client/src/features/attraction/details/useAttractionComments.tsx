@@ -7,6 +7,7 @@ import {
 } from '@microsoft/signalr';
 import { useAppSelector } from '../../../app/store/configureStore.ts';
 import { toast } from 'react-toastify';
+import { API_ORIGIN } from '../../../app/api/agent.ts';
 
 export default function useAttractionComments(attractionId: string) {
   const user = useAppSelector((state) => state.account.user);
@@ -25,10 +26,10 @@ export default function useAttractionComments(attractionId: string) {
     hubConnection
       .stop()
       .then(() => {
-        console.log('Chat hub connection stopped');
+        console.debug('Chat hub connection stopped');
         setHubConnection(null);
       })
-      .catch((error) => console.log('Error stopping connection: ', error));
+      .catch((error) => console.warn('Error stopping connection: ', error));
   }, [hubConnection]);
 
   useEffect(() => {
@@ -37,21 +38,21 @@ export default function useAttractionComments(attractionId: string) {
     setLoading(true);
 
     const connection = new HubConnectionBuilder()
-      .withUrl(`http://localhost:7000/chat?attractionId=${attractionId}`, {
+      .withUrl(API_ORIGIN + `chat?attractionId=${attractionId}`, {
         accessTokenFactory: () => user!.token,
       })
       .withAutomaticReconnect()
-      .configureLogging(LogLevel.Information)
+      .configureLogging(LogLevel.Warning)
       .build();
 
     connection
       .start()
       .then(() => {
-        console.log('Chat hub connection started');
+        console.debug('Chat hub connection started');
         setHubConnection(connection);
       })
       .catch((error) =>
-        console.log('Error establishing the connection: ', error),
+        console.warn('Error establishing the connection: ', error),
       );
 
     connection.on('LoadComments', (loadedComments: ChatComment[]) => {
@@ -86,7 +87,7 @@ export default function useAttractionComments(attractionId: string) {
         .finally(() => setLoading(false));
     } catch (error) {
       toast.error('Error adding comment');
-      console.log(error);
+      console.warn(error);
     }
   }
 
