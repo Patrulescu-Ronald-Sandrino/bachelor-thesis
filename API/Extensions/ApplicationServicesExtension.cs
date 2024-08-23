@@ -30,7 +30,7 @@ public static class ApplicationServicesExtension
 
         services.AddDbContext<DataContext>(options =>
         {
-            options.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
         });
 
         services.AddScoped<IAttractionTypesService, AttractionTypesService>();
