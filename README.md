@@ -67,6 +67,25 @@ https://vitejs.dev/guide/env-and-mode.html
 npm run build
 ```
 
+### Switch to postgres
+
+```bash
+# Start (an existing or new) postgres container
+docker start postgres || docker run --name postgres -e POSTGRES_USER=appuser -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgres:latest
+
+# docker exec + psql drop database
+# https://stackoverflow.com/questions/53974488/how-to-delete-and-recreate-a-postgres-database-using-a-single-docker-command
+docker exec -it postgres psql -U appuser -d postgres -c "DROP DATABASE attractions;"
+
+# Update the connection string
+
+# Remove the old database and migrations
+rm -rf API/bt.db* Persistence/Migrations
+
+# Create new migration
+dotnet ef migrations add -p Persistence -s API PostgresInitial
+```
+
 ## Utils
 
 SQLite URL: `jdbc:sqlite:PATH/bt.db`
