@@ -51,7 +51,8 @@ function createFormData(
   return formData;
 }
 
-axios.defaults.baseURL = (import.meta.env.VITE_APP_URL ?? '/') + 'api/';
+export const API_ORIGIN = import.meta.env.VITE_APP_URL ?? '/';
+axios.defaults.baseURL = API_ORIGIN + 'api/';
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
