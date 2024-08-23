@@ -56,9 +56,6 @@ export default function useAttractionComments(attractionId: string) {
       );
 
     connection.on('LoadComments', (loadedComments: ChatComment[]) => {
-      loadedComments.forEach((comment) => {
-        comment.createdAt = new Date(comment.createdAt + 'Z');
-      });
       setComments(loadedComments);
       setLoading(false);
       setHasNoComments(loadedComments.length === 0);
@@ -66,7 +63,6 @@ export default function useAttractionComments(attractionId: string) {
 
     connection.on('ReceiveComment', (comment: ChatComment) => {
       setHasNoComments(false);
-      comment.createdAt = new Date(comment.createdAt);
       setComments((prevComments) => {
         return prevComments.some((c) => c.id === comment.id)
           ? prevComments
