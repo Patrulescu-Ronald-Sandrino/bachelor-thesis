@@ -16,7 +16,7 @@ import MouseOverPopover from '../../../app/components/MouseOverPopover.tsx';
 
 import ProfileCard from '../../common/ProfileCard.tsx';
 import { ReactNode } from 'react';
-import { formatDateDetailed } from '../../../app/util/date.ts';
+import { formatDateDetailed, stringToDate } from '../../../app/util/date.ts';
 
 interface Props {
   attractionId: string;
@@ -118,7 +118,7 @@ export default function Comments({ attractionId }: Props) {
                       color="gray"
                       paddingX={1}
                     >
-                      {formatDistanceToNow(comment.createdAt)} ago
+                      {formatDistanceToNow(stringToDate(comment.createdAt))} ago
                     </Typography>
                   </Box>
 

@@ -99,7 +99,7 @@ export function FriendsTab({ username }: Props) {
                     <Typography
                       title={
                         isSelf
-                          ? `Since ${formatDateDetailed(item.modifiedAt + 'Z')}`
+                          ? `Since ${formatDateDetailed(item.modifiedAt)}`
                           : undefined
                       }
                     >
