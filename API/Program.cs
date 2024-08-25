@@ -57,6 +57,31 @@ app.MapHub<ChatHub>("/chat");
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 
+// try
+// {
+//     var connection = new MySqlConnection("Database=attractions; Server=localhost;User ID=root;Password=1234");
+//     connection.Open();
+//     await using var command = new MySqlCommand("SELECT * FROM test;", connection);
+//     await using var reader = await command.ExecuteReaderAsync();
+//     while (await reader.ReadAsync())
+//     {
+//         var value = reader.GetValue(0);
+//         Console.WriteLine($"value = {value}");
+//         // do something with 'value'
+//     }
+//
+//     Console.WriteLine(connection);
+//     Console.WriteLine("Exiting");
+//     return;
+// }
+// ex.Number = 1042 when the server isn't up yet, assuming you're using MySql.Data and not some other MySql implementation
+// catch (MySqlException ex) when (ex.Number is 1042)
+// {
+//     Console.Error.WriteLine("Waiting for db.");
+//     Thread.Sleep(1000);
+// }
+
+
 try
 {
     var context = services.GetRequiredService<DataContext>();

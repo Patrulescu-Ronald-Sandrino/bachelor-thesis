@@ -67,6 +67,45 @@ https://vitejs.dev/guide/env-and-mode.html
 npm run build
 ```
 
+### Switch to mariadb
+
+```bash
+# remove existing container
+docker stop mariadb; docker rm mariadb
+
+# Create and start a new container
+#docker run --name mariadb -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d mariadb:latest
+#docker run --name mariadb -e MYSQL_DATABASE=attractions -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d mariadb:latest
+#docker run --name mariadb -e MYSQL_ROOT_HOST='%' -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d mariadb:latest
+#docker run --name mariadb -e MYSQL_ROOT_HOST='%' -e MYSQL_DATABASE=attractions -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d mariadb:latest
+#docker run --name mariadb -e MYSQL_ROOT_HOST='%' -e MYSQL_DATABASE=attractions -e MYSQL_USER=root -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d mariadb:latest
+#docker run --name mariadb -e MYSQL_ROOT_HOST='localhost' -e MYSQL_DATABASE=attractions -e MYSQL_USER=root -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d mariadb:latest
+#docker run --name mariadb -e MYSQL_DATABASE=attractions -e MYSQL_USER=root -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d mariadb:latest
+#docker run --name mariadb -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=attractions -p 3306:3306 -d mariadb:latest
+#docker run --name mariadb -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=attractions -p 3306:3306 -d mariadb:11.3
+#docker run --name mariadb -e MYSQL_ROOT_HOST='%' -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=attractions -p 3306:3306 -d mariadb:11.3
+docker run --name mariadb --network="host" -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=attractions -p 3306:3306 -d mariadb:11.3 # works w/ python 127 and MySqlConnection localhost
+
+docker exec -it mariadb mariadb --user=root --password=1234 -e "CREATE TABLE attractions.test (id INT PRIMARY KEY AUTO_INCREMENT);"
+
+# Start an existing container
+docker start mariadb
+
+docker exec -it mariadb mariadb --user=root --password=1234 -e "CREATE USER 'root'@'172.17.0.1' IDENTIFIED BY 'root'; GRANT ALL PRIVILEGES ON *.* TO 'root'@'172.17.0.1'; FLUSH PRIVILEGES;"
+
+# docker exec + psql drop database
+# https://stackoverflow.com/questions/53974488/how-to-delete-and-recreate-a-postgres-database-using-a-single-docker-command
+docker exec -it mariadb mariadb --user=root --password=1234 -e "DROP DATABASE attractions"
+
+# Update the connection string
+
+# Remove the old database and migrations
+rm -rf API/bt.db* Persistence/Migrations
+
+# Create new migration
+dotnet ef migrations add -p Persistence -s API MariadbInitial
+```
+
 ## Utils
 
 SQLite URL: `jdbc:sqlite:PATH/bt.db`

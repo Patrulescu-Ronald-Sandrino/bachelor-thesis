@@ -30,7 +30,10 @@ public static class ApplicationServicesExtension
 
         services.AddDbContext<DataContext>(options =>
         {
-            options.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
+            options.UseMySql(ServerVersion.AutoDetect(configuration.GetConnectionString("DefaultConnection")))
+                .LogTo(Console.WriteLine, LogLevel.Trace)
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors();
         });
 
         services.AddScoped<IAttractionTypesService, AttractionTypesService>();
