@@ -2,7 +2,6 @@ using Application.DTOs;
 using Application.DTOs.Attraction;
 using Application.DTOs.Attraction.Query;
 using Application.DTOs.Pagination;
-using Domain.Entities;
 using Domain.Types;
 
 namespace Application.Contracts;
@@ -17,7 +16,7 @@ public interface IAttractionsService
 
     public Task<AttractionDto> UpdateAttraction(AttractionAddOrEditDto attractionDto);
 
-    public Task<Attraction> DeleteAttraction(Guid id);
+    public Task DeleteAttraction(Guid id);
 
     public Task React(Guid id, ReactionType reactionType);
 

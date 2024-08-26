@@ -2,7 +2,6 @@ using API.Extensions;
 using Application.Contracts;
 using Application.DTOs.Attraction;
 using Application.DTOs.Attraction.Query;
-using Domain.Entities;
 using Domain.Types;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,9 +45,10 @@ public class AttractionsController(
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<ActionResult<Attraction>> DeleteAttraction(Guid id)
+    public async Task<ActionResult> DeleteAttraction(Guid id)
     {
-        return await attractionsService.DeleteAttraction(id);
+        await attractionsService.DeleteAttraction(id);
+        return NoContent();
     }
 
     [HttpGet("form-data/{id:guid?}")]

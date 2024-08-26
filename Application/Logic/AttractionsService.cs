@@ -67,7 +67,7 @@ public class AttractionsService(
         return await MapAttraction(attraction);
     }
 
-    public async Task<Attraction> DeleteAttraction(Guid id)
+    public async Task DeleteAttraction(Guid id)
     {
         var attraction = await context.Attractions.FindAsyncOrThrow(id);
         await EnsureWriteAccess(attraction);
@@ -78,7 +78,6 @@ public class AttractionsService(
         context.Remove(attraction);
         await context.SaveChangesAsync();
         await photoAccessor.DeletePhotos(attraction.Photos);
-        return attraction;
     }
 
     public async Task React(Guid id, ReactionType reactionType)
