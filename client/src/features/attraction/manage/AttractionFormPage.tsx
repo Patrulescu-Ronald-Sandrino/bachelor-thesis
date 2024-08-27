@@ -124,13 +124,13 @@ export default function AttractionFormPage() {
         })
         .catch((error) => {
           setIsSubmitSuccessful(false);
-          forEachError(error, (field, message) =>
+          forEachError(error, (field, message, i) =>
             setError(
               field as FieldPath<AttractionAddOrEditDto>,
               {
                 message: message.join('\n'),
               },
-              { shouldFocus: true },
+              { shouldFocus: i == 0 },
             ),
           );
         })

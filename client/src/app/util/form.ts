@@ -1,15 +1,15 @@
 export function forEachError(
   data: unknown,
-  callback: (field: string, messages: string[]) => void,
+  callback: (field: string, messages: string[], i: number) => void,
 ): void {
   if (!data) return;
 
   Object.entries(data as { [key: string]: string[] }).forEach(
-    ([field, fieldErrors]) => {
+    ([field, fieldErrors], i) => {
       const fieldCamelCase =
         field.charAt(0).toLocaleLowerCase() + field.slice(1);
 
-      callback(fieldCamelCase, fieldErrors);
+      callback(fieldCamelCase, fieldErrors, i);
     },
   );
 }

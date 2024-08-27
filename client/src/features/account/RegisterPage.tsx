@@ -53,11 +53,11 @@ export default function RegisterPage() {
               });
             })
             .catch((errors) => {
-              forEachError(errors, (field, message) =>
+              forEachError(errors, (field, message, i) =>
                 setError(
                   field,
                   { message: message.join('\n') },
-                  { shouldFocus: true },
+                  { shouldFocus: i == 0 },
                 ),
               );
             }),
